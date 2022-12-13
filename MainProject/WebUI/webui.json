@@ -1,0 +1,701 @@
+{
+  "version": "4.67.0",
+  "application": {
+    "aimms.widget.type": {
+      "literal": "application"
+    },
+    "browsername": {
+      "aimms": {
+        "contents": [
+          "webui::ClientBrowserName"
+        ]
+      }
+    },
+    "browsertimezone": {
+      "aimms": {
+        "contents": [
+          "webui::BrowserTimeZone"
+        ]
+      }
+    },
+    "ignoredst": {
+      "aimms": {
+        "contents": [
+          "webui::IgnoreDST"
+        ]
+      }
+    },
+    "pages": {
+      "literal": {
+        "name": "root",
+        "slug": "root",
+        "children": [
+          {
+            "name": "Main Project",
+            "slug": "main_project",
+            "children": [
+              {
+                "name": "home",
+                "slug": "home",
+                "type": "pagev2-grid",
+                "children": []
+              },
+              {
+                "name": "Story",
+                "type": "pagev2-grid",
+                "slug": "story",
+                "children": []
+              },
+              {
+                "name": "Tours",
+                "type": "pagev2-grid",
+                "slug": "tours",
+                "children": []
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "theme.classic": {
+      "literal": "NOT_ALLOWED"
+    },
+    "timezone": {
+      "aimms": {
+        "contents": [
+          "webui::DisplayTimeZone"
+        ]
+      }
+    },
+    "timezone.dst.readonly": {
+      "aimms": {
+        "contents": [
+          "webui::DefaultDSTSettingForDisplayTimeZone"
+        ]
+      }
+    },
+    "workflows.configuration": {
+      "aimms": {
+        "contents": [
+          "sp_myWorkflowSteps"
+        ],
+        "slices": [
+          {
+            "identifier": "sp_myWorkflowSteps",
+            "slice": [
+              {
+                "index": "webui::indexWorkflowOrder",
+                "type": "free",
+                "value": "webui::indexWorkflowOrder"
+              },
+              {
+                "index": "webui::indexNoOfPages",
+                "type": "free",
+                "value": "webui::indexNoOfPages"
+              },
+              {
+                "index": "webui::indexWorkflowPageSpec",
+                "type": "free",
+                "value": "webui::indexWorkflowPageSpec"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "layouts/custom_afa86eba-6e6a-4077-a063-bf443788a472": {
+    "definition": {
+      "literal": {
+        "componentName": "Grid",
+        "props": {
+          "gridTemplateColumns": "1fr 1fr 1fr",
+          "gridTemplateRows": "1fr",
+          "gridTemplateAreas": "\"area-a area-b area-c\""
+        },
+        "items": [
+          {
+            "componentName": "WidgetArea",
+            "props": {
+              "gridArea": "area-a",
+              "name": "Area A",
+              "gridAutoFlow": "row"
+            }
+          },
+          {
+            "componentName": "WidgetArea",
+            "props": {
+              "gridArea": "area-b",
+              "name": "Area B",
+              "gridAutoFlow": "row"
+            }
+          },
+          {
+            "componentName": "WidgetArea",
+            "props": {
+              "gridArea": "area-c",
+              "name": "Area C",
+              "gridAutoFlow": "row"
+            }
+          }
+        ]
+      }
+    },
+    "displayName": {
+      "literal": "Layout7 Copy"
+    }
+  },
+  "pages/home": {
+    "aimms.widget.type": {
+      "literal": "pagev2-grid"
+    },
+    "bindings": {
+      "literal": [
+        {
+          "widgetUri": "img_homeLogo",
+          "gridArea": "area-d",
+          "dndId": "area-aimg_homeLogo1"
+        },
+        {
+          "widgetUri": "txt_welcome",
+          "gridArea": "area-a",
+          "dndId": "area-atxt_welcome0"
+        }
+      ]
+    },
+    "layoutId": {
+      "literal": "Layout10"
+    },
+    "widgets": {
+      "literal": [
+        {
+          "uri": "txt_welcome",
+          "layoutInfo": {
+            "width": "2",
+            "height": "1"
+          }
+        },
+        {
+          "uri": "img_homeLogo",
+          "layoutInfo": {
+            "width": "2",
+            "height": "1"
+          }
+        }
+      ]
+    }
+  },
+  "pages/story": {
+    "aimms.widget.type": {
+      "literal": "pagev2-grid"
+    },
+    "bindings": {
+      "literal": [
+        {
+          "widgetUri": "txt_story",
+          "gridArea": "area-a",
+          "dndId": "Unassigned widgetstxt_story"
+        }
+      ]
+    },
+    "layoutId": {
+      "literal": "Layout11"
+    },
+    "widgets": {
+      "literal": [
+        {
+          "uri": "txt_story",
+          "layoutInfo": {
+            "width": "2",
+            "height": "1"
+          }
+        }
+      ]
+    }
+  },
+  "pages/tours": {
+    "aimms.widget.type": {
+      "literal": "pagev2-grid"
+    },
+    "bindings": {
+      "literal": [
+        {
+          "widgetUri": "map_improvedTourSimultaneous",
+          "gridArea": "area-c",
+          "dndId": "area-dmap_improvedTourSimultaneous2"
+        },
+        {
+          "widgetUri": "map_improvedTourCyclic",
+          "gridArea": "area-b",
+          "dndId": "area-bmap_improvedTourCyclic0"
+        },
+        {
+          "widgetUri": "map_initialTour",
+          "gridArea": "area-a",
+          "dndId": "area-amap_initialTour1"
+        }
+      ]
+    },
+    "layoutId": {
+      "literal": "custom_afa86eba-6e6a-4077-a063-bf443788a472"
+    },
+    "widgets": {
+      "literal": [
+        {
+          "uri": "map_initialTour",
+          "layoutInfo": {
+            "width": "2",
+            "height": "1"
+          }
+        },
+        {
+          "uri": "map_improvedTourCyclic",
+          "layoutInfo": {
+            "width": "2",
+            "height": "1"
+          }
+        },
+        {
+          "uri": "map_improvedTourSimultaneous",
+          "layoutInfo": {
+            "width": "2",
+            "height": "1"
+          }
+        }
+      ]
+    }
+  },
+  "widgets/img_homeLogo": {
+    "aimms.widget.type": {
+      "literal": "image"
+    },
+    "name": {
+      "literal": "img_homeLogo"
+    }
+  },
+  "widgets/map_improvedTourCyclic": {
+    "aimms.widget.type": {
+      "literal": "map-v2"
+    },
+    "arcs.__display_order__": {
+      "literal": [
+        "arcs.0"
+      ]
+    },
+    "arcs.0": {
+      "aimms": {
+        "contents": [
+          "p_cyc_tourConnect"
+        ],
+        "slices": [
+          {
+            "identifier": "p_cyc_tourConnect",
+            "slice": [
+              {
+                "index": "i_i",
+                "type": "free",
+                "value": "i_i"
+              },
+              {
+                "index": "i_j",
+                "type": "free",
+                "value": "i_j"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "arcs.0.label.hide": {
+      "literal": true
+    },
+    "arcs.0.line.straight": {
+      "literal": true
+    },
+    "arcs.0.value": {
+      "literal": {
+        "identifier": "p_cyc_tourConnect",
+        "slice": [
+          {
+            "index": "i_i",
+            "type": "free",
+            "value": "i_i"
+          },
+          {
+            "index": "i_j",
+            "type": "free",
+            "value": "i_j"
+          }
+        ]
+      }
+    },
+    "center.latitude": {
+      "literal": 4.372152138075887
+    },
+    "center.longitude": {
+      "literal": 5.008746800135247
+    },
+    "heatmaps.__display_order__": {
+      "literal": [
+        "heatmaps.0"
+      ]
+    },
+    "name": {
+      "literal": "map_improvedTourCyclic"
+    },
+    "nodes.__display_order__": {
+      "literal": [
+        "nodes.0"
+      ]
+    },
+    "nodes.0": {
+      "aimms": {
+        "contents": [
+          "p_yCoord",
+          "p_xCoord"
+        ],
+        "slices": [
+          {
+            "identifier": "p_yCoord",
+            "slice": [
+              {
+                "index": "i_city",
+                "type": "free",
+                "value": "i_city"
+              }
+            ]
+          },
+          {
+            "identifier": "p_xCoord",
+            "slice": [
+              {
+                "index": "i_city",
+                "type": "free",
+                "value": "i_city"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "nodes.0.latitude": {
+      "literal": {
+        "identifier": "p_xCoord",
+        "slice": [
+          {
+            "index": "i_city",
+            "type": "free",
+            "value": "i_city"
+          }
+        ]
+      }
+    },
+    "nodes.0.longitude": {
+      "literal": {
+        "identifier": "p_yCoord",
+        "slice": [
+          {
+            "index": "i_city",
+            "type": "free",
+            "value": "i_city"
+          }
+        ]
+      }
+    },
+    "title": {
+      "literal": "Improved Tour (Cyclic)"
+    },
+    "zoom": {
+      "literal": 5
+    }
+  },
+  "widgets/map_improvedTourSimultaneous": {
+    "aimms.widget.type": {
+      "literal": "map-v2"
+    },
+    "arcs.__display_order__": {
+      "literal": [
+        "arcs.0"
+      ]
+    },
+    "arcs.0": {
+      "aimms": {
+        "contents": [
+          "p_sim_tourConnect"
+        ],
+        "slices": [
+          {
+            "identifier": "p_sim_tourConnect",
+            "slice": [
+              {
+                "index": "i_i",
+                "type": "free",
+                "value": "i_i"
+              },
+              {
+                "index": "i_j",
+                "type": "free",
+                "value": "i_j"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "arcs.0.label.hide": {
+      "literal": true
+    },
+    "arcs.0.line.straight": {
+      "literal": true
+    },
+    "arcs.0.value": {
+      "literal": {
+        "identifier": "p_sim_tourConnect",
+        "slice": [
+          {
+            "index": "i_i",
+            "type": "free",
+            "value": "i_i"
+          },
+          {
+            "index": "i_j",
+            "type": "free",
+            "value": "i_j"
+          }
+        ]
+      }
+    },
+    "center.latitude": {
+      "literal": 4.499452788279215
+    },
+    "center.longitude": {
+      "literal": 4.564607080757349
+    },
+    "heatmaps.__display_order__": {
+      "literal": [
+        "heatmaps.0"
+      ]
+    },
+    "name": {
+      "literal": "map_improvedTourSimultaneous"
+    },
+    "nodes.__display_order__": {
+      "literal": [
+        "nodes.0"
+      ]
+    },
+    "nodes.0": {
+      "aimms": {
+        "contents": [
+          "p_yCoord",
+          "p_xCoord"
+        ],
+        "slices": [
+          {
+            "identifier": "p_yCoord",
+            "slice": [
+              {
+                "index": "i_city",
+                "type": "free",
+                "value": "i_city"
+              }
+            ]
+          },
+          {
+            "identifier": "p_xCoord",
+            "slice": [
+              {
+                "index": "i_city",
+                "type": "free",
+                "value": "i_city"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "nodes.0.latitude": {
+      "literal": {
+        "identifier": "p_xCoord",
+        "slice": [
+          {
+            "index": "i_city",
+            "type": "free",
+            "value": "i_city"
+          }
+        ]
+      }
+    },
+    "nodes.0.longitude": {
+      "literal": {
+        "identifier": "p_yCoord",
+        "slice": [
+          {
+            "index": "i_city",
+            "type": "free",
+            "value": "i_city"
+          }
+        ]
+      }
+    },
+    "title": {
+      "literal": "Improved Tour (Simultaneous)"
+    },
+    "zoom": {
+      "literal": 5
+    }
+  },
+  "widgets/map_initialTour": {
+    "aimms.widget.type": {
+      "literal": "map-v2"
+    },
+    "arcs.__display_order__": {
+      "literal": [
+        "arcs.0"
+      ]
+    },
+    "arcs.0": {
+      "aimms": {
+        "contents": [
+          "p_init_tourConnect"
+        ],
+        "slices": [
+          {
+            "identifier": "p_init_tourConnect",
+            "slice": [
+              {
+                "index": "i_i",
+                "type": "free",
+                "value": "i_i"
+              },
+              {
+                "index": "i_j",
+                "type": "free",
+                "value": "i_j"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "arcs.0.label.hide": {
+      "literal": true
+    },
+    "arcs.0.line.straight": {
+      "literal": true
+    },
+    "arcs.0.value": {
+      "literal": {
+        "identifier": "p_init_tourConnect",
+        "slice": [
+          {
+            "index": "i_i",
+            "type": "free",
+            "value": "i_i"
+          },
+          {
+            "index": "i_j",
+            "type": "free",
+            "value": "i_j"
+          }
+        ]
+      }
+    },
+    "center.latitude": {
+      "literal": 4.194884089235734
+    },
+    "center.longitude": {
+      "literal": 4.959979049942032
+    },
+    "name": {
+      "literal": "map_initialTour"
+    },
+    "nodes.__display_order__": {
+      "literal": [
+        "nodes.0"
+      ]
+    },
+    "nodes.0": {
+      "aimms": {
+        "contents": [
+          "p_yCoord",
+          "p_xCoord"
+        ],
+        "slices": [
+          {
+            "identifier": "p_yCoord",
+            "slice": [
+              {
+                "index": "i_city",
+                "type": "free",
+                "value": "i_city"
+              }
+            ]
+          },
+          {
+            "identifier": "p_xCoord",
+            "slice": [
+              {
+                "index": "i_city",
+                "type": "free",
+                "value": "i_city"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "nodes.0.latitude": {
+      "literal": {
+        "identifier": "p_xCoord",
+        "slice": [
+          {
+            "index": "i_city",
+            "type": "free",
+            "value": "i_city"
+          }
+        ]
+      }
+    },
+    "nodes.0.longitude": {
+      "literal": {
+        "identifier": "p_yCoord",
+        "slice": [
+          {
+            "index": "i_city",
+            "type": "free",
+            "value": "i_city"
+          }
+        ]
+      }
+    },
+    "title": {
+      "literal": "Initial Tour"
+    },
+    "zoom": {
+      "literal": 5
+    }
+  },
+  "widgets/txt_story": {
+    "aimms.widget.type": {
+      "literal": "text"
+    },
+    "contents": {
+      "literal": "<div><br></div>"
+    },
+    "name": {
+      "literal": "txt_story"
+    }
+  },
+  "widgets/txt_welcome": {
+    "aimms.widget.type": {
+      "literal": "text"
+    },
+    "contents": {
+      "literal": "<div><span style=\"background-color: inherit; font-size: 32px;\"><b>Welcome!</b></span></div><div><br></div><div><span style=\"background-color: inherit; font-size: 18px;\">You are in an AIMMS Example. Feel free to play around and create something more in this app!</span></div><div><span style=\"background-color: inherit; font-size: 18px;\">&nbsp;</span></div><div><span style=\"background-color: inherit; font-size: 18px;\">If you do, please fork this repository and commit your changes.&nbsp;</span><b><span style=\"background-color: inherit; font-size: 18px;\">This ensures our GitHub stays up-to-date for the entire community!</span></b></div><div><br></div><div><span style=\"background-color: inherit; font-size: 18px;\">You can also check our other interactive resources:</span></div><div><br></div><ul><li><span style=\"background-color: inherit; font-size: 18px;\">In the Online&nbsp;</span><a href=\"https://community.aimms.com/\" style=\"color: var(--primaryDarker); background-color: inherit; font-size: 18px;\" target=\"_blank\">Community</a><span style=\"background-color: inherit; font-size: 18px;\">, talk to other developers and AIMMSians about the product, modeling, use cases, and more.</span></li><li><span style=\"background-color: inherit; font-size: 18px;\">In the&nbsp;</span><a href=\"https://academy.aimms.com/\" style=\"color: var(--primaryDarker); background-color: inherit; font-size: 18px;\" target=\"_blank\">Academy</a><span style=\"background-color: inherit; font-size: 18px;\">, learn new skills and challenge yourself. We are busy creating new courses, so keep an eye out!</span></li></ul><div><br></div><div><span style=\"background-color: inherit; font-size: 18px;\">For questions that can't be posted on the community, contact us at&nbsp;</span><i style=\"background-color: rgb(255, 255, 204); font-size: 18px;\">support@aimms.com</i><span style=\"background-color: inherit; font-size: 18px;\">.</span></div><div><br></div><div><br></div><div><br></div><div><br></div><div><br></div><div><br></div><div><br></div>"
+    },
+    "name": {
+      "literal": "txt_welcome"
+    }
+  }
+}
