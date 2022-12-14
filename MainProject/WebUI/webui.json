@@ -239,6 +239,11 @@
     "layoutId": {
       "literal": "custom_afa86eba-6e6a-4077-a063-bf443788a472"
     },
+    "onload": {
+      "aimms": {
+        "run": "pr_runAll"
+      }
+    },
     "widgets": {
       "literal": [
         {
@@ -330,10 +335,10 @@
       }
     },
     "center.latitude": {
-      "literal": 4.372152138075887
+      "literal": 4.707828375218317
     },
     "center.longitude": {
-      "literal": 5.008746800135247
+      "literal": 5.053710937500001
     },
     "heatmaps.__display_order__": {
       "literal": [
@@ -406,7 +411,7 @@
       "literal": "Improved Tour (Cyclic)"
     },
     "zoom": {
-      "literal": 5
+      "literal": 6
     }
   },
   "widgets/map_improvedTourSimultaneous": {
@@ -466,10 +471,10 @@
       }
     },
     "center.latitude": {
-      "literal": 4.499452788279215
+      "literal": 5.4082109285908299
     },
     "center.longitude": {
-      "literal": 4.564607080757349
+      "literal": 4.855957031250001
     },
     "heatmaps.__display_order__": {
       "literal": [
@@ -542,7 +547,7 @@
       "literal": "Improved Tour (Simultaneous)"
     },
     "zoom": {
-      "literal": 5
+      "literal": 6
     }
   },
   "widgets/map_initialTour": {
@@ -602,10 +607,10 @@
       }
     },
     "center.latitude": {
-      "literal": 4.194884089235734
+      "literal": 4.324501493019203
     },
     "center.longitude": {
-      "literal": 4.959979049942032
+      "literal": 6.152343750000001
     },
     "name": {
       "literal": "map_initialTour"

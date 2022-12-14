@@ -46,12 +46,12 @@ Model Main_TravelingSalesman {
 				Parameter: ep_city;
 				Definition: ElementRange( from: 1, to: p_maxCities, fill: 0 );
 			}
-			Set Neighbors {
+			Set s_neighbors {
 				IndexDomain: i_i;
 				SubsetOf: s_cities;
 				Text: "The set of neighbors of city i";
 				OrderBy: user;
-				Definition: NBest( i_j | (i_i <> i_j), -p_def_directDistance(i_i,i_j), p_def_maxNeighbors );
+				Definition: NBest(i_j | (i_i <> i_j), -p_def_directDistance(i_i,i_j), p_def_maxNeighbors);
 			}
 			Parameter p_maxCities {
 				Text: "Maximum number of cities in the tour";
@@ -163,14 +163,14 @@ Model Main_TravelingSalesman {
 					city for swapping, considering all cities in the tour simultaneously."
 				}
 				Parameter p_sim_distanceChange {
-					IndexDomain: (i_i,i_j in Neighbors(i_i));
+					IndexDomain: (i_i,i_j in s_neighbors(i_i));
 					Text: "Improvement in total tour distance by swapping city i with neighbor j in simultaneous algorithm";
 					Default: -inf;
 					Definition: p_def_directDistance(i_i,p_sim_nextCity(i_i)) + p_def_directDistance(i_j,p_sim_nextCity(i_j)) - (p_def_directDistance(i_i,i_j) + p_def_directDistance(p_sim_nextCity(i_i),p_sim_nextCity(i_j)));
 				}
 				Parameter p_sim_maxChange {
 					Text: "Maximum possible distance improvement in simultaneous algorithm";
-					Definition: Max((i_i,i_j in Neighbors(i_i)), p_sim_distanceChange(i_i,i_j));
+					Definition: Max((i_i,i_j in s_neighbors(i_i)), p_sim_distanceChange(i_i,i_j));
 				}
 				Parameter p_sim_swaps {
 					Text: "Number of performed swaps in simultaneous algorithm";
@@ -299,7 +299,7 @@ Model Main_TravelingSalesman {
 				Macro p_cyc_distanceChange {
 					Text: "Improvement in total tour distance by swapping city i with neighbor j in cyclic algorithm";
 					Arguments: (i_i,i_j);
-					Definition: p_def_directDistance(i_i,p_cyc_textCity(i_i)) + p_def_directDistance(i_j,p_cyc_textCity(i_j)) - (p_def_directDistance(i_i,i_j) + p_def_directDistance(p_cyc_textCity(i_i),p_cyc_textCity(i_j)));
+					Definition: p_def_directDistance(i_i,p_cyc_nextCity(i_i)) + p_def_directDistance(i_j,p_cyc_nextCity(i_j)) - (p_def_directDistance(i_i,i_j) + p_def_directDistance(p_cyc_nextCity(i_i),p_cyc_nextCity(i_j)));
 				}
 				Parameter p_cyc_swaps {
 					Text: "Number of performed swaps in cyclic algorithm";
@@ -311,7 +311,7 @@ Model Main_TravelingSalesman {
 					IndexDomain: (i_i,i_j);
 					Text: "City i connected to city j after current iteration in cyclic algorithm";
 				}
-				ElementParameter p_cyc_textCity {
+				ElementParameter p_cyc_nextCity {
 					IndexDomain: i_city;
 					Text: "Next city of city c after current iteration in cyclic algorithm";
 					Range: s_cities;
@@ -335,7 +335,7 @@ Model Main_TravelingSalesman {
 						endif;
 						
 						if (not p_cyc_initialized) then
-						   p_cyc_textCity(i_city) := ep_init_nextCity(i_city);
+						   p_cyc_nextCity(i_city) := ep_init_nextCity(i_city);
 						   p_cyc_prevCity(i_city) := ep_init_prevCity(i_city);
 						   p_cyc_initialized := 1;
 						   p_cyc_swaps := 0;
@@ -352,7 +352,7 @@ Model Main_TravelingSalesman {
 						    p_loc_uselessLoops += 1;
 						
 						    ! Select a NewNext to be swapped with City
-						    ep_loc_nextCity := argmax(i_city in Neighbors(ep_city), p_cyc_distanceChange(ep_city,i_city));
+						    ep_loc_nextCity := argmax(i_city in s_neighbors(ep_city), p_cyc_distanceChange(ep_city,i_city));
 						
 						    if (p_cyc_distanceChange(ep_city, ep_loc_nextCity) > 0) then
 						        p_cyc_swaps += 1;
@@ -364,45 +364,45 @@ Model Main_TravelingSalesman {
 						            ! city references we have to walk over the subtour, carefully making sure we don't
 						            ! destroy any information while reversing the direction.
 						
-						            GMP::ProgressWindow::DisplayLine(1, "Phase", "Swap Cities");
+						            GMP::ProgressWindow::DisplayLine( 1, "Phase", "Swap Cities" );
 						
 						            ! Set up a link from the old destinations of City to the old destination of NewNext in the tour
-						            ep_loc_OCity := p_cyc_textCity(ep_city);
-						            ep_loc_DCity := p_cyc_textCity(ep_loc_nextCity);
-						            p_cyc_textCity(ep_loc_OCity) := ep_loc_DCity;
+						            ep_loc_OCity := p_cyc_NextCity(ep_city);
+						            ep_loc_DCity := p_cyc_nextCity(ep_loc_nextCity);
+						            p_cyc_nextCity(ep_loc_OCity) := ep_loc_DCity;
 						            p_cyc_prevCity(ep_loc_DCity) := ep_loc_OCity;
 						
 						            ! Reverse the chain from the old destination of City to NextNew
 						            ep_loc_OCity := ep_loc_nextCity;
 						            ep_loc_DCity := p_cyc_prevCity(ep_loc_OCity);
 						
-						            while (ep_loc_DCity <> ep_city) do
+						            while ( ep_loc_DCity <> ep_city ) do
 						                 ep_loc_ODCity := ep_loc_DCity;
-						                 p_cyc_textCity(ep_loc_OCity) := ep_loc_ODCity;
+						                 p_cyc_NextCity(ep_loc_OCity) := ep_loc_ODCity;
 						                 ep_loc_DCity := p_cyc_prevCity(ep_loc_ODCity);
 						                 p_cyc_prevCity(ep_loc_ODCity) := ep_loc_OCity;
-						                 ep_loc_OCity := ep_loc_OCity;
+						                 ep_loc_OCity := ep_loc_ODCity;
 						            endwhile;
 						
 						            ! Finally, setup the link from City to NextNew
-						            p_cyc_textCity(ep_city) := ep_loc_nextCity;
-						            p_cyc_prevCity(ep_loc_nextCity) := ep_city;
-						        endblock ;
+						            p_cyc_NextCity(ep_city) := ep_loc_nextCity;
+						            p_cyc_PrevCity(ep_loc_nextCity) := ep_city;
+						        endblock;
 						
-						        Block ! Update network flow object.
-						            empty p_cyc_tourConnect;
-						            p_cyc_tourConnect(i_city, p_cyc_textCity(i_city)) := 1;
-						            p_cyc_tourDistance := sum(i_city, p_def_directDistance(i_city, p_cyc_textCity(i_city)));
+						        block ! Update network flow object.
+						            empty p_cyc_TourConnect;
+						            p_cyc_TourConnect(i_city,p_cyc_NextCity(i_city)) := 1;
+						            p_cyc_TourDistance := sum(i_city, p_def_directDistance(i_city,p_cyc_nextCity(i_city)));
 						            PageRefreshAll;
 						        endblock;
 						
 						        block ! Update Progress Window.
-						            GMP::ProgressWindow::DisplayLine(3,"Objective", p_cyc_tourDistance);
-						            GMP::ProgressWindow::DisplayLine(2, "Node Swaps", p_cyc_swaps);
+						            GMP::ProgressWindow::DisplayLine(3,"Objective", p_cyc_TourDistance);
+						            GMP::ProgressWindow::DisplayLine(2, "Node Swaps", p_cyc_Swaps);
 						        endblock;
 						    endif;
 						
-						    ep_city := p_cyc_textCity(ep_city);
+						    ep_city := p_cyc_nextCity(ep_city);
 						endwhile;
 						
 						GMP::ProgressWindow::DisplayProgramStatus('LocallyOptimal');
@@ -462,17 +462,11 @@ Model Main_TravelingSalesman {
 		}
 		Section Pages {
 			Section Tours_Page {
-				Procedure NewTour {
+				Procedure pr_runAll {
 					Body: {
-						
-						empty p_init_tourConnect,p_sim_tourConnect,p_cyc_tourConnect;
-						p_init_tourInitialized := 0;
-						p_sim_initialized  := 0;
-						p_cyc_initialized  := 0;
-					}
-					Comment: {
-						"This procedure computes a new set of coordinates for the given set of cities, and
-						determines initial values for the iteration limit and size of the neighbor set."
+						pr_improveTourCyclic;
+						pr_improveTourSimultaneous;
+						pr_findInitialTour;
 					}
 				}
 			}
@@ -483,18 +477,26 @@ Model Main_TravelingSalesman {
 			}
 		}
 	}
+	Procedure MainInitialization {
+		Body: {
+			empty p_init_tourConnect,p_sim_tourConnect,p_cyc_tourConnect;
+			
+			p_init_tourInitialized := 0;
+			p_sim_initialized  := 0;
+			p_cyc_initialized  := 0;
+		}
+	}
+	Procedure PostMainInitialization;
+	Procedure MainExecution;
+	Procedure PreMainTermination {
+		Body: {
+			return 1;
+		}
+	}
 	Procedure MainTermination {
 		Body: {
 			return 1;
 		}
 		Comment: "We return 1 to make sure AIMMS does not ask to save a case when closing the project";
-	}
-	Procedure InitialMovie {
-		Body: {
-			ShowProgressWindow;
-			NewTour;
-			pr_findInitialTour;
-		}
-		Comment: "This procedure is used when opening the only page of the project.";
 	}
 }

@@ -1,9 +1,7 @@
 * The timestamps in this namechange file are stored in Coordinated universal time (UTC).
 "Main_Traveling_Salesman_Problem" "Main_TravelingSalesman" "2022-12-13 17:39:03"
-"Distance" "SDistance" "2022-12-13 17:41:04"
 "MaxCities" "p_maxCities" "2022-12-13 17:49:33"
 "Cities" "s_cities" "2022-12-13 17:49:52"
-"SDistance" "p_distance" "2022-12-13 17:54:41"
 "p_distance" "p_directDistance" "2022-12-13 17:54:51"
 "c" "i_city" "2022-12-13 18:00:12"
 "i" "i_i" "2022-12-13 18:00:12"
@@ -45,3 +43,6 @@
 "pr_ImproveInitialTourCyclic" "pr_improveTourCyclic" "2022-12-13 19:54:12"
 "MaxNeighbors" "p_def_maxNeighbors" "2022-12-13 20:09:10"
 "p_directDistance" "p_def_directDistance" "2022-12-13 20:10:06"
+"p_cyc_textCity" "p_cyc_nextCity" "2022-12-14 19:43:58"
+"Neighbors" "s_neighbors" "2022-12-14 19:54:02"
+"MainInicialization" "MainInitialization" "2022-12-14 19:56:11"
