@@ -1,0 +1,3 @@
+.tag-table.focused .cell.focus-cell {
+    box-shadow: inset 0 0 0 2px var(--primaryDark);
+}

@@ -1,0 +1,32 @@
+:root {
+  --primaryLight: #00A0C8;
+  --primary: #0082AA;
+  --primaryDark: #0A5078;
+  --secondaryDarker: #A00028;
+  --secondary: #C80A50;
+  --secondary2: #DC9600;
+
+  --bg_app-logo: 15px 50% / 50px 50px no-repeat url(/app-resources/resources/images/traveling.png);
+  --spacing_app-logo_width: 65px;
+
+  --color_border-divider_themed: var(--primary);
+  --color_text_edit-select-link: var(--primaryDark);
+  --color_text_edit-select-link_hover: var(--primaryLight);
+  --color_bg_edit-select-link_inverted: var(--secondary);
+
+  --color_bg_button_primary: var(--primaryLight);
+  --color_text_button_primary: white;
+  --border_button_primary: 1px solid var(--primaryLight);
+
+  --color_bg_button_primary_hover: var(--primaryLight);
+  --color_text_button_primary_hover: var(--primaryDark);
+  --border_button_primary_hover: 1px solid var(--primaryDark);
+
+  --color_text_button_secondary: var(--secondary);
+  --border_button_secondary: 1px solid var(--secondary);
+  --color_text_button_secondary_hover: var(--primaryDark);
+  --border_button_secondary_hover: 1px solid var(--primaryDark);
+
+  --color_bg_widget-header: var(--primaryDark);
+  --border_widget-header: 3px solid var(--primary);
+}

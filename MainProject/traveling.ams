@@ -473,6 +473,11 @@ Model Main_TravelingSalesman {
 				}
 				StringParameter sp_toursSidePanel {
 					IndexDomain: (webui::indexPageExtension,webui::indexSidePanelSpec);
+					Definition: {
+						data 
+						{ ( 1, displayText ) : "New Network"   ,  ( 1, pageId      ) : "new_network"   ,  ( 1, state       ) : "active"        ,
+						  ( 2, displayText ) : "Tour Distances",  ( 2, pageId      ) : "tour_distances",  ( 2, state       ) : "active"         }
+					}
 				}
 			}
 		}

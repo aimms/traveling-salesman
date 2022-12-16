@@ -1,0 +1,30 @@
+/*Link color*/
+.ql-snow a {  
+    color: var(--primaryDarker);
+}
+
+/*Change checkbox color*/
+input.boolean-cell-editor-contents {
+  accent-color: var(--primaryDarker);
+}
+
+.aimms-widget .ui-button {
+  text-transform: uppercase;
+}
+
+/*Changing tittle to be uppercase*/
+.title-addon,
+.ui-dialog .ui-dialog-title,
+.page-container__dialog-header .title{
+  text-transform: uppercase;
+  text-shadow: 1px 1px 0px var(--primaryDarker);
+  color: whitesmoke;
+}
+
+.tag-table .grid-viewport .cell:not(.flag-readOnly), html:not(.using-touch) .tag-table .grid-viewport .cell:not(.flag-readOnly) {
+  color: var(--primaryDarker);
+}
+
+.widget-menu-container .widget-menu-items-wrapper .widget-menu-item .title {
+  color: var(--primaryDarker);
+}

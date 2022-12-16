@@ -267,12 +267,20 @@
     }
   },
   "pages/tour_distances": {
+    "aimms.widget.type": {
+      "literal": "pagev2-grid-sidepanel"
+    },
     "bindings": {
       "literal": [
         {
+          "widgetUri": "lbl_distanceTitle",
+          "gridArea": "area-a",
+          "dndId": "area-albl_distanceTitle1"
+        },
+        {
           "widgetUri": "scl_initialTour",
           "gridArea": "area-a",
-          "dndId": "Unassigned widgetsscl_initialTour0"
+          "dndId": "area-ascl_initialTour0"
         }
       ]
     },
@@ -280,6 +288,13 @@
       "literal": [
         {
           "uri": "scl_initialTour",
+          "layoutInfo": {
+            "width": "2",
+            "height": "1"
+          }
+        },
+        {
+          "uri": "lbl_distanceTitle",
           "layoutInfo": {
             "width": "2",
             "height": "1"
@@ -419,7 +434,7 @@
       "literal": "btn_runCycTour"
     },
     "title": {
-      "literal": "btn_runCycTour"
+      "literal": "Improve Tour (Cyclic)"
     }
   },
   "widgets/btn_runInitialTour": {
@@ -436,7 +451,7 @@
       "literal": "btn_runInitialTour"
     },
     "title": {
-      "literal": "btn_runInitialTour"
+      "literal": "Run Initial Tour"
     }
   },
   "widgets/btn_runNewNetwork": {
@@ -447,7 +462,7 @@
       "literal": "btn_runNewNetwork"
     },
     "title": {
-      "literal": "btn_runNewNetwork"
+      "literal": "New Network"
     }
   },
   "widgets/btn_runSimTour": {
@@ -464,15 +479,33 @@
       "literal": "btn_runSimTour"
     },
     "title": {
-      "literal": "btn_runSimTour"
+      "literal": "Improve Tour (Simultaneous)"
     }
   },
   "widgets/img_homeLogo": {
     "aimms.widget.type": {
       "literal": "image"
     },
+    "contents": {
+      "aimms": {
+        "contents": [
+          "sp_logo"
+        ]
+      }
+    },
     "name": {
       "literal": "img_homeLogo"
+    }
+  },
+  "widgets/lbl_distanceTitle": {
+    "aimms.widget.type": {
+      "literal": "label"
+    },
+    "contents": {
+      "literal": "Distances"
+    },
+    "name": {
+      "literal": "lbl_distanceTitle"
     }
   },
   "widgets/map_improvedTourCyclic": {
@@ -668,10 +701,10 @@
       }
     },
     "center.latitude": {
-      "literal": -2.0210651187669899
+      "literal": 4.620228796979006
     },
     "center.longitude": {
-      "literal": 5.712890625000001
+      "literal": 4.877929687500001
     },
     "heatmaps.__display_order__": {
       "literal": [
@@ -744,7 +777,7 @@
       "literal": "Improved Tour (Simultaneous)"
     },
     "zoom": {
-      "literal": 4
+      "literal": 6
     }
   },
   "widgets/map_initialTour": {
@@ -804,10 +837,10 @@
       }
     },
     "center.latitude": {
-      "literal": 0.4394488164139768
+      "literal": 4.466903610394136
     },
     "center.longitude": {
-      "literal": 5.009765625000001
+      "literal": 4.702148437500001
     },
     "name": {
       "literal": "map_initialTour"
@@ -875,7 +908,7 @@
       "literal": "Initial Tour"
     },
     "zoom": {
-      "literal": 4
+      "literal": 6
     }
   },
   "widgets/scl_initialTour": {
@@ -890,6 +923,9 @@
           "p_sim_tourDistance"
         ]
       }
+    },
+    "contents.numdecimals": {
+      "literal": 3
     },
     "multi.line": {
       "literal": 1
@@ -910,6 +946,9 @@
           "p_def_maxNeighbors"
         ]
       }
+    },
+    "contents.numdecimals": {
+      "literal": 0
     },
     "name": {
       "literal": "scl_newNetworkInfo"
