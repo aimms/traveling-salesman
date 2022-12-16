@@ -50,7 +50,20 @@
                 "name": "Tours",
                 "type": "pagev2-grid",
                 "slug": "tours",
-                "children": []
+                "children": [
+                  {
+                    "name": "Tour Distances",
+                    "type": "pagev2-grid-sidepanel",
+                    "slug": "tour_distances",
+                    "children": []
+                  },
+                  {
+                    "name": "New Network",
+                    "type": "pagev2-grid-sidepanel",
+                    "slug": "new_network",
+                    "children": []
+                  }
+                ]
               }
             ]
           }
@@ -185,6 +198,46 @@
       ]
     }
   },
+  "pages/new_network": {
+    "aimms.widget.type": {
+      "literal": "pagev2-grid-sidepanel"
+    },
+    "bindings": {
+      "literal": [
+        {
+          "widgetUri": "scl_newNetworkInfo",
+          "gridArea": "area-a",
+          "dndId": "area-ascl_newNetworkInfo1"
+        },
+        {
+          "widgetUri": "btn_runNewNetwork",
+          "gridArea": "area-a",
+          "dndId": "area-abtn_runNewNetwork0"
+        }
+      ]
+    },
+    "layoutId": {
+      "literal": "Layout11"
+    },
+    "widgets": {
+      "literal": [
+        {
+          "uri": "scl_newNetworkInfo",
+          "layoutInfo": {
+            "width": "2",
+            "height": "1"
+          }
+        },
+        {
+          "uri": "btn_runNewNetwork",
+          "layoutInfo": {
+            "width": "2",
+            "height": "1"
+          }
+        }
+      ]
+    }
+  },
   "pages/story": {
     "aimms.widget.type": {
       "literal": "pagev2-grid"
@@ -213,6 +266,28 @@
       ]
     }
   },
+  "pages/tour_distances": {
+    "bindings": {
+      "literal": [
+        {
+          "widgetUri": "scl_initialTour",
+          "gridArea": "area-a",
+          "dndId": "Unassigned widgetsscl_initialTour0"
+        }
+      ]
+    },
+    "widgets": {
+      "literal": [
+        {
+          "uri": "scl_initialTour",
+          "layoutInfo": {
+            "width": "2",
+            "height": "1"
+          }
+        }
+      ]
+    }
+  },
   "pages/tours": {
     "aimms.widget.type": {
       "literal": "pagev2-grid"
@@ -220,19 +295,34 @@
     "bindings": {
       "literal": [
         {
-          "widgetUri": "map_improvedTourSimultaneous",
+          "widgetUri": "btn_runCycTour",
           "gridArea": "area-c",
-          "dndId": "area-dmap_improvedTourSimultaneous2"
+          "dndId": "area-cbtn_runCycTour0"
         },
         {
           "widgetUri": "map_improvedTourCyclic",
-          "gridArea": "area-b",
-          "dndId": "area-bmap_improvedTourCyclic0"
+          "gridArea": "area-c",
+          "dndId": "area-cmap_improvedTourCyclic1"
+        },
+        {
+          "widgetUri": "btn_runInitialTour",
+          "gridArea": "area-a",
+          "dndId": "area-abtn_runInitialTour2"
         },
         {
           "widgetUri": "map_initialTour",
           "gridArea": "area-a",
-          "dndId": "area-amap_initialTour1"
+          "dndId": "area-amap_initialTour3"
+        },
+        {
+          "widgetUri": "btn_runSimTour",
+          "gridArea": "area-b",
+          "dndId": "area-bbtn_runSimTour5"
+        },
+        {
+          "widgetUri": "map_improvedTourSimultaneous",
+          "gridArea": "area-b",
+          "dndId": "area-bmap_improvedTourSimultaneous4"
         }
       ]
     },
@@ -242,6 +332,30 @@
     "onload": {
       "aimms": {
         "run": "pr_runAll"
+      }
+    },
+    "sidepanels": {
+      "aimms": {
+        "contents": [
+          "sp_toursSidePanel"
+        ],
+        "slices": [
+          {
+            "identifier": "sp_toursSidePanel",
+            "slice": [
+              {
+                "index": "webui::indexPageExtension",
+                "type": "free",
+                "value": "webui::indexPageExtension"
+              },
+              {
+                "index": "webui::indexSidePanelSpec",
+                "type": "free",
+                "value": "webui::indexSidePanelSpec"
+              }
+            ]
+          }
+        ]
       }
     },
     "widgets": {
@@ -266,8 +380,91 @@
             "width": "2",
             "height": "1"
           }
+        },
+        {
+          "uri": "btn_runInitialTour",
+          "layoutInfo": {
+            "width": "2",
+            "height": "1"
+          }
+        },
+        {
+          "uri": "btn_runCycTour",
+          "layoutInfo": {
+            "width": "2",
+            "height": "1"
+          }
+        },
+        {
+          "uri": "btn_runSimTour",
+          "layoutInfo": {
+            "width": "2",
+            "height": "1"
+          }
         }
       ]
+    }
+  },
+  "widgets/btn_runCycTour": {
+    "action": {
+      "literal": {
+        "type": "procedure",
+        "value": "pr_improveTourCyclic"
+      }
+    },
+    "aimms.widget.type": {
+      "literal": "button"
+    },
+    "name": {
+      "literal": "btn_runCycTour"
+    },
+    "title": {
+      "literal": "btn_runCycTour"
+    }
+  },
+  "widgets/btn_runInitialTour": {
+    "action": {
+      "literal": {
+        "type": "procedure",
+        "value": "pr_findInitialTour"
+      }
+    },
+    "aimms.widget.type": {
+      "literal": "button"
+    },
+    "name": {
+      "literal": "btn_runInitialTour"
+    },
+    "title": {
+      "literal": "btn_runInitialTour"
+    }
+  },
+  "widgets/btn_runNewNetwork": {
+    "aimms.widget.type": {
+      "literal": "button"
+    },
+    "name": {
+      "literal": "btn_runNewNetwork"
+    },
+    "title": {
+      "literal": "btn_runNewNetwork"
+    }
+  },
+  "widgets/btn_runSimTour": {
+    "action": {
+      "literal": {
+        "type": "procedure",
+        "value": "pr_improveTourSimultaneous"
+      }
+    },
+    "aimms.widget.type": {
+      "literal": "button"
+    },
+    "name": {
+      "literal": "btn_runSimTour"
+    },
+    "title": {
+      "literal": "btn_runSimTour"
     }
   },
   "widgets/img_homeLogo": {
@@ -335,10 +532,10 @@
       }
     },
     "center.latitude": {
-      "literal": 4.707828375218317
+      "literal": -1.318243056862001
     },
     "center.longitude": {
-      "literal": 5.053710937500001
+      "literal": 4.042968750000001
     },
     "heatmaps.__display_order__": {
       "literal": [
@@ -411,7 +608,7 @@
       "literal": "Improved Tour (Cyclic)"
     },
     "zoom": {
-      "literal": 6
+      "literal": 4
     }
   },
   "widgets/map_improvedTourSimultaneous": {
@@ -471,10 +668,10 @@
       }
     },
     "center.latitude": {
-      "literal": 5.4082109285908299
+      "literal": -2.0210651187669899
     },
     "center.longitude": {
-      "literal": 4.855957031250001
+      "literal": 5.712890625000001
     },
     "heatmaps.__display_order__": {
       "literal": [
@@ -547,7 +744,7 @@
       "literal": "Improved Tour (Simultaneous)"
     },
     "zoom": {
-      "literal": 6
+      "literal": 4
     }
   },
   "widgets/map_initialTour": {
@@ -607,10 +804,10 @@
       }
     },
     "center.latitude": {
-      "literal": 4.324501493019203
+      "literal": 0.4394488164139768
     },
     "center.longitude": {
-      "literal": 6.152343750000001
+      "literal": 5.009765625000001
     },
     "name": {
       "literal": "map_initialTour"
@@ -678,7 +875,44 @@
       "literal": "Initial Tour"
     },
     "zoom": {
-      "literal": 5
+      "literal": 4
+    }
+  },
+  "widgets/scl_initialTour": {
+    "aimms.widget.type": {
+      "literal": "scalar"
+    },
+    "contents": {
+      "aimms": {
+        "contents": [
+          "p_init_tourDistance",
+          "p_cyc_tourDistance",
+          "p_sim_tourDistance"
+        ]
+      }
+    },
+    "multi.line": {
+      "literal": 1
+    },
+    "name": {
+      "literal": "scl_tourDistances"
+    }
+  },
+  "widgets/scl_newNetworkInfo": {
+    "aimms.widget.type": {
+      "literal": "scalar"
+    },
+    "contents": {
+      "aimms": {
+        "contents": [
+          "p_maxCities",
+          "p_def_iterationLimit",
+          "p_def_maxNeighbors"
+        ]
+      }
+    },
+    "name": {
+      "literal": "scl_newNetworkInfo"
     }
   },
   "widgets/txt_story": {

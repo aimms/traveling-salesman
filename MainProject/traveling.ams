@@ -56,14 +56,17 @@ Model Main_TravelingSalesman {
 			Parameter p_maxCities {
 				Text: "Maximum number of cities in the tour";
 				Default: 100;
+				InitialData: 100;
 			}
 			Parameter p_xCoord {
 				IndexDomain: i_city;
 				Text: "X-Coordinate of city c";
+				InitialData: 0;
 			}
 			Parameter p_yCoord {
 				IndexDomain: i_city;
 				Text: "Y-Coordinate of city c";
+				InitialData: 0;
 			}
 			Parameter p_def_directDistance {
 				IndexDomain: (i_i,i_j);
@@ -431,7 +434,6 @@ Model Main_TravelingSalesman {
 				}
 			}
 		}
-		Section Outputs;
 	}
 	Section UI_Declarations {
 		Procedure pr_empty;
@@ -468,6 +470,9 @@ Model Main_TravelingSalesman {
 						pr_improveTourSimultaneous;
 						pr_findInitialTour;
 					}
+				}
+				StringParameter sp_toursSidePanel {
+					IndexDomain: (webui::indexPageExtension,webui::indexSidePanelSpec);
 				}
 			}
 		}

@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<ExportSettings>
+	<ExcludedFile>backup</ExcludedFile>
+	<ExcludedFile>log</ExcludedFile>
+	<ExcludedFile>PROTemp</ExcludedFile>
+	<ExcludedFile>traveling-1671195153.data</ExcludedFile>
+	<ExcludedFile>traveling-1671196110.data</ExcludedFile>
+	<ExcludedFile>traveling-1671196382.data</ExcludedFile>
+	<ExcludedFile>_Local_Libs_</ExcludedFile>
+</ExportSettings>
