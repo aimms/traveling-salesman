@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<AimmsJSONMapping>
+	<ObjectMapping>
+		<RowMapping name="rows">
+			<ColumnMapping name="Cities" binds-to="i_city" />
+			<ColumnMapping name="test2" maps-to="p_xCoord(i_city)" />
+		</RowMapping>
+	</ObjectMapping>
+</AimmsJSONMapping>

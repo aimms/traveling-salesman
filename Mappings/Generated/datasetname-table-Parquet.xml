@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<AimmsParquetMapping>
+	<RowMapping name="table">
+		<ColumnMapping name="Cities" binds-to="i_city" />
+		<ColumnMapping name="test2" maps-to="p_xCoord(i_city)" />
+	</RowMapping>
+</AimmsParquetMapping>

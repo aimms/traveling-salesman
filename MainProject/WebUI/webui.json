@@ -565,10 +565,10 @@
       }
     },
     "center.latitude": {
-      "literal": -1.318243056862001
+      "literal": 1.845383988573187
     },
     "center.longitude": {
-      "literal": 4.042968750000001
+      "literal": 4.391603395272897
     },
     "heatmaps.__display_order__": {
       "literal": [
@@ -641,7 +641,7 @@
       "literal": "Improved Tour (Cyclic)"
     },
     "zoom": {
-      "literal": 4
+      "literal": 5
     }
   },
   "widgets/map_improvedTourSimultaneous": {
@@ -701,10 +701,10 @@
       }
     },
     "center.latitude": {
-      "literal": 4.620228796979006
+      "literal": 3.2940822283128177
     },
     "center.longitude": {
-      "literal": 4.877929687500001
+      "literal": 4.438270375547369
     },
     "heatmaps.__display_order__": {
       "literal": [
@@ -777,7 +777,7 @@
       "literal": "Improved Tour (Simultaneous)"
     },
     "zoom": {
-      "literal": 6
+      "literal": 5
     }
   },
   "widgets/map_initialTour": {
@@ -837,10 +837,10 @@
       }
     },
     "center.latitude": {
-      "literal": 4.466903610394136
+      "literal": 1.7575368113083255
     },
     "center.longitude": {
-      "literal": 4.702148437500001
+      "literal": 5.758348042720477
     },
     "name": {
       "literal": "map_initialTour"
@@ -908,7 +908,7 @@
       "literal": "Initial Tour"
     },
     "zoom": {
-      "literal": 6
+      "literal": 5
     }
   },
   "widgets/scl_initialTour": {

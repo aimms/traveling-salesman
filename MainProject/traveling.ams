@@ -42,7 +42,7 @@ Model Main_TravelingSalesman {
 		Section Inputs {
 			Set s_cities {
 				Text: "The set of cities in the tour";
-				Index: i_i, i_j, i_city;
+				Index: i_i, i_j;
 				Parameter: ep_city;
 				Definition: ElementRange( from: 1, to: p_maxCities, fill: 0 );
 			}
@@ -62,6 +62,9 @@ Model Main_TravelingSalesman {
 				IndexDomain: i_city;
 				Text: "X-Coordinate of city c";
 				InitialData: 0;
+				dex::ColumnName: test2;
+				dex::Dataset: datasetname;
+				dex::TableName: table;
 			}
 			Parameter p_yCoord {
 				IndexDomain: i_city;
@@ -84,6 +87,10 @@ Model Main_TravelingSalesman {
 				Definition: {
 					floor(Sqrt(p_maxCities));
 				}
+			}
+			Index i_city {
+				Range: s_cities;
+				dex::ColumnName: Cities;
 			}
 		}
 		Section Finding_Tours {
@@ -487,6 +494,55 @@ Model Main_TravelingSalesman {
 			}
 		}
 	}
+	Section dev {
+		StringParameter sp_requestId;
+		Procedure pr_getCitiesAndCountries {
+			Body: {
+				!Deleting old info
+				if DirectoryExists("out") then
+				    DirectoryDelete("out");
+				endif;
+				DirectoryCreate("out");
+				
+				block ! get Countries 
+				SP_requestId := "getCountries";
+				
+				dex::client::NewRequest(
+				        SP_requestId,
+				        "https://wft-geo-db.p.rapidapi.com/v1/geo/countries",
+				        'dex::client::EmptyCallback',
+				        responsefile:"out/OutputCountries.json"
+				);
+				
+				dex::client::AddRequestHeader(SP_requestId, "X-Rapidapi-Key", "5fd2f456b1mshbd7742cbaa43912p1b10d1jsn58a153616196");
+				dex::client::AddRequestHeader(SP_requestId, "X-Rapidapi-Host", "wft-geo-db.p.rapidapi.com");
+				
+				
+				dex::client::PerformRequest(SP_requestId);
+				dex::client::WaitForResponses(1000);    
+				endblock;
+				
+				block ! get Cities 
+				
+				SP_requestId := "getCities";
+				
+				dex::client::NewRequest(
+				        SP_requestId,
+				        "https://wft-geo-db.p.rapidapi.com/v1/geo/cities",
+				        'dex::client::EmptyCallback',
+				        responsefile:"out/OutputCities.json"
+				);
+				
+				dex::client::AddRequestHeader(SP_requestId, "X-Rapidapi-Key", "5fd2f456b1mshbd7742cbaa43912p1b10d1jsn58a153616196");
+				dex::client::AddRequestHeader(SP_requestId, "X-Rapidapi-Host", "wft-geo-db.p.rapidapi.com");
+				
+				dex::client::PerformRequest(SP_requestId);
+				
+				dex::client::WaitForResponses(1000);
+				endblock;
+			}
+		}
+	}
 	Procedure MainInitialization {
 		Body: {
 			empty p_init_tourConnect,p_sim_tourConnect,p_cyc_tourConnect;
@@ -497,7 +553,11 @@ Model Main_TravelingSalesman {
 		}
 	}
 	Procedure PostMainInitialization;
-	Procedure MainExecution;
+	Procedure MainExecution {
+		Body: {
+			dex::GenerateDatasetMappings;
+		}
+	}
 	Procedure PreMainTermination {
 		Body: {
 			return 1;

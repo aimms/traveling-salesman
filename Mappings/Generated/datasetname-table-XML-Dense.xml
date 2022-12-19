@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<AimmsXMLMapping>
+	<ElementObjectMapping name="table">
+		<ElementObjectMapping name="Row" dense-children="1">
+			<AttributeMapping name="Cities" binds-to="i_city" />
+			<ElementValueMapping name="test2" maps-to="p_xCoord(i_city)" />
+		</ElementObjectMapping>
+	</ElementObjectMapping>
+</AimmsXMLMapping>
