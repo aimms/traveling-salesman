@@ -1,0 +1,10 @@
+CREATE TABLE "worldCities" (
+	"ID"	INTEGER,
+	"City"	TEXT,
+	"CityASCII"	TEXT,
+	"Country"	TEXT,
+	"ISO"	TEXT,
+	"Province"	TEXT
+)
+
+drop table worldCities

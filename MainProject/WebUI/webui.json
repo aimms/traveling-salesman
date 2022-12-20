@@ -527,14 +527,14 @@
             "identifier": "p_cyc_tourConnect",
             "slice": [
               {
-                "index": "i_i",
+                "index": "i_city1",
                 "type": "free",
-                "value": "i_i"
+                "value": "i_city1"
               },
               {
-                "index": "i_j",
+                "index": "i_city2",
                 "type": "free",
-                "value": "i_j"
+                "value": "i_city2"
               }
             ]
           }
@@ -552,14 +552,14 @@
         "identifier": "p_cyc_tourConnect",
         "slice": [
           {
-            "index": "i_i",
+            "index": "i_city1",
             "type": "free",
-            "value": "i_i"
+            "value": "i_city1"
           },
           {
-            "index": "i_j",
+            "index": "i_city2",
             "type": "free",
-            "value": "i_j"
+            "value": "i_city2"
           }
         ]
       }
@@ -663,14 +663,14 @@
             "identifier": "p_sim_tourConnect",
             "slice": [
               {
-                "index": "i_i",
+                "index": "i_city1",
                 "type": "free",
-                "value": "i_i"
+                "value": "i_city1"
               },
               {
-                "index": "i_j",
+                "index": "i_city2",
                 "type": "free",
-                "value": "i_j"
+                "value": "i_city2"
               }
             ]
           }
@@ -688,14 +688,14 @@
         "identifier": "p_sim_tourConnect",
         "slice": [
           {
-            "index": "i_i",
+            "index": "i_city1",
             "type": "free",
-            "value": "i_i"
+            "value": "i_city1"
           },
           {
-            "index": "i_j",
+            "index": "i_city2",
             "type": "free",
-            "value": "i_j"
+            "value": "i_city2"
           }
         ]
       }
@@ -799,14 +799,14 @@
             "identifier": "p_init_tourConnect",
             "slice": [
               {
-                "index": "i_i",
+                "index": "i_city1",
                 "type": "free",
-                "value": "i_i"
+                "value": "i_city1"
               },
               {
-                "index": "i_j",
+                "index": "i_city2",
                 "type": "free",
-                "value": "i_j"
+                "value": "i_city2"
               }
             ]
           }
@@ -824,20 +824,20 @@
         "identifier": "p_init_tourConnect",
         "slice": [
           {
-            "index": "i_i",
+            "index": "i_city1",
             "type": "free",
-            "value": "i_i"
+            "value": "i_city1"
           },
           {
-            "index": "i_j",
+            "index": "i_city2",
             "type": "free",
-            "value": "i_j"
+            "value": "i_city2"
           }
         ]
       }
     },
     "center.latitude": {
-      "literal": 1.7575368113083255
+      "literal": 1.7575368113083257
     },
     "center.longitude": {
       "literal": 5.758348042720477

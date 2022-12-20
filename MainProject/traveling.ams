@@ -40,57 +40,85 @@ Model Main_TravelingSalesman {
 			}
 		}
 		Section Inputs {
-			Set s_cities {
-				Text: "The set of cities in the tour";
-				Index: i_i, i_j;
-				Parameter: ep_city;
-				Definition: ElementRange( from: 1, to: p_maxCities, fill: 0 );
-			}
-			Set s_neighbors {
-				IndexDomain: i_i;
-				SubsetOf: s_cities;
-				Text: "The set of neighbors of city i";
-				OrderBy: user;
-				Definition: NBest(i_j | (i_i <> i_j), -p_def_directDistance(i_i,i_j), p_def_maxNeighbors);
-			}
-			Parameter p_maxCities {
-				Text: "Maximum number of cities in the tour";
-				Default: 100;
-				InitialData: 100;
-			}
-			Parameter p_xCoord {
-				IndexDomain: i_city;
-				Text: "X-Coordinate of city c";
-				InitialData: 0;
-				dex::ColumnName: test2;
-				dex::Dataset: datasetname;
-				dex::TableName: table;
-			}
-			Parameter p_yCoord {
-				IndexDomain: i_city;
-				Text: "Y-Coordinate of city c";
-				InitialData: 0;
-			}
-			Parameter p_def_directDistance {
-				IndexDomain: (i_i,i_j);
-				Text: "Distance from city i to city j";
-				Definition: sqrt( (p_xCoord(i_j) - p_xCoord(i_i))^2 + (p_yCoord(i_j) - p_yCoord(i_i))^2 );
-			}
-			Parameter p_def_iterationLimit {
-				Text: "Maximum number of iterations to improve tour";
-				Definition: {
-					floor(p_maxCities / 3);
+			DeclarationSection DB_Inputs {
+				Set s_ids {
+					Index: i_id;
+					Parameter: ep_id;
+				}
+				Set s_cities {
+					Text: "The set of cities in the tour";
+					Index: i_city1, i_city2, i_city;
+					Parameter: ep_city;
+				}
+				Set s_citiesASCII {
+					Index: i_city_ascii;
+					Parameter: ep_cityASCII;
+				}
+				Set s_countries {
+					Index: i_country;
+					Parameter: ep_country;
+				}
+				Set s_provinces {
+					Index: i_province;
+					Parameter: ep_province;
+				}
+				StringParameter sp_countryAcronym {
+					IndexDomain: i_country;
+				}
+				Parameter bp_city_x_country {
+					IndexDomain: (i_city,i_country);
+				}
+				Parameter bp_city_x_cityASCII {
+					IndexDomain: (i_city,i_city_ascii);
+				}
+				Parameter bp_city_x_province {
+					IndexDomain: (i_city,i_province);
 				}
 			}
-			Parameter p_def_maxNeighbors {
-				Text: "Maximum number of neighbors considered for each city";
-				Definition: {
-					floor(Sqrt(p_maxCities));
+			DeclarationSection API_Inputs {
+				Set s_nodes {
+					SubsetOf: s_cities;
+					Index: i_node1, i_node2;
 				}
-			}
-			Index i_city {
-				Range: s_cities;
-				dex::ColumnName: Cities;
+				Set s_neighbors {
+					IndexDomain: i_node1;
+					SubsetOf: s_cities;
+					Text: "The set of neighbors of city i";
+					OrderBy: user;
+					Definition: NBest(i_node2 | (i_node1 <> i_node2), -p_def_directDistance(i_node1,i_node2), p_def_maxNeighbors);
+				}
+				Parameter p_maxCities {
+					Text: "Maximum number of cities in the tour";
+					Default: 100;
+					InitialData: 100;
+				}
+				Parameter p_xCoord {
+					IndexDomain: i_city;
+					Text: "X-Coordinate of city c";
+					InitialData: 0;
+				}
+				Parameter p_yCoord {
+					IndexDomain: i_city;
+					Text: "Y-Coordinate of city c";
+					InitialData: 0;
+				}
+				Parameter p_def_directDistance {
+					IndexDomain: (i_node1,i_node2);
+					Text: "Distance from city i to city j";
+					Definition: sqrt( (p_xCoord(i_node2) - p_xCoord(i_node1))^2 + (p_yCoord(i_node2) - p_yCoord(i_node1))^2 );
+				}
+				Parameter p_def_iterationLimit {
+					Text: "Maximum number of iterations to improve tour";
+					Definition: {
+						floor(p_maxCities / 3);
+					}
+				}
+				Parameter p_def_maxNeighbors {
+					Text: "Maximum number of neighbors considered for each city";
+					Definition: {
+						floor(Sqrt(p_maxCities));
+					}
+				}
 			}
 		}
 		Section Finding_Tours {
@@ -111,7 +139,7 @@ Model Main_TravelingSalesman {
 					Text: "Total distance of the initial tour";
 				}
 				Parameter p_init_tourConnect {
-					IndexDomain: (i_i,i_j);
+					IndexDomain: (i_node1,i_node2);
 					Text: "City i connected to city j in initial tour";
 				}
 				ElementParameter ep_init_nextCity {
@@ -173,14 +201,14 @@ Model Main_TravelingSalesman {
 					city for swapping, considering all cities in the tour simultaneously."
 				}
 				Parameter p_sim_distanceChange {
-					IndexDomain: (i_i,i_j in s_neighbors(i_i));
+					IndexDomain: (i_node1,i_node2);
 					Text: "Improvement in total tour distance by swapping city i with neighbor j in simultaneous algorithm";
 					Default: -inf;
-					Definition: p_def_directDistance(i_i,p_sim_nextCity(i_i)) + p_def_directDistance(i_j,p_sim_nextCity(i_j)) - (p_def_directDistance(i_i,i_j) + p_def_directDistance(p_sim_nextCity(i_i),p_sim_nextCity(i_j)));
+					Definition: p_def_directDistance(i_node1,p_sim_nextCity(i_node1)) + p_def_directDistance(i_node2,p_sim_nextCity(i_node2)) - (p_def_directDistance(i_node1,i_node2) + p_def_directDistance(p_sim_nextCity(i_node1),p_sim_nextCity(i_node2)));
 				}
 				Parameter p_sim_maxChange {
 					Text: "Maximum possible distance improvement in simultaneous algorithm";
-					Definition: Max((i_i,i_j in s_neighbors(i_i)), p_sim_distanceChange(i_i,i_j));
+					Definition: Max((i_node1,i_node2 in s_neighbors(i_node1)), p_sim_distanceChange(i_node1,i_node2));
 				}
 				Parameter p_sim_swaps {
 					Text: "Number of performed swaps in simultaneous algorithm";
@@ -189,7 +217,7 @@ Model Main_TravelingSalesman {
 					Text: "Total tour distance after current iteration in simultaneous algorithm";
 				}
 				Parameter p_sim_tourConnect {
-					IndexDomain: (i_i,i_j);
+					IndexDomain: (i_node1,i_node2);
 					Text: "City i connected to city j after current iteration in simultaneous algorithm";
 				}
 				ElementParameter p_sim_nextCity {
@@ -228,9 +256,9 @@ Model Main_TravelingSalesman {
 						    p_sim_swaps += 1;
 						
 						    ! Select City and NewNext as a (i,j) tuple which reaches the maximum change
-						    for ((i_i,i_j) | p_sim_distanceChange(i_i,i_j) = p_sim_maxChange) do
-						        ep_city := i_i;
-						        ep_loc_nextCity := i_j;
+						    for ((i_node1,i_node2) | p_sim_distanceChange(i_node1,i_node2) = p_sim_maxChange) do
+						        ep_city := i_node1;
+						        ep_loc_nextCity := i_node2;
 						        break;
 						    endfor;
 						
@@ -308,8 +336,8 @@ Model Main_TravelingSalesman {
 				}
 				Macro p_cyc_distanceChange {
 					Text: "Improvement in total tour distance by swapping city i with neighbor j in cyclic algorithm";
-					Arguments: (i_i,i_j);
-					Definition: p_def_directDistance(i_i,p_cyc_nextCity(i_i)) + p_def_directDistance(i_j,p_cyc_nextCity(i_j)) - (p_def_directDistance(i_i,i_j) + p_def_directDistance(p_cyc_nextCity(i_i),p_cyc_nextCity(i_j)));
+					Arguments: (i_node1,i_node2);
+					Definition: p_def_directDistance(i_node1,p_cyc_nextCity(i_node1)) + p_def_directDistance(i_node2,p_cyc_nextCity(i_node2)) - (p_def_directDistance(i_node1,i_node2) + p_def_directDistance(p_cyc_nextCity(i_node1),p_cyc_nextCity(i_node2)));
 				}
 				Parameter p_cyc_swaps {
 					Text: "Number of performed swaps in cyclic algorithm";
@@ -318,7 +346,7 @@ Model Main_TravelingSalesman {
 					Text: "Total tour distance after current iteration in cyclic algorithm";
 				}
 				Parameter p_cyc_tourConnect {
-					IndexDomain: (i_i,i_j);
+					IndexDomain: (i_node1,i_node2);
 					Text: "City i connected to city j after current iteration in cyclic algorithm";
 				}
 				ElementParameter p_cyc_nextCity {
@@ -494,8 +522,86 @@ Model Main_TravelingSalesman {
 			}
 		}
 	}
+	Section Integration {
+		Section World_Cities_DB {
+			Procedure pr_readWorldCities {
+				Body: {
+					empty World_Cities_DB;
+					read from table db_worldCities;
+					
+					if exists(i_int_id | sp_int_city(i_int_id)) then
+					
+					    for i_int_id | sp_int_city(i_int_id) do
+					        ep_id := StringToElement(s_ids, val(i_int_id) + 10000, 1); 
+					        SetElementAdd(s_cities, ep_city, sp_int_city(i_int_id));
+					        SetElementAdd(s_citiesASCII, ep_cityASCII, sp_int_cityASCII(i_int_id));
+					        SetElementAdd(s_countries, ep_country, sp_int_country(i_int_id));
+					        SetElementAdd(s_provinces, ep_province, sp_int_province(i_int_id));
+					
+					        sp_countryAcronym(ep_country) := sp_int_countryAcronym(i_int_id);
+					
+					        bp_city_x_country(ep_city,ep_country) := 1;
+					        bp_city_x_cityASCII(ep_city, ep_cityASCII) := 1;
+					        bp_city_x_province(ep_city, ep_province) := 1;
+					    endfor;
+					endif;
+				}
+			}
+			StringParameter sp_def_datasource {
+				Definition: {
+					SQLCreateConnectionString (
+					       DatabaseInterface              :  'odbc',
+					       DriverName                     :  "SQLite3 ODBC Driver", !Your local drive
+					       ServerName                     :  "", 
+					       DatabaseName                   :  "WorldCities.db", !The path of your database
+					       UserId                         :  "", 
+					       Password                       :  "", 
+					       AdditionalConnectionParameters :  "");
+				}
+			}
+			DatabaseTable db_worldCities {
+				DataSource: sp_def_datasource;
+				TableName: "worldCities";
+				Mapping: {
+					"ID"   -->i_int_id,
+					"City" -->sp_int_city,
+					"CityASCII" -->sp_int_cityASCII,
+					"Country" -->sp_int_country,
+					"ISO" -->sp_int_countryAcronym,
+					"Province" -->sp_int_province
+				}
+			}
+			Set s_int_id {
+				Index: i_int_id;
+				Definition: {
+					{1..7400}
+				}
+			}
+			StringParameter sp_int_city {
+				IndexDomain: i_int_id;
+			}
+			StringParameter sp_int_cityASCII {
+				IndexDomain: i_int_id;
+			}
+			StringParameter sp_int_country {
+				IndexDomain: i_int_id;
+			}
+			StringParameter sp_int_province {
+				IndexDomain: i_int_id;
+			}
+			StringParameter sp_int_countryAcronym {
+				IndexDomain: i_int_id;
+			}
+		}
+		Section LatLong_API {
+			Procedure Procedure_1;
+		}
+	}
 	Section dev {
 		StringParameter sp_requestId;
+		StringParameter sp_apiKey;
+		StringParameter sp_query;
+		StringParameter tudo;
 		Procedure pr_getCitiesAndCountries {
 			Body: {
 				!Deleting old info
@@ -509,7 +615,7 @@ Model Main_TravelingSalesman {
 				
 				dex::client::NewRequest(
 				        SP_requestId,
-				        "https://wft-geo-db.p.rapidapi.com/v1/geo/countries",
+				        "https://wft-geo-db.p.rapidapi.com/v1/geo/countries?limit=10",
 				        'dex::client::EmptyCallback',
 				        responsefile:"out/OutputCountries.json"
 				);
@@ -517,28 +623,54 @@ Model Main_TravelingSalesman {
 				dex::client::AddRequestHeader(SP_requestId, "X-Rapidapi-Key", "5fd2f456b1mshbd7742cbaa43912p1b10d1jsn58a153616196");
 				dex::client::AddRequestHeader(SP_requestId, "X-Rapidapi-Host", "wft-geo-db.p.rapidapi.com");
 				
-				
 				dex::client::PerformRequest(SP_requestId);
 				dex::client::WaitForResponses(1000);    
 				endblock;
 				
-				block ! get Cities 
+				!block ! get Cities 
+				!
+				!SP_requestId := "getCities";
+				!
+				!dex::client::NewRequest(
+				!        SP_requestId,
+				!        "https://wft-geo-db.p.rapidapi.com/v1/geo/cities",
+				!        'dex::client::EmptyCallback',
+				!        responsefile:"out/OutputCities.json"
+				!);
+				!
+				!dex::client::AddRequestHeader(SP_requestId, "X-Rapidapi-Key", "5fd2f456b1mshbd7742cbaa43912p1b10d1jsn58a153616196");
+				!dex::client::AddRequestHeader(SP_requestId, "X-Rapidapi-Host", "wft-geo-db.p.rapidapi.com");
+				!
+				!dex::client::PerformRequest(SP_requestId);
+				!
+				!dex::client::WaitForResponses(1000);
+				!endblock;
+				!
+			}
+		}
+		Procedure Copy_pr_getCitiesAndCountries {
+			Body: {
+				!Deleting old info
+				if DirectoryExists("out") then
+				    DirectoryDelete("out");
+				endif;
+				DirectoryCreate("out");
 				
-				SP_requestId := "getCities";
+				block ! fetchText 
+				sp_requestId := "fetchText2";
+				sp_apiKey := "54c8e0e21241f8f235ff0e7329aa989b";
+				sp_query := "itatiba";
+				
+				tudo :=  "http://api.positionstack.com/v1/forward?access_key=" + sp_apiKey + "&query=" + sp_query;
 				
 				dex::client::NewRequest(
-				        SP_requestId,
-				        "https://wft-geo-db.p.rapidapi.com/v1/geo/cities",
+				        sp_requestId,
+				        "http://api.positionstack.com/v1/forward?access_key=54c8e0e21241f8f235ff0e7329aa989b&query=london",
 				        'dex::client::EmptyCallback',
-				        responsefile:"out/OutputCities.json"
-				);
+				        responsefile:"out/Output.json");
 				
-				dex::client::AddRequestHeader(SP_requestId, "X-Rapidapi-Key", "5fd2f456b1mshbd7742cbaa43912p1b10d1jsn58a153616196");
-				dex::client::AddRequestHeader(SP_requestId, "X-Rapidapi-Host", "wft-geo-db.p.rapidapi.com");
-				
-				dex::client::PerformRequest(SP_requestId);
-				
-				dex::client::WaitForResponses(1000);
+				dex::client::PerformRequest(sp_requestId);
+				dex::client::WaitForResponses(1000);    
 				endblock;
 			}
 		}
