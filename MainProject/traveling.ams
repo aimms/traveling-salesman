@@ -515,6 +515,23 @@ Model Main_TravelingSalesman {
 					}
 				}
 			}
+			Section Add_Cities_DialogPage {
+				Procedure pr_cleanAllNodes {
+					Body: {
+						empty API_Inputs;
+					}
+				}
+				StringParameter sp_addThisCity;
+				Parameter bp_callAddThisCityProcedure {
+					Range: binary;
+				}
+				Parameter bp_callAddByCountryProcedure {
+					Range: binary;
+				}
+				Parameter bp_callByLimitProcedure {
+					Range: binary;
+				}
+			}
 		}
 		Section FlagsIdentifier {
 			StringParameter sp_readOnlyFlag {
@@ -594,84 +611,80 @@ Model Main_TravelingSalesman {
 			}
 		}
 		Section LatLong_API {
-			Procedure Procedure_1;
-		}
-	}
-	Section dev {
-		StringParameter sp_requestId;
-		StringParameter sp_apiKey;
-		StringParameter sp_query;
-		StringParameter tudo;
-		Procedure pr_getCitiesAndCountries {
-			Body: {
-				!Deleting old info
-				if DirectoryExists("out") then
-				    DirectoryDelete("out");
-				endif;
-				DirectoryCreate("out");
-				
-				block ! get Countries 
-				SP_requestId := "getCountries";
-				
-				dex::client::NewRequest(
-				        SP_requestId,
-				        "https://wft-geo-db.p.rapidapi.com/v1/geo/countries?limit=10",
-				        'dex::client::EmptyCallback',
-				        responsefile:"out/OutputCountries.json"
-				);
-				
-				dex::client::AddRequestHeader(SP_requestId, "X-Rapidapi-Key", "5fd2f456b1mshbd7742cbaa43912p1b10d1jsn58a153616196");
-				dex::client::AddRequestHeader(SP_requestId, "X-Rapidapi-Host", "wft-geo-db.p.rapidapi.com");
-				
-				dex::client::PerformRequest(SP_requestId);
-				dex::client::WaitForResponses(1000);    
-				endblock;
-				
-				!block ! get Cities 
-				!
-				!SP_requestId := "getCities";
-				!
-				!dex::client::NewRequest(
-				!        SP_requestId,
-				!        "https://wft-geo-db.p.rapidapi.com/v1/geo/cities",
-				!        'dex::client::EmptyCallback',
-				!        responsefile:"out/OutputCities.json"
-				!);
-				!
-				!dex::client::AddRequestHeader(SP_requestId, "X-Rapidapi-Key", "5fd2f456b1mshbd7742cbaa43912p1b10d1jsn58a153616196");
-				!dex::client::AddRequestHeader(SP_requestId, "X-Rapidapi-Host", "wft-geo-db.p.rapidapi.com");
-				!
-				!dex::client::PerformRequest(SP_requestId);
-				!
-				!dex::client::WaitForResponses(1000);
-				!endblock;
-				!
+			StringParameter sp_def_apiKey {
+				Definition: "54c8e0e21241f8f235ff0e7329aa989b";
 			}
-		}
-		Procedure Copy_pr_getCitiesAndCountries {
-			Body: {
-				!Deleting old info
-				if DirectoryExists("out") then
-				    DirectoryDelete("out");
-				endif;
-				DirectoryCreate("out");
-				
-				block ! fetchText 
-				sp_requestId := "fetchText2";
-				sp_apiKey := "54c8e0e21241f8f235ff0e7329aa989b";
-				sp_query := "itatiba";
-				
-				tudo :=  "http://api.positionstack.com/v1/forward?access_key=" + sp_apiKey + "&query=" + sp_query;
-				
-				dex::client::NewRequest(
-				        sp_requestId,
-				        "http://api.positionstack.com/v1/forward?access_key=54c8e0e21241f8f235ff0e7329aa989b&query=london",
-				        'dex::client::EmptyCallback',
-				        responsefile:"out/Output.json");
-				
-				dex::client::PerformRequest(sp_requestId);
-				dex::client::WaitForResponses(1000);    
-				endblock;
+			Procedure pr_callAPIQuery {
+				Arguments: (sp_in_city,sp_in_cityCountry);
+				Body: {
+					!Deleting old info
+					if DirectoryExists("out") then
+					    DirectoryDelete("out");
+					endif;
+					DirectoryCreate("out");
+					
+					block ! fetch query 
+					sp_loc_requestId := "fetch" + sp_in_city;
+					
+					sp_loc_urlCall 
+					:=  "http://api.positionstack.com/v1/forward?access_key=" + sp_def_apiKey 
+					    + "&query=" + sp_in_city 
+					    + "&limit=1"+
+					    + "&country=" + sp_in_cityCountry;
+					
+					dex::client::NewRequest(
+					        sp_loc_requestId,
+					        sp_loc_urlCall,
+					        'dex::client::EmptyCallback',
+					        responsefile:"out/Output.json");
+					
+					dex::client::PerformRequest(sp_loc_requestId);
+					dex::client::WaitForResponses(1000);    
+					endblock;
+				}
+				StringParameter sp_in_city {
+					Property: Input;
+				}
+				StringParameter sp_in_cityCountry {
+					Property: Input;
+				}
+				StringParameter sp_loc_urlCall;
+				StringParameter sp_loc_requestId;
+			}
+			Section Read_JSON_by_DEX {
+				DeclarationSection LatLong {
+					dex::Dataset: LatLongDataset;
+					dex::TableName: LatLong;
+					Set s_int_cities;
+					Index i_int_city {
+						Range: s_int_cities;
+						dex::ColumnName: name;
+					}
+					Parameter p_int_latitude {
+						IndexDomain: i_int_city;
+						dex::ColumnName: latitude;
+					}
+					Parameter p_int_longitude {
+						IndexDomain: i_int_city;
+						dex::ColumnName: longitude;
+					}
+				}
+				Procedure pr_readJSONOutput {
+					Body: {
+						!dex::GenerateDatasetMappings;
+						
+						dex::AddMapping(
+							mappingName :  "LatLongMapping", 
+							mappingFile :  "Mappings/Generated/LatLongDataset-LatLong-JSON-Sparse.xml");
+						
+						dex::ReadFromFile(
+							dataFile         :  "out/Output.json", 
+							mappingName      :  "LatLongMapping", 
+							emptyIdentifiers :  1, 
+							emptySets        :  1, 
+							resetCounters    :  1);
+					}
+				}
 			}
 		}
 	}
@@ -684,12 +697,12 @@ Model Main_TravelingSalesman {
 			p_cyc_initialized  := 0;
 		}
 	}
-	Procedure PostMainInitialization;
-	Procedure MainExecution {
+	Procedure PostMainInitialization {
 		Body: {
-			dex::GenerateDatasetMappings;
+			pr_readWorldCities;
 		}
 	}
+	Procedure MainExecution;
 	Procedure PreMainTermination {
 		Body: {
 			return 1;

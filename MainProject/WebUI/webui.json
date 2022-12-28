@@ -117,6 +117,55 @@
       }
     }
   },
+  "layouts/custom_02bece4f-d0aa-4135-872b-8ffbeb15dc61": {
+    "definition": {
+      "literal": {
+        "componentName": "Grid",
+        "props": {
+          "gridTemplateColumns": "1fr",
+          "gridTemplateRows": "1fr 1fr 1fr 1fr",
+          "gridTemplateAreas": "\"area-a\" \"area-b\" \"area-c\" \"area-d\""
+        },
+        "items": [
+          {
+            "componentName": "WidgetArea",
+            "props": {
+              "gridArea": "area-a",
+              "name": "Area A",
+              "gridAutoFlow": "row"
+            }
+          },
+          {
+            "componentName": "WidgetArea",
+            "props": {
+              "gridArea": "area-b",
+              "name": "Area B",
+              "gridAutoFlow": "row"
+            }
+          },
+          {
+            "componentName": "WidgetArea",
+            "props": {
+              "gridArea": "area-c",
+              "name": "Area C",
+              "gridAutoFlow": "row"
+            }
+          },
+          {
+            "componentName": "WidgetArea",
+            "props": {
+              "gridArea": "area-d",
+              "name": "Area D",
+              "gridAutoFlow": "row"
+            }
+          }
+        ]
+      }
+    },
+    "displayName": {
+      "literal": "Layout10 Copy"
+    }
+  },
   "layouts/custom_afa86eba-6e6a-4077-a063-bf443788a472": {
     "definition": {
       "literal": {
@@ -205,19 +254,39 @@
     "bindings": {
       "literal": [
         {
-          "widgetUri": "scl_newNetworkInfo",
-          "gridArea": "area-a",
-          "dndId": "area-ascl_newNetworkInfo1"
+          "widgetUri": "btn_runNewNetwork",
+          "gridArea": "Unassigned widgets",
+          "dndId": "Unassigned widgetsbtn_runNewNetwork0"
         },
         {
-          "widgetUri": "btn_runNewNetwork",
+          "widgetUri": "scl_addByCity",
+          "gridArea": "area-b",
+          "dndId": "area-bscl_addByCity2"
+        },
+        {
+          "widgetUri": "scl_newNetworkInfo",
           "gridArea": "area-a",
-          "dndId": "area-abtn_runNewNetwork0"
+          "dndId": "Unassigned widgetsscl_newNetworkInfo1"
+        },
+        {
+          "widgetUri": "btn_cleanAllNodes",
+          "gridArea": "area-a",
+          "dndId": "area-abtn_cleanAllNodes3"
+        },
+        {
+          "widgetUri": "scl_addByCountry",
+          "gridArea": "area-c",
+          "dndId": "area-cscl_addByCountry4"
+        },
+        {
+          "widgetUri": "scl_addByLimit",
+          "gridArea": "area-d",
+          "dndId": "area-dscl_addByLimit5"
         }
       ]
     },
     "layoutId": {
-      "literal": "Layout11"
+      "literal": "custom_02bece4f-d0aa-4135-872b-8ffbeb15dc61"
     },
     "widgets": {
       "literal": [
@@ -230,6 +299,34 @@
         },
         {
           "uri": "btn_runNewNetwork",
+          "layoutInfo": {
+            "width": "2",
+            "height": "1"
+          }
+        },
+        {
+          "uri": "btn_cleanAllNodes",
+          "layoutInfo": {
+            "width": "2",
+            "height": "1"
+          }
+        },
+        {
+          "uri": "scl_addByCity",
+          "layoutInfo": {
+            "width": "2",
+            "height": "1"
+          }
+        },
+        {
+          "uri": "scl_addByCountry",
+          "layoutInfo": {
+            "width": "2",
+            "height": "1"
+          }
+        },
+        {
+          "uri": "scl_addByLimit",
           "layoutInfo": {
             "width": "2",
             "height": "1"
@@ -310,6 +407,11 @@
     "bindings": {
       "literal": [
         {
+          "widgetUri": "scl_newNetworkInfo_1",
+          "gridArea": "area-c",
+          "dndId": "Unassigned widgetsscl_newNetworkInfo_16"
+        },
+        {
           "widgetUri": "btn_runCycTour",
           "gridArea": "area-c",
           "dndId": "area-cbtn_runCycTour0"
@@ -332,12 +434,12 @@
         {
           "widgetUri": "btn_runSimTour",
           "gridArea": "area-b",
-          "dndId": "area-bbtn_runSimTour5"
+          "dndId": "area-bbtn_runSimTour4"
         },
         {
           "widgetUri": "map_improvedTourSimultaneous",
           "gridArea": "area-b",
-          "dndId": "area-bmap_improvedTourSimultaneous4"
+          "dndId": "area-bmap_improvedTourSimultaneous5"
         }
       ]
     },
@@ -416,8 +518,39 @@
             "width": "2",
             "height": "1"
           }
+        },
+        {
+          "uri": "scl_newNetworkInfo_1",
+          "layoutInfo": {
+            "width": "2",
+            "height": "1"
+          }
+        },
+        {
+          "uri": "scl_newNetworkInfo_1",
+          "layoutInfo": {
+            "width": "2",
+            "height": "1"
+          }
         }
       ]
+    }
+  },
+  "widgets/btn_cleanAllNodes": {
+    "action": {
+      "literal": {
+        "type": "procedure",
+        "value": "pr_cleanAllNodes"
+      }
+    },
+    "aimms.widget.type": {
+      "literal": "button"
+    },
+    "name": {
+      "literal": "btn_cleanAllNodes"
+    },
+    "title": {
+      "literal": "btn_cleanAllNodes"
     }
   },
   "widgets/btn_runCycTour": {
@@ -911,6 +1044,57 @@
       "literal": 5
     }
   },
+  "widgets/scl_addByCity": {
+    "aimms.widget.type": {
+      "literal": "scalar"
+    },
+    "contents": {
+      "aimms": {
+        "contents": [
+          "sp_addThisCity",
+          "bp_callAddThisCityProcedure"
+        ]
+      }
+    },
+    "name": {
+      "literal": "scl_addByCity"
+    },
+    "title": {
+      "literal": ""
+    }
+  },
+  "widgets/scl_addByCountry": {
+    "aimms.widget.type": {
+      "literal": "scalar"
+    },
+    "contents": {
+      "aimms": {
+        "contents": [
+          "p_maxCities",
+          "bp_callAddByCountryProcedure"
+        ]
+      }
+    },
+    "name": {
+      "literal": "scl_addByCountry"
+    }
+  },
+  "widgets/scl_addByLimit": {
+    "aimms.widget.type": {
+      "literal": "scalar"
+    },
+    "contents": {
+      "aimms": {
+        "contents": [
+          "p_maxCities",
+          "bp_callByLimitProcedure"
+        ]
+      }
+    },
+    "name": {
+      "literal": "scl_addByLimit"
+    }
+  },
   "widgets/scl_initialTour": {
     "aimms.widget.type": {
       "literal": "scalar"
@@ -941,7 +1125,6 @@
     "contents": {
       "aimms": {
         "contents": [
-          "p_maxCities",
           "p_def_iterationLimit",
           "p_def_maxNeighbors"
         ]
@@ -952,6 +1135,25 @@
     },
     "name": {
       "literal": "scl_newNetworkInfo"
+    }
+  },
+  "widgets/scl_newNetworkInfo_1": {
+    "aimms.widget.type": {
+      "literal": "scalar"
+    },
+    "contents": {
+      "aimms": {
+        "contents": [
+          "p_def_iterationLimit",
+          "p_def_maxNeighbors"
+        ]
+      }
+    },
+    "contents.numdecimals": {
+      "literal": 0
+    },
+    "name": {
+      "literal": "scl_newNetworkInfo (1)"
     }
   },
   "widgets/txt_story": {
