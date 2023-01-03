@@ -68,6 +68,9 @@ Model Main_TravelingSalesman {
 				Parameter bp_city_x_country {
 					IndexDomain: (i_city,i_country);
 				}
+				Parameter bp_city_x_id {
+					IndexDomain: (i_city,i_id);
+				}
 				Parameter bp_city_x_cityASCII {
 					IndexDomain: (i_city,i_city_ascii);
 				}
@@ -92,12 +95,12 @@ Model Main_TravelingSalesman {
 					Default: 100;
 					InitialData: 100;
 				}
-				Parameter p_xCoord {
+				Parameter p_latitude {
 					IndexDomain: i_city;
 					Text: "X-Coordinate of city c";
 					InitialData: 0;
 				}
-				Parameter p_yCoord {
+				Parameter p_longitude {
 					IndexDomain: i_city;
 					Text: "Y-Coordinate of city c";
 					InitialData: 0;
@@ -105,7 +108,7 @@ Model Main_TravelingSalesman {
 				Parameter p_def_directDistance {
 					IndexDomain: (i_node1,i_node2);
 					Text: "Distance from city i to city j";
-					Definition: sqrt( (p_xCoord(i_node2) - p_xCoord(i_node1))^2 + (p_yCoord(i_node2) - p_yCoord(i_node1))^2 );
+					Definition: sqrt( (p_latitude(i_node2) - p_latitude(i_node1))^2 + (p_longitude(i_node2) - p_longitude(i_node1))^2 );
 				}
 				Parameter p_def_iterationLimit {
 					Text: "Maximum number of iterations to improve tour";
@@ -215,6 +218,7 @@ Model Main_TravelingSalesman {
 				}
 				Parameter p_sim_tourDistance {
 					Text: "Total tour distance after current iteration in simultaneous algorithm";
+					InitialData: 0;
 				}
 				Parameter p_sim_tourConnect {
 					IndexDomain: (i_node1,i_node2);
@@ -344,6 +348,7 @@ Model Main_TravelingSalesman {
 				}
 				Parameter p_cyc_tourDistance {
 					Text: "Total tour distance after current iteration in cyclic algorithm";
+					InitialData: 0;
 				}
 				Parameter p_cyc_tourConnect {
 					IndexDomain: (i_node1,i_node2);
@@ -516,20 +521,54 @@ Model Main_TravelingSalesman {
 				}
 			}
 			Section Add_Cities_DialogPage {
+				StringParameter sp_addThisCity;
+				StringParameter sp_addByCountry;
+				Procedure pr_addThisCity {
+					Body: {
+						ep_city := StringToElement(s_cities, sp_addThisCity, 0);
+						
+						ep_loc_cityCountry := first(i_country | bp_city_x_country(ep_city, i_country));
+						
+						if ep_loc_cityCountry then
+						    pr_callAPIQuery(sp_addThisCity, ep_loc_cityCountry);
+						else
+						    raise error "No city with this name";   
+						endif;
+					}
+					ElementParameter ep_loc_cityCountry {
+						Range: s_countries;
+					}
+				}
+				Procedure pr_addByCountry {
+					Body: {
+						ep_country := StringToElement(s_countries, sp_addByCountry, 0);
+						
+						s_loc_idPerCountry 
+						:= {i_id | exists(i_city | 
+						                bp_city_x_id(i_city, i_id) 
+						                and bp_city_x_country(i_city, ep_country))};
+						!
+						!while p_loc_counter <= p_maxCities do
+						!Uniform(
+						!p_loc_counter
+						!
+						!if ep_loc_cityCountry then
+						!    pr_callAPIQuery(sp_addThisCity, sp_addByCountry);
+						!else
+						!    raise error "No city with this name";   
+						!endif;
+						!
+					}
+					Parameter p_loc_counter;
+					Set s_loc_idPerCountry {
+						SubsetOf: s_ids;
+					}
+				}
+				Procedure pr_addByLimit;
 				Procedure pr_cleanAllNodes {
 					Body: {
 						empty API_Inputs;
 					}
-				}
-				StringParameter sp_addThisCity;
-				Parameter bp_callAddThisCityProcedure {
-					Range: binary;
-				}
-				Parameter bp_callAddByCountryProcedure {
-					Range: binary;
-				}
-				Parameter bp_callByLimitProcedure {
-					Range: binary;
 				}
 			}
 		}
@@ -560,6 +599,7 @@ Model Main_TravelingSalesman {
 					        bp_city_x_country(ep_city,ep_country) := 1;
 					        bp_city_x_cityASCII(ep_city, ep_cityASCII) := 1;
 					        bp_city_x_province(ep_city, ep_province) := 1;
+					        bp_city_x_id(ep_city, ep_id) := 1;
 					    endfor;
 					endif;
 				}
@@ -615,7 +655,7 @@ Model Main_TravelingSalesman {
 				Definition: "54c8e0e21241f8f235ff0e7329aa989b";
 			}
 			Procedure pr_callAPIQuery {
-				Arguments: (sp_in_city,sp_in_cityCountry);
+				Arguments: (sp_in_city,ep_in_cityCountry);
 				Body: {
 					!Deleting old info
 					if DirectoryExists("out") then
@@ -629,8 +669,8 @@ Model Main_TravelingSalesman {
 					sp_loc_urlCall 
 					:=  "http://api.positionstack.com/v1/forward?access_key=" + sp_def_apiKey 
 					    + "&query=" + sp_in_city 
-					    + "&limit=1"+
-					    + "&country=" + sp_in_cityCountry;
+					    + "&limit=1"
+					    + "&country=" + sp_countryAcronym(ep_in_cityCountry);
 					
 					dex::client::NewRequest(
 					        sp_loc_requestId,
@@ -641,11 +681,14 @@ Model Main_TravelingSalesman {
 					dex::client::PerformRequest(sp_loc_requestId);
 					dex::client::WaitForResponses(1000);    
 					endblock;
+					
+					pr_readJSONOutput;
 				}
 				StringParameter sp_in_city {
 					Property: Input;
 				}
-				StringParameter sp_in_cityCountry {
+				ElementParameter ep_in_cityCountry {
+					Range: s_countries;
 					Property: Input;
 				}
 				StringParameter sp_loc_urlCall;
@@ -655,7 +698,9 @@ Model Main_TravelingSalesman {
 				DeclarationSection LatLong {
 					dex::Dataset: LatLongDataset;
 					dex::TableName: LatLong;
-					Set s_int_cities;
+					Set s_int_cities {
+						Parameter: ep_int_city;
+					}
 					Index i_int_city {
 						Range: s_int_cities;
 						dex::ColumnName: name;
@@ -671,11 +716,9 @@ Model Main_TravelingSalesman {
 				}
 				Procedure pr_readJSONOutput {
 					Body: {
-						!dex::GenerateDatasetMappings;
-						
 						dex::AddMapping(
 							mappingName :  "LatLongMapping", 
-							mappingFile :  "Mappings/Generated/LatLongDataset-LatLong-JSON-Sparse.xml");
+							mappingFile :  "Mappings/Generated/LatLongDataset.xml");
 						
 						dex::ReadFromFile(
 							dataFile         :  "out/Output.json", 
@@ -683,6 +726,15 @@ Model Main_TravelingSalesman {
 							emptyIdentifiers :  1, 
 							emptySets        :  1, 
 							resetCounters    :  1);
+						
+						! Mapping to main data model
+						ep_int_city := first(i_int_city);
+						ep_city := StringToElement(s_cities, ep_int_city, 0);
+						
+						if ep_city and ep_int_city then
+						    p_latitude(ep_city) := p_int_latitude(ep_int_city);
+						    p_longitude(ep_city) := p_int_longitude(ep_int_city);
+						endif;
 					}
 				}
 			}

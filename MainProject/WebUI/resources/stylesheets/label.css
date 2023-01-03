@@ -1,0 +1,8 @@
+.tag-label>.label {
+    background: var(--primary);
+}
+
+[data-widget\.uri*="scl_addByCity"] .aimms-widget .ui-button {
+    width: 30px;
+
+}    

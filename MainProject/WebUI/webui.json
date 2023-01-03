@@ -52,15 +52,15 @@
                 "slug": "tours",
                 "children": [
                   {
-                    "name": "Tour Distances",
-                    "type": "pagev2-grid-sidepanel",
-                    "slug": "tour_distances",
-                    "children": []
-                  },
-                  {
                     "name": "New Network",
                     "type": "pagev2-grid-sidepanel",
                     "slug": "new_network",
+                    "children": []
+                  },
+                  {
+                    "name": "Tour Distances",
+                    "type": "pagev2-grid-sidepanel",
+                    "slug": "tour_distances",
                     "children": []
                   }
                 ]
@@ -115,6 +115,30 @@
           }
         ]
       }
+    },
+    "workflows.information": {
+      "aimms": {
+        "contents": [
+          "sp_myWorkflows"
+        ],
+        "slices": [
+          {
+            "identifier": "sp_myWorkflows",
+            "slice": [
+              {
+                "index": "webui::indexWorkflowOrder",
+                "type": "free",
+                "value": "webui::indexWorkflowOrder"
+              },
+              {
+                "index": "webui::indexWorkflowSpec",
+                "type": "free",
+                "value": "webui::indexWorkflowSpec"
+              }
+            ]
+          }
+        ]
+      }
     }
   },
   "layouts/custom_02bece4f-d0aa-4135-872b-8ffbeb15dc61": {
@@ -122,9 +146,9 @@
       "literal": {
         "componentName": "Grid",
         "props": {
-          "gridTemplateColumns": "1fr",
-          "gridTemplateRows": "1fr 1fr 1fr 1fr",
-          "gridTemplateAreas": "\"area-a\" \"area-b\" \"area-c\" \"area-d\""
+          "gridTemplateColumns": "1fr 1fr",
+          "gridTemplateRows": "1fr 0.3fr 2.5fr 0.3fr 1fr 0.3fr 4fr",
+          "gridTemplateAreas": "\"area-a area-a\" \"area-x area-b\" \"area-c area-c\" \"area-y area-d\" \"area-e area-e\" \"area-z area-f\" \"area-g area-g\""
         },
         "items": [
           {
@@ -156,6 +180,54 @@
             "props": {
               "gridArea": "area-d",
               "name": "Area D",
+              "gridAutoFlow": "row"
+            }
+          },
+          {
+            "componentName": "WidgetArea",
+            "props": {
+              "gridArea": "area-e",
+              "name": "Area E",
+              "gridAutoFlow": "row"
+            }
+          },
+          {
+            "componentName": "WidgetArea",
+            "props": {
+              "gridArea": "area-f",
+              "name": "Area F",
+              "gridAutoFlow": "row"
+            }
+          },
+          {
+            "componentName": "WidgetArea",
+            "props": {
+              "gridArea": "area-g",
+              "name": "Area G",
+              "gridAutoFlow": "row"
+            }
+          },
+          {
+            "componentName": "WidgetArea",
+            "props": {
+              "gridArea": "area-x",
+              "name": "Area X",
+              "gridAutoFlow": "row"
+            }
+          },
+          {
+            "componentName": "WidgetArea",
+            "props": {
+              "gridArea": "area-z",
+              "name": "Area Z",
+              "gridAutoFlow": "row"
+            }
+          },
+          {
+            "componentName": "WidgetArea",
+            "props": {
+              "gridArea": "area-y",
+              "name": "Area Y",
               "gridAutoFlow": "row"
             }
           }
@@ -254,34 +326,69 @@
     "bindings": {
       "literal": [
         {
-          "widgetUri": "btn_runNewNetwork",
-          "gridArea": "Unassigned widgets",
-          "dndId": "Unassigned widgetsbtn_runNewNetwork0"
+          "widgetUri": "lbl_titleAddLimity",
+          "gridArea": "area-e",
+          "dndId": "area-elbl_titleAddLimity0"
+        },
+        {
+          "widgetUri": "scl_addByLimit",
+          "gridArea": "area-e",
+          "dndId": "area-escl_addByLimit1"
+        },
+        {
+          "widgetUri": "btn_addByCountry",
+          "gridArea": "area-d",
+          "dndId": "area-dbtn_addByCountry2"
+        },
+        {
+          "widgetUri": "btn_addByLimity",
+          "gridArea": "area-f",
+          "dndId": "area-fbtn_addByLimity3"
+        },
+        {
+          "widgetUri": "lbl_tittleAddCity",
+          "gridArea": "area-a",
+          "dndId": "area-albl_tittleAddCity4"
         },
         {
           "widgetUri": "scl_addByCity",
+          "gridArea": "area-a",
+          "dndId": "area-ascl_addByCity5"
+        },
+        {
+          "widgetUri": "btn_addThisCity",
           "gridArea": "area-b",
-          "dndId": "area-bscl_addByCity2"
+          "dndId": "area-bbtn_addThisCity6"
         },
         {
-          "widgetUri": "scl_newNetworkInfo",
-          "gridArea": "area-a",
-          "dndId": "Unassigned widgetsscl_newNetworkInfo1"
-        },
-        {
-          "widgetUri": "btn_cleanAllNodes",
-          "gridArea": "area-a",
-          "dndId": "area-abtn_cleanAllNodes3"
+          "widgetUri": "lbl_titleAddCountry",
+          "gridArea": "area-c",
+          "dndId": "area-clbl_titleAddCountry7"
         },
         {
           "widgetUri": "scl_addByCountry",
           "gridArea": "area-c",
-          "dndId": "area-cscl_addByCountry4"
+          "dndId": "area-cscl_addByCountry8"
         },
         {
-          "widgetUri": "scl_addByLimit",
-          "gridArea": "area-d",
-          "dndId": "area-dscl_addByLimit5"
+          "widgetUri": "lbl_networkInfo",
+          "gridArea": "area-g",
+          "dndId": "area-glbl_networkInfo12"
+        },
+        {
+          "widgetUri": "scl_newNetworkInfo",
+          "gridArea": "area-g",
+          "dndId": "area-gscl_newNetworkInfo9"
+        },
+        {
+          "widgetUri": "btn_runNewNetwork",
+          "gridArea": "area-g",
+          "dndId": "area-gbtn_runNewNetwork10"
+        },
+        {
+          "widgetUri": "btn_cleanAllNodes",
+          "gridArea": "area-g",
+          "dndId": "area-gbtn_cleanAllNodes11"
         }
       ]
     },
@@ -327,6 +434,55 @@
         },
         {
           "uri": "scl_addByLimit",
+          "layoutInfo": {
+            "width": "2",
+            "height": "1"
+          }
+        },
+        {
+          "uri": "btn_addThisCity",
+          "layoutInfo": {
+            "width": "2",
+            "height": "1"
+          }
+        },
+        {
+          "uri": "btn_addByCountry",
+          "layoutInfo": {
+            "width": "2",
+            "height": "1"
+          }
+        },
+        {
+          "uri": "btn_addByLimity",
+          "layoutInfo": {
+            "width": "2",
+            "height": "1"
+          }
+        },
+        {
+          "uri": "lbl_tittleAddCity",
+          "layoutInfo": {
+            "width": "2",
+            "height": "1"
+          }
+        },
+        {
+          "uri": "lbl_titleAddCountry",
+          "layoutInfo": {
+            "width": "2",
+            "height": "1"
+          }
+        },
+        {
+          "uri": "lbl_titleAddLimity",
+          "layoutInfo": {
+            "width": "2",
+            "height": "1"
+          }
+        },
+        {
+          "uri": "lbl_networkInfo",
           "layoutInfo": {
             "width": "2",
             "height": "1"
@@ -407,39 +563,34 @@
     "bindings": {
       "literal": [
         {
-          "widgetUri": "scl_newNetworkInfo_1",
-          "gridArea": "area-c",
-          "dndId": "Unassigned widgetsscl_newNetworkInfo_16"
-        },
-        {
           "widgetUri": "btn_runCycTour",
           "gridArea": "area-c",
-          "dndId": "area-cbtn_runCycTour0"
+          "dndId": "area-cbtn_runCycTour1"
         },
         {
           "widgetUri": "map_improvedTourCyclic",
           "gridArea": "area-c",
-          "dndId": "area-cmap_improvedTourCyclic1"
+          "dndId": "area-cmap_improvedTourCyclic2"
         },
         {
           "widgetUri": "btn_runInitialTour",
           "gridArea": "area-a",
-          "dndId": "area-abtn_runInitialTour2"
+          "dndId": "area-abtn_runInitialTour3"
         },
         {
           "widgetUri": "map_initialTour",
           "gridArea": "area-a",
-          "dndId": "area-amap_initialTour3"
+          "dndId": "area-amap_initialTour4"
         },
         {
           "widgetUri": "btn_runSimTour",
           "gridArea": "area-b",
-          "dndId": "area-bbtn_runSimTour4"
+          "dndId": "area-bbtn_runSimTour5"
         },
         {
           "widgetUri": "map_improvedTourSimultaneous",
           "gridArea": "area-b",
-          "dndId": "area-bmap_improvedTourSimultaneous5"
+          "dndId": "area-bmap_improvedTourSimultaneous6"
         }
       ]
     },
@@ -518,22 +669,47 @@
             "width": "2",
             "height": "1"
           }
-        },
-        {
-          "uri": "scl_newNetworkInfo_1",
-          "layoutInfo": {
-            "width": "2",
-            "height": "1"
-          }
-        },
-        {
-          "uri": "scl_newNetworkInfo_1",
-          "layoutInfo": {
-            "width": "2",
-            "height": "1"
-          }
         }
       ]
+    }
+  },
+  "widgets/btn_addByCountry": {
+    "aimms.widget.type": {
+      "literal": "button"
+    },
+    "name": {
+      "literal": "btn_addByCountry"
+    },
+    "title": {
+      "literal": "run"
+    }
+  },
+  "widgets/btn_addByLimity": {
+    "aimms.widget.type": {
+      "literal": "button"
+    },
+    "name": {
+      "literal": "btn_addByLimity"
+    },
+    "title": {
+      "literal": "fd"
+    }
+  },
+  "widgets/btn_addThisCity": {
+    "action": {
+      "literal": {
+        "type": "procedure",
+        "value": "pr_addThisCity"
+      }
+    },
+    "aimms.widget.type": {
+      "literal": "button"
+    },
+    "name": {
+      "literal": "btn_addThisCity"
+    },
+    "title": {
+      "literal": "btn_addThisCity"
     }
   },
   "widgets/btn_cleanAllNodes": {
@@ -641,6 +817,47 @@
       "literal": "lbl_distanceTitle"
     }
   },
+  "widgets/lbl_networkInfo": {
+    "aimms.widget.type": {
+      "literal": "label"
+    },
+    "name": {
+      "literal": "lbl_networkInfo"
+    }
+  },
+  "widgets/lbl_titleAddCountry": {
+    "aimms.widget.type": {
+      "literal": "label"
+    },
+    "contents": {
+      "literal": "Add by Country"
+    },
+    "name": {
+      "literal": "lbl_titleAddCountry"
+    }
+  },
+  "widgets/lbl_titleAddLimity": {
+    "aimms.widget.type": {
+      "literal": "label"
+    },
+    "contents": {
+      "literal": "Add by Limit"
+    },
+    "name": {
+      "literal": "lbl_titleAddLimity"
+    }
+  },
+  "widgets/lbl_tittleAddCity": {
+    "aimms.widget.type": {
+      "literal": "label"
+    },
+    "contents": {
+      "literal": "Add by City"
+    },
+    "name": {
+      "literal": "lbl_titleAddCity"
+    }
+  },
   "widgets/map_improvedTourCyclic": {
     "aimms.widget.type": {
       "literal": "map-v2"
@@ -698,10 +915,10 @@
       }
     },
     "center.latitude": {
-      "literal": 1.845383988573187
+      "literal": -3.162455530237848
     },
     "center.longitude": {
-      "literal": 4.391603395272897
+      "literal": 11.909179687500002
     },
     "heatmaps.__display_order__": {
       "literal": [
@@ -719,12 +936,12 @@
     "nodes.0": {
       "aimms": {
         "contents": [
-          "p_yCoord",
-          "p_xCoord"
+          "p_longitude",
+          "p_latitude"
         ],
         "slices": [
           {
-            "identifier": "p_yCoord",
+            "identifier": "p_longitude",
             "slice": [
               {
                 "index": "i_city",
@@ -734,7 +951,7 @@
             ]
           },
           {
-            "identifier": "p_xCoord",
+            "identifier": "p_latitude",
             "slice": [
               {
                 "index": "i_city",
@@ -748,7 +965,7 @@
     },
     "nodes.0.latitude": {
       "literal": {
-        "identifier": "p_xCoord",
+        "identifier": "p_latitude",
         "slice": [
           {
             "index": "i_city",
@@ -760,7 +977,7 @@
     },
     "nodes.0.longitude": {
       "literal": {
-        "identifier": "p_yCoord",
+        "identifier": "p_longitude",
         "slice": [
           {
             "index": "i_city",
@@ -774,7 +991,7 @@
       "literal": "Improved Tour (Cyclic)"
     },
     "zoom": {
-      "literal": 5
+      "literal": 4
     }
   },
   "widgets/map_improvedTourSimultaneous": {
@@ -834,10 +1051,10 @@
       }
     },
     "center.latitude": {
-      "literal": 3.2940822283128177
+      "literal": 46.9052455464292
     },
     "center.longitude": {
-      "literal": 4.438270375547369
+      "literal": -119.739990234375
     },
     "heatmaps.__display_order__": {
       "literal": [
@@ -855,12 +1072,12 @@
     "nodes.0": {
       "aimms": {
         "contents": [
-          "p_yCoord",
-          "p_xCoord"
+          "p_longitude",
+          "p_latitude"
         ],
         "slices": [
           {
-            "identifier": "p_yCoord",
+            "identifier": "p_longitude",
             "slice": [
               {
                 "index": "i_city",
@@ -870,7 +1087,7 @@
             ]
           },
           {
-            "identifier": "p_xCoord",
+            "identifier": "p_latitude",
             "slice": [
               {
                 "index": "i_city",
@@ -884,7 +1101,7 @@
     },
     "nodes.0.latitude": {
       "literal": {
-        "identifier": "p_xCoord",
+        "identifier": "p_latitude",
         "slice": [
           {
             "index": "i_city",
@@ -896,7 +1113,7 @@
     },
     "nodes.0.longitude": {
       "literal": {
-        "identifier": "p_yCoord",
+        "identifier": "p_longitude",
         "slice": [
           {
             "index": "i_city",
@@ -910,7 +1127,7 @@
       "literal": "Improved Tour (Simultaneous)"
     },
     "zoom": {
-      "literal": 5
+      "literal": 6
     }
   },
   "widgets/map_initialTour": {
@@ -970,10 +1187,10 @@
       }
     },
     "center.latitude": {
-      "literal": 1.7575368113083257
+      "literal": -23.936054914599816
     },
     "center.longitude": {
-      "literal": 5.758348042720477
+      "literal": -46.71590915493636
     },
     "name": {
       "literal": "map_initialTour"
@@ -986,12 +1203,12 @@
     "nodes.0": {
       "aimms": {
         "contents": [
-          "p_yCoord",
-          "p_xCoord"
+          "p_longitude",
+          "p_latitude"
         ],
         "slices": [
           {
-            "identifier": "p_yCoord",
+            "identifier": "p_longitude",
             "slice": [
               {
                 "index": "i_city",
@@ -1001,7 +1218,7 @@
             ]
           },
           {
-            "identifier": "p_xCoord",
+            "identifier": "p_latitude",
             "slice": [
               {
                 "index": "i_city",
@@ -1015,7 +1232,7 @@
     },
     "nodes.0.latitude": {
       "literal": {
-        "identifier": "p_xCoord",
+        "identifier": "p_latitude",
         "slice": [
           {
             "index": "i_city",
@@ -1027,7 +1244,7 @@
     },
     "nodes.0.longitude": {
       "literal": {
-        "identifier": "p_yCoord",
+        "identifier": "p_longitude",
         "slice": [
           {
             "index": "i_city",
@@ -1041,18 +1258,20 @@
       "literal": "Initial Tour"
     },
     "zoom": {
-      "literal": 5
+      "literal": 7
     }
   },
   "widgets/scl_addByCity": {
     "aimms.widget.type": {
       "literal": "scalar"
     },
+    "compact": {
+      "literal": 1
+    },
     "contents": {
       "aimms": {
         "contents": [
-          "sp_addThisCity",
-          "bp_callAddThisCityProcedure"
+          "sp_addThisCity"
         ]
       }
     },
@@ -1071,7 +1290,7 @@
       "aimms": {
         "contents": [
           "p_maxCities",
-          "bp_callAddByCountryProcedure"
+          "sp_addByCountry"
         ]
       }
     },
@@ -1083,11 +1302,13 @@
     "aimms.widget.type": {
       "literal": "scalar"
     },
+    "compact": {
+      "literal": 1
+    },
     "contents": {
       "aimms": {
         "contents": [
-          "p_maxCities",
-          "bp_callByLimitProcedure"
+          "p_maxCities"
         ]
       }
     },
@@ -1135,25 +1356,6 @@
     },
     "name": {
       "literal": "scl_newNetworkInfo"
-    }
-  },
-  "widgets/scl_newNetworkInfo_1": {
-    "aimms.widget.type": {
-      "literal": "scalar"
-    },
-    "contents": {
-      "aimms": {
-        "contents": [
-          "p_def_iterationLimit",
-          "p_def_maxNeighbors"
-        ]
-      }
-    },
-    "contents.numdecimals": {
-      "literal": 0
-    },
-    "name": {
-      "literal": "scl_newNetworkInfo (1)"
     }
   },
   "widgets/txt_story": {
