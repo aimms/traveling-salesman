@@ -348,47 +348,42 @@
         {
           "widgetUri": "lbl_tittleAddCity",
           "gridArea": "area-a",
-          "dndId": "area-albl_tittleAddCity4"
+          "dndId": "area-albl_tittleAddCity5"
         },
         {
           "widgetUri": "scl_addByCity",
           "gridArea": "area-a",
-          "dndId": "area-ascl_addByCity5"
+          "dndId": "area-ascl_addByCity6"
         },
         {
           "widgetUri": "btn_addThisCity",
           "gridArea": "area-b",
-          "dndId": "area-bbtn_addThisCity6"
+          "dndId": "area-bbtn_addThisCity7"
         },
         {
           "widgetUri": "lbl_titleAddCountry",
           "gridArea": "area-c",
-          "dndId": "area-clbl_titleAddCountry7"
+          "dndId": "area-clbl_titleAddCountry8"
         },
         {
           "widgetUri": "scl_addByCountry",
           "gridArea": "area-c",
-          "dndId": "area-cscl_addByCountry8"
+          "dndId": "area-cscl_addByCountry9"
         },
         {
           "widgetUri": "lbl_networkInfo",
           "gridArea": "area-g",
-          "dndId": "area-glbl_networkInfo12"
+          "dndId": "area-glbl_networkInfo10"
         },
         {
           "widgetUri": "scl_newNetworkInfo",
           "gridArea": "area-g",
-          "dndId": "area-gscl_newNetworkInfo9"
-        },
-        {
-          "widgetUri": "btn_runNewNetwork",
-          "gridArea": "area-g",
-          "dndId": "area-gbtn_runNewNetwork10"
+          "dndId": "area-gscl_newNetworkInfo11"
         },
         {
           "widgetUri": "btn_cleanAllNodes",
           "gridArea": "area-g",
-          "dndId": "area-gbtn_cleanAllNodes11"
+          "dndId": "area-abtn_cleanAllNodes4"
         }
       ]
     },
@@ -399,13 +394,6 @@
       "literal": [
         {
           "uri": "scl_newNetworkInfo",
-          "layoutInfo": {
-            "width": "2",
-            "height": "1"
-          }
-        },
-        {
-          "uri": "btn_runNewNetwork",
           "layoutInfo": {
             "width": "2",
             "height": "1"
@@ -726,7 +714,7 @@
       "literal": "btn_cleanAllNodes"
     },
     "title": {
-      "literal": "btn_cleanAllNodes"
+      "literal": "delete all nodes"
     }
   },
   "widgets/btn_runCycTour": {
@@ -820,6 +808,9 @@
   "widgets/lbl_networkInfo": {
     "aimms.widget.type": {
       "literal": "label"
+    },
+    "contents": {
+      "literal": "Network Info"
     },
     "name": {
       "literal": "lbl_networkInfo"
@@ -915,10 +906,10 @@
       }
     },
     "center.latitude": {
-      "literal": -3.162455530237848
+      "literal": -36.59788913307021
     },
     "center.longitude": {
-      "literal": 11.909179687500002
+      "literal": -4.218750000000001
     },
     "heatmaps.__display_order__": {
       "literal": [
@@ -991,7 +982,7 @@
       "literal": "Improved Tour (Cyclic)"
     },
     "zoom": {
-      "literal": 4
+      "literal": 2
     }
   },
   "widgets/map_improvedTourSimultaneous": {
@@ -1051,10 +1042,10 @@
       }
     },
     "center.latitude": {
-      "literal": 46.9052455464292
+      "literal": -24.5271348225978
     },
     "center.longitude": {
-      "literal": -119.739990234375
+      "literal": -73.12500000000002
     },
     "heatmaps.__display_order__": {
       "literal": [
@@ -1127,7 +1118,7 @@
       "literal": "Improved Tour (Simultaneous)"
     },
     "zoom": {
-      "literal": 6
+      "literal": 2
     }
   },
   "widgets/map_initialTour": {
@@ -1187,10 +1178,15 @@
       }
     },
     "center.latitude": {
-      "literal": -23.936054914599816
+      "literal": -24.846565348219746
     },
     "center.longitude": {
-      "literal": -46.71590915493636
+      "literal": -81.91406250000002
+    },
+    "heatmaps.__display_order__": {
+      "literal": [
+        "heatmaps.0"
+      ]
     },
     "name": {
       "literal": "map_initialTour"
@@ -1258,7 +1254,7 @@
       "literal": "Initial Tour"
     },
     "zoom": {
-      "literal": 7
+      "literal": 2
     }
   },
   "widgets/scl_addByCity": {
@@ -1346,6 +1342,7 @@
     "contents": {
       "aimms": {
         "contents": [
+          "p_def_cardinalityOfNodes",
           "p_def_iterationLimit",
           "p_def_maxNeighbors"
         ]

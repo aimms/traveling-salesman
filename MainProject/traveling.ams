@@ -82,6 +82,15 @@ Model Main_TravelingSalesman {
 				Set s_nodes {
 					SubsetOf: s_cities;
 					Index: i_node1, i_node2;
+					Parameter: ep_node;
+					Definition: {
+						{i_city | 
+						        p_latitude(i_city)
+						        and p_longitude(i_city)}
+					}
+				}
+				Parameter p_def_cardinalityOfNodes {
+					Definition: card(s_nodes);
 				}
 				Set s_neighbors {
 					IndexDomain: i_node1;
@@ -160,31 +169,33 @@ Model Main_TravelingSalesman {
 				}
 				Procedure pr_findInitialTour {
 					Body: {
+						empty Initial_Tour;
+						
 						Initialize_Progress_Window;
 						GMP::ProgressWindow::DisplayLine( 1, "Phase", "Find Initial Tour" );
 						
 						empty p_init_tourConnect;
-						s_loc_remainingCities := s_cities;
+						s_loc_remainingCities := s_nodes;
 						
 						! We start adding the first city to the tour
-						ep_city := First(s_cities);
-						s_loc_remainingCities -= ep_city;
+						ep_node := First(s_nodes);
+						s_loc_remainingCities -= ep_node;
 						
 						! For every other city, the next city in the tour is the one closest to it not yet chosen
 						while (Card(s_loc_remainingCities) <> 0) do
-						    ep_init_nextCity(ep_city) 
-						    :=  argmin(i_city in s_loc_remainingCities, p_def_directDistance(ep_city,i_city));
+						    ep_init_nextCity(ep_node) 
+						    :=  argmin(i_node1 in s_loc_remainingCities, p_def_directDistance(ep_node,i_node1));
 						
-						    ep_city := ep_init_nextCity(ep_city);
-						    s_loc_remainingCities -= ep_city;
+						    ep_node := ep_init_nextCity(ep_node);
+						    s_loc_remainingCities -= ep_node;
 						endwhile;
 						
 						! Finally, close the tour
-						ep_init_nextCity(ep_city) := First(s_cities);
+						ep_init_nextCity(ep_node) := First(s_nodes);
 						
-						ep_init_prevCity(ep_init_nextCity(i_city)) := i_city;
-						p_init_tourConnect(i_city,ep_init_nextCity(i_city)) := 1;
-						p_init_tourDistance := sum(i_city, p_def_directDistance(i_city,ep_init_nextCity(i_city)));
+						ep_init_prevCity(ep_init_nextCity(i_node1)) := i_node1;
+						p_init_tourConnect(i_node1,ep_init_nextCity(i_node1)) := 1;
+						p_init_tourDistance := sum(i_node1, p_def_directDistance(i_node1,ep_init_nextCity(i_node1)));
 						
 						p_init_tourInitialized := 1;
 					}
@@ -239,6 +250,8 @@ Model Main_TravelingSalesman {
 				}
 				Procedure pr_improveTourSimultaneous {
 					Body: {
+						empty Improve_Tour_Simultaneous;
+						
 						Initialize_Progress_Window;
 						GMP::ProgressWindow::DisplaySolver("Simultaneous Approach");
 						GMP::ProgressWindow::DisplayLine(1, "Phase", "");
@@ -248,8 +261,8 @@ Model Main_TravelingSalesman {
 						endif;
 						
 						if (not p_sim_initialized) then
-						   p_sim_nextCity(i_city) := ep_init_nextCity(i_city);
-						   p_sim_prevCity(i_city) := ep_init_prevCity(i_city);
+						   p_sim_nextCity(i_node1) := ep_init_nextCity(i_node1);
+						   p_sim_prevCity(i_node1) := ep_init_prevCity(i_node1);
 						   p_sim_initialized := 1;
 						   p_sim_swaps := 0;
 						endif;
@@ -261,7 +274,7 @@ Model Main_TravelingSalesman {
 						
 						    ! Select City and NewNext as a (i,j) tuple which reaches the maximum change
 						    for ((i_node1,i_node2) | p_sim_distanceChange(i_node1,i_node2) = p_sim_maxChange) do
-						        ep_city := i_node1;
+						        ep_node := i_node1;
 						        ep_loc_nextCity := i_node2;
 						        break;
 						    endfor;
@@ -275,7 +288,7 @@ Model Main_TravelingSalesman {
 						        GMP::ProgressWindow::DisplayLine(1, "Phase", "Swap Cities");
 						
 						        ! Set up a link from the old destinations of City to the old destination of NewNext in the tour
-						        ep_loc_OCity := p_sim_nextCity(ep_city);
+						        ep_loc_OCity := p_sim_nextCity(ep_node);
 						        ep_loc_DCity := p_sim_nextCity(ep_loc_nextCity);
 						        p_sim_nextCity(ep_loc_OCity) := ep_loc_DCity;
 						        p_sim_prevCity(ep_loc_DCity) := ep_loc_OCity;
@@ -284,7 +297,7 @@ Model Main_TravelingSalesman {
 						        ep_loc_OCity := ep_loc_nextCity;
 						        ep_loc_DCity := p_sim_prevCity(ep_loc_OCity);
 						
-						        while ( ep_loc_DCity <> ep_city ) do
+						        while ( ep_loc_DCity <> ep_node ) do
 						            ep_loc_ODCity := ep_loc_DCity;
 						            p_sim_nextCity(ep_loc_OCity) := ep_loc_ODCity;
 						            ep_loc_DCity := p_sim_prevCity(ep_loc_ODCity);
@@ -293,14 +306,14 @@ Model Main_TravelingSalesman {
 						        endwhile;
 						
 						        ! Finally, setup the link from City to NextNew
-						        p_sim_nextCity(ep_city) := ep_loc_nextCity;
-						        p_sim_prevCity(ep_loc_nextCity) := ep_city;
+						        p_sim_nextCity(ep_node) := ep_loc_nextCity;
+						        p_sim_prevCity(ep_loc_nextCity) := ep_node;
 						    endblock; 
 						
 						    block ! Update network flow object.
 						        empty p_sim_tourConnect;
-						        p_sim_tourConnect(i_city, p_sim_nextCity(i_city)) := 1;
-						        p_sim_tourDistance := sum(i_city, p_def_directDistance(i_city, p_sim_nextCity(i_city)));
+						        p_sim_tourConnect(i_node1, p_sim_nextCity(i_node1)) := 1;
+						        p_sim_tourDistance := sum(i_node1, p_def_directDistance(i_node1, p_sim_nextCity(i_node1)));
 						    endblock; 
 						
 						    block ! Update Progress Window.
@@ -369,6 +382,8 @@ Model Main_TravelingSalesman {
 				}
 				Procedure pr_improveTourCyclic {
 					Body: {
+						empty Improve_Tour_Cyclic;
+						
 						Initialize_Progress_Window;
 						GMP::ProgressWindow::DisplaySolver("Cyclic Approach");
 						GMP::ProgressWindow::DisplayLine(1, "Phase", "");
@@ -378,14 +393,14 @@ Model Main_TravelingSalesman {
 						endif;
 						
 						if (not p_cyc_initialized) then
-						   p_cyc_nextCity(i_city) := ep_init_nextCity(i_city);
-						   p_cyc_prevCity(i_city) := ep_init_prevCity(i_city);
+						   p_cyc_nextCity(i_node1) := ep_init_nextCity(i_node1);
+						   p_cyc_prevCity(i_node1) := ep_init_prevCity(i_node1);
 						   p_cyc_initialized := 1;
 						   p_cyc_swaps := 0;
 						endif;
 						
 						p_loc_uselessLoops := 0;
-						ep_city := First(s_cities);
+						ep_node := First(s_nodes);
 						
 						while (p_cyc_swaps < p_def_iterationLimit 
 						        and p_loc_uselessLoops <= p_maxCities) do
@@ -395,9 +410,9 @@ Model Main_TravelingSalesman {
 						    p_loc_uselessLoops += 1;
 						
 						    ! Select a NewNext to be swapped with City
-						    ep_loc_nextCity := argmax(i_city in s_neighbors(ep_city), p_cyc_distanceChange(ep_city,i_city));
+						    ep_loc_nextCity := argmax(i_node1 in s_neighbors(ep_node), p_cyc_distanceChange(ep_node,i_node1));
 						
-						    if (p_cyc_distanceChange(ep_city, ep_loc_nextCity) > 0) then
+						    if (p_cyc_distanceChange(ep_node, ep_loc_nextCity) > 0) then
 						        p_cyc_swaps += 1;
 						        p_loc_uselessLoops := 0;
 						
@@ -410,7 +425,7 @@ Model Main_TravelingSalesman {
 						            GMP::ProgressWindow::DisplayLine( 1, "Phase", "Swap Cities" );
 						
 						            ! Set up a link from the old destinations of City to the old destination of NewNext in the tour
-						            ep_loc_OCity := p_cyc_NextCity(ep_city);
+						            ep_loc_OCity := p_cyc_NextCity(ep_node);
 						            ep_loc_DCity := p_cyc_nextCity(ep_loc_nextCity);
 						            p_cyc_nextCity(ep_loc_OCity) := ep_loc_DCity;
 						            p_cyc_prevCity(ep_loc_DCity) := ep_loc_OCity;
@@ -419,7 +434,7 @@ Model Main_TravelingSalesman {
 						            ep_loc_OCity := ep_loc_nextCity;
 						            ep_loc_DCity := p_cyc_prevCity(ep_loc_OCity);
 						
-						            while ( ep_loc_DCity <> ep_city ) do
+						            while ( ep_loc_DCity <> ep_node ) do
 						                 ep_loc_ODCity := ep_loc_DCity;
 						                 p_cyc_NextCity(ep_loc_OCity) := ep_loc_ODCity;
 						                 ep_loc_DCity := p_cyc_prevCity(ep_loc_ODCity);
@@ -428,15 +443,15 @@ Model Main_TravelingSalesman {
 						            endwhile;
 						
 						            ! Finally, setup the link from City to NextNew
-						            p_cyc_NextCity(ep_city) := ep_loc_nextCity;
-						            p_cyc_PrevCity(ep_loc_nextCity) := ep_city;
+						            p_cyc_NextCity(ep_node) := ep_loc_nextCity;
+						            p_cyc_PrevCity(ep_loc_nextCity) := ep_node;
 						        endblock;
 						
 						        block ! Update network flow object.
-						            empty p_cyc_TourConnect;
-						            p_cyc_TourConnect(i_city,p_cyc_NextCity(i_city)) := 1;
-						            p_cyc_TourDistance := sum(i_city, p_def_directDistance(i_city,p_cyc_nextCity(i_city)));
-						            PageRefreshAll;
+						            empty p_cyc_tourConnect;
+						            p_cyc_TourConnect(i_node1,p_cyc_NextCity(i_node1)) := 1;
+						            p_cyc_TourDistance := sum(i_node1, p_def_directDistance(i_node1,p_cyc_nextCity(i_node1)));
+						
 						        endblock;
 						
 						        block ! Update Progress Window.
@@ -445,7 +460,7 @@ Model Main_TravelingSalesman {
 						        endblock;
 						    endif;
 						
-						    ep_city := p_cyc_nextCity(ep_city);
+						    ep_node := p_cyc_nextCity(ep_node);
 						endwhile;
 						
 						GMP::ProgressWindow::DisplayProgramStatus('LocallyOptimal');
@@ -506,9 +521,9 @@ Model Main_TravelingSalesman {
 			Section Tours_Page {
 				Procedure pr_runAll {
 					Body: {
+						pr_findInitialTour;
 						pr_improveTourCyclic;
 						pr_improveTourSimultaneous;
-						pr_findInitialTour;
 					}
 				}
 				StringParameter sp_toursSidePanel {
@@ -541,30 +556,78 @@ Model Main_TravelingSalesman {
 				}
 				Procedure pr_addByCountry {
 					Body: {
+						empty ep_country, p_latitude, p_longitude;
+						
 						ep_country := StringToElement(s_countries, sp_addByCountry, 0);
 						
-						s_loc_idPerCountry 
-						:= {i_id | exists(i_city | 
-						                bp_city_x_id(i_city, i_id) 
-						                and bp_city_x_country(i_city, ep_country))};
-						!
-						!while p_loc_counter <= p_maxCities do
-						!Uniform(
-						!p_loc_counter
-						!
-						!if ep_loc_cityCountry then
-						!    pr_callAPIQuery(sp_addThisCity, sp_addByCountry);
-						!else
-						!    raise error "No city with this name";   
-						!endif;
-						!
+						if sp_addByCountry and ep_country then
+						    p_loc_cardinalityOfCitiesFromCountry  
+						    :=  sum(i_id | exists(i_city | 
+						                    bp_city_x_id(i_city, i_id) 
+						                    and bp_city_x_country(i_city, ep_country)), 1);
+						
+						    s_loc_newIds := {1 .. p_loc_cardinalityOfCitiesFromCountry};
+						    ep_loc_newId := first(i_loc_newid);
+						
+						    for i_id | exists(i_city | 
+						                    bp_city_x_id(i_city, i_id) 
+						                    and bp_city_x_country(i_city, ep_country)) do
+						
+						        bp_loc_oldId_x_newId(i_id, ep_loc_newId) :=  1;
+						        ep_loc_newId += 1;
+						    endfor;    
+						
+						    while p_loc_counter <= p_maxCities do
+						        p_loc_randomNewId := ceil(uniform(val(first(i_loc_newid)), val(last(i_loc_newid))));
+						        ep_loc_newId := StringToElement(s_loc_newIds, p_loc_randomNewId, 0);
+						        ep_city := first(i_city | exists(i_id |  bp_loc_oldId_x_newId(i_id, ep_loc_newId) and bp_city_x_id(i_city, i_id)));
+						
+						        if ep_country and ep_city then
+						            pr_callAPIQuery(ep_city, ep_country);
+						        endif;
+						
+						        p_loc_counter += 1;
+						    endwhile; 
+						else 
+						    raise error "No country with this name";   
+						endif;
 					}
+					Set s_loc_newIds {
+						Index: i_loc_newid;
+						Parameter: ep_loc_newId;
+					}
+					ElementParameter ep_loc_cityCountry {
+						Range: s_countries;
+					}
+					Parameter p_loc_randomNewId;
 					Parameter p_loc_counter;
-					Set s_loc_idPerCountry {
-						SubsetOf: s_ids;
+					Parameter p_loc_cardinalityOfCitiesFromCountry;
+					Parameter bp_loc_oldId_x_newId {
+						IndexDomain: (i_id,i_loc_newid);
+						Range: binary;
 					}
 				}
-				Procedure pr_addByLimit;
+				Procedure pr_addByLimit {
+					Body: {
+						empty ep_country, ep_city, p_latitude, p_longitude;
+						
+						while p_loc_counter <= p_maxCities do
+						    p_loc_randomId := ceil(uniform(val(first(i_id)), val(last(i_id))));
+						    ep_id := StringToElement(s_ids, p_loc_randomId, 0);
+						
+						    ep_city := first(i_city | bp_city_x_id(i_city, ep_id));
+						    ep_country := first(i_country | bp_city_x_country(ep_city, i_country));
+						
+						    if ep_country and ep_city then
+						        pr_callAPIQuery(ep_city, ep_country);
+						    endif;
+						
+						    p_loc_counter += 1;
+						endwhile;
+					}
+					Parameter p_loc_counter;
+					Parameter p_loc_randomId;
+				}
 				Procedure pr_cleanAllNodes {
 					Body: {
 						empty API_Inputs;
@@ -719,6 +782,8 @@ Model Main_TravelingSalesman {
 						dex::AddMapping(
 							mappingName :  "LatLongMapping", 
 							mappingFile :  "Mappings/Generated/LatLongDataset.xml");
+						
+						delay(5);
 						
 						dex::ReadFromFile(
 							dataFile         :  "out/Output.json", 
