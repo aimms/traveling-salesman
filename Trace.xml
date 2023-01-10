@@ -1,0 +1,64 @@
+== Info: Found bundle for host api.positionstack.com: 0x26161fe5178 [serially]
+== Info: Re-using existing connection! (#0) with host api.positionstack.com
+== Info: Connected to api.positionstack.com (104.21.65.172) port 80 (#0)
+=> Send header, 145 bytes
+GET /v1/forward?access_key=54c8e0e21241f8f235ff0e7329aa989b&query=Aldan&limit=1&country=RU HTTP/1.1
+Host: api.positionstack.com
+Accept: */*
+
+== Info: Mark bundle as not supporting multiuse
+<= Recv header, 17 bytes
+HTTP/1.1 200 OK
+<= Recv header, 37 bytes
+Date: Tue, 10 Jan 2023 18:23:49 GMT
+<= Recv header, 32 bytes
+Content-Type: application/json
+<= Recv header, 28 bytes
+Transfer-Encoding: chunked
+<= Recv header, 24 bytes
+Connection: keep-alive
+<= Recv header, 53 bytes
+user-agent: GuzzleHttp/6.5.5 curl/7.68.0 PHP/7.4.33
+<= Recv header, 13 bytes
+accept: */*
+<= Recv header, 23 bytes
+accept-encoding: gzip
+<= Recv header, 34 bytes
+cache-control: no-cache, private
+<= Recv header, 65 bytes
+x-apilayer-transaction-id: 31719ad8-1fe8-4b82-a67e-8d4b93b5da4c
+<= Recv header, 32 bytes
+access-control-allow-origin: *
+<= Recv header, 56 bytes
+access-control-allow-methods: GET, POST, HEAD, OPTIONS
+<= Recv header, 33 bytes
+access-control-allow-headers: *
+<= Recv header, 22 bytes
+x-quota-limit: 25000
+<= Recv header, 26 bytes
+x-quota-remaining: 23873
+<= Recv header, 22 bytes
+x-increment-usage: 1
+<= Recv header, 23 bytes
+x-request-time: 0.081
+<= Recv header, 26 bytes
+CF-Cache-Status: DYNAMIC
+<= Recv header, 266 bytes
+Report-To: {"endpoints":[{"url":"https:\/\/a.nel.cloudflare.com\/report\/v3?s=QyltGwayaMp%2BujksClQgco2yZVvPt4mpVOEbl8ItHNrImMmzxUP1tb2m7quEyLbSXN9c8rIFuJ3pwyXZ7aOmJGEexZ7qGR2E7xmtO0%2Bteg65nmjPBN6t%2BWRPgPpykrSkvwNGxCEBbNg%3D"}],"group":"cf-nel","max_age":604800}
+<= Recv header, 67 bytes
+NEL: {"success_fraction":0,"report_to":"cf-nel","max_age":604800}
+<= Recv header, 20 bytes
+Server: cloudflare
+<= Recv header, 30 bytes
+CF-RAY: 7877722e5d17a62f-GRU
+<= Recv header, 54 bytes
+alt-svc: h3=":443"; ma=86400, h3-29=":443"; ma=86400
+<= Recv header, 2 bytes
+
+<= Recv data, 369 bytes
+165
+{"data":[{"latitude":58.602315,"longitude":125.383794,"type":"locality","name":"Aldan","number":null,"postal_code":null,"street":null,"confidence":1,"region":"Sakha","region_code":"SK","county":null,"locality":"Aldan","administrative_area":null,"neighbourhood":null,"country":"Russia","country_code":"RUS","continent":"Europe","label":"Aldan, SK, Russia"}]}
+0
+
+
+== Info: Connection #0 to host api.positionstack.com left intact

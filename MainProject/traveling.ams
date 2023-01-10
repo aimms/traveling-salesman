@@ -101,6 +101,9 @@ Model Main_TravelingSalesman {
 				}
 				Parameter p_maxCities {
 					Text: "Maximum number of cities in the tour";
+					Range: {
+						{-inf..inf}
+					}
 					Default: 100;
 					InitialData: 100;
 				}
@@ -140,6 +143,13 @@ Model Main_TravelingSalesman {
 					GMP::ProgressWindow::DisplayLine( 3, "Objective", "" );
 					GMP::ProgressWindow::DisplayProgramStatus( '' );
 					GMP::ProgressWindow::DisplaySolverStatus( '' );
+				}
+			}
+			Procedure pr_runAll {
+				Body: {
+					pr_findInitialTour;
+					pr_improveTourCyclic;
+					pr_improveTourSimultaneous;
 				}
 			}
 			Section Initial_Tour {
@@ -491,7 +501,6 @@ Model Main_TravelingSalesman {
 		}
 	}
 	Section UI_Declarations {
-		Procedure pr_empty;
 		StringParameter sp_logo {
 			InitialData: "aimms_logo.png";
 		}
@@ -519,14 +528,7 @@ Model Main_TravelingSalesman {
 		}
 		Section Pages {
 			Section Tours_Page {
-				Procedure pr_runAll {
-					Body: {
-						pr_findInitialTour;
-						pr_improveTourCyclic;
-						pr_improveTourSimultaneous;
-					}
-				}
-				StringParameter sp_toursSidePanel {
+				StringParameter sp_def_toursSidePanel {
 					IndexDomain: (webui::indexPageExtension,webui::indexSidePanelSpec);
 					Definition: {
 						data 
@@ -534,18 +536,26 @@ Model Main_TravelingSalesman {
 						  ( 2, displayText ) : "Tour Distances",  ( 2, pageId      ) : "tour_distances",  ( 2, state       ) : "active"         }
 					}
 				}
+				StringParameter sp_def_toursPrimaryActions {
+					IndexDomain: webui::indexPageActionSpec;
+					Definition: data { displaytext : "Run All",  icon : "aimms-airplane",  procedure : "pr_runAll",  state : "active" };
+				}
 			}
 			Section Add_Cities_DialogPage {
 				StringParameter sp_addThisCity;
 				StringParameter sp_addByCountry;
+				Parameter p_def_unableToFetch {
+					InitialData: 0;
+					webui::FlagsIdentifier: sp_readOnlyFlag;
+				}
 				Procedure pr_addThisCity {
 					Body: {
 						ep_city := StringToElement(s_cities, sp_addThisCity, 0);
-						
+						sp_loc_cityASCII := first(i_city_ascii | bp_city_x_cityASCII(ep_city, i_city_ascii));
 						ep_loc_cityCountry := first(i_country | bp_city_x_country(ep_city, i_country));
 						
 						if ep_loc_cityCountry then
-						    pr_callAPIQuery(sp_addThisCity, ep_loc_cityCountry);
+						    pr_callAPIQuery(sp_loc_cityASCII, ep_loc_cityCountry);
 						else
 						    raise error "No city with this name";   
 						endif;
@@ -553,14 +563,17 @@ Model Main_TravelingSalesman {
 					ElementParameter ep_loc_cityCountry {
 						Range: s_countries;
 					}
+					StringParameter sp_loc_cityASCII;
 				}
 				Procedure pr_addByCountry {
 					Body: {
 						empty ep_country, p_latitude, p_longitude;
 						
 						ep_country := StringToElement(s_countries, sp_addByCountry, 0);
+						p_loc_counter := 1;
 						
 						if sp_addByCountry and ep_country then
+						    block 
 						    p_loc_cardinalityOfCitiesFromCountry  
 						    :=  sum(i_id | exists(i_city | 
 						                    bp_city_x_id(i_city, i_id) 
@@ -576,17 +589,23 @@ Model Main_TravelingSalesman {
 						        bp_loc_oldId_x_newId(i_id, ep_loc_newId) :=  1;
 						        ep_loc_newId += 1;
 						    endfor;    
+						    endblock;
 						
 						    while p_loc_counter <= p_maxCities do
 						        p_loc_randomNewId := ceil(uniform(val(first(i_loc_newid)), val(last(i_loc_newid))));
 						        ep_loc_newId := StringToElement(s_loc_newIds, p_loc_randomNewId, 0);
 						        ep_city := first(i_city | exists(i_id |  bp_loc_oldId_x_newId(i_id, ep_loc_newId) and bp_city_x_id(i_city, i_id)));
 						
-						        if ep_country and ep_city then
-						            pr_callAPIQuery(ep_city, ep_country);
+						        sp_loc_cityASCII := first(i_city_ascii | bp_city_x_cityASCII(ep_city, i_city_ascii));
+						
+						        if ep_country and sp_loc_cityASCII then
+						            pr_callAPIQuery(sp_loc_cityASCII, ep_country);
+						            p_loc_counter += 1;
 						        endif;
 						
-						        p_loc_counter += 1;
+						        if  p_loc_counter > 2000 then
+						            return 1;
+						        endif;            
 						    endwhile; 
 						else 
 						    raise error "No country with this name";   
@@ -596,6 +615,7 @@ Model Main_TravelingSalesman {
 						Index: i_loc_newid;
 						Parameter: ep_loc_newId;
 					}
+					StringParameter sp_loc_cityASCII;
 					ElementParameter ep_loc_cityCountry {
 						Range: s_countries;
 					}
@@ -618,15 +638,23 @@ Model Main_TravelingSalesman {
 						    ep_city := first(i_city | bp_city_x_id(i_city, ep_id));
 						    ep_country := first(i_country | bp_city_x_country(ep_city, i_country));
 						
-						    if ep_country and ep_city then
-						        pr_callAPIQuery(ep_city, ep_country);
+						    sp_loc_cityASCII := first(i_city_ascii | bp_city_x_cityASCII(ep_city, i_city_ascii));
+						
+						    if ep_country and sp_loc_cityASCII then
+						        pr_callAPIQuery(sp_loc_cityASCII, ep_country);
+						        p_loc_counter += 1;
 						    endif;
 						
-						    p_loc_counter += 1;
+						    if  p_loc_counter > 2000 then
+						        return 1;
+						    endif;   
 						endwhile;
 					}
-					Parameter p_loc_counter;
+					Parameter p_loc_counter {
+						InitialData: 0;
+					}
 					Parameter p_loc_randomId;
+					StringParameter sp_loc_cityASCII;
 				}
 				Procedure pr_cleanAllNodes {
 					Body: {
@@ -729,6 +757,8 @@ Model Main_TravelingSalesman {
 					block ! fetch query 
 					sp_loc_requestId := "fetch" + sp_in_city;
 					
+					sp_in_city := FindReplaceStrings(sp_in_city, " ", "%20");
+					
 					sp_loc_urlCall 
 					:=  "http://api.positionstack.com/v1/forward?access_key=" + sp_def_apiKey 
 					    + "&query=" + sp_in_city 
@@ -739,11 +769,14 @@ Model Main_TravelingSalesman {
 					        sp_loc_requestId,
 					        sp_loc_urlCall,
 					        'dex::client::EmptyCallback',
-					        responsefile:"out/Output.json");
+					        responsefile:"out/Output.json",
+					        tracefile:"Trace.xml");
 					
 					dex::client::PerformRequest(sp_loc_requestId);
-					dex::client::WaitForResponses(1000);    
+					dex::client::WaitForResponses(2000);    
 					endblock;
+					
+					delay(5);
 					
 					pr_readJSONOutput;
 				}
@@ -783,8 +816,6 @@ Model Main_TravelingSalesman {
 							mappingName :  "LatLongMapping", 
 							mappingFile :  "Mappings/Generated/LatLongDataset.xml");
 						
-						delay(5);
-						
 						dex::ReadFromFile(
 							dataFile         :  "out/Output.json", 
 							mappingName      :  "LatLongMapping", 
@@ -793,15 +824,46 @@ Model Main_TravelingSalesman {
 							resetCounters    :  1);
 						
 						! Mapping to main data model
+						empty ep_city;
 						ep_int_city := first(i_int_city);
-						ep_city := StringToElement(s_cities, ep_int_city, 0);
+						sp_loc_city := ep_int_city;
 						
-						if ep_city and ep_int_city then
+						pr_checkReplaceCharacters(sp_loc_city);
+						
+						ep_city := StringToElement(s_cities, sp_loc_city, 1);
+						
+						if ep_city then
 						    p_latitude(ep_city) := p_int_latitude(ep_int_city);
 						    p_longitude(ep_city) := p_int_longitude(ep_int_city);
+						else
+						    p_def_unableToFetch += 1;
 						endif;
 					}
+					StringParameter sp_loc_city;
 				}
+			}
+		}
+	}
+	Section Toolkit {
+		Procedure pr_checkReplaceCharacters {
+			Arguments: (sp_inout_string);
+			Body: {
+				sp_inout_string := FindReplaceStrings(sp_inout_string, "ã", "a");
+				sp_inout_string := FindReplaceStrings(sp_inout_string, "é", "e");
+				sp_inout_string := FindReplaceStrings(sp_inout_string, "á", "a");
+				sp_inout_string := FindReplaceStrings(sp_inout_string, "õ", "o");
+				sp_inout_string := FindReplaceStrings(sp_inout_string, "è", "e");
+				sp_inout_string := FindReplaceStrings(sp_inout_string, "í", "i");
+				sp_inout_string := FindReplaceStrings(sp_inout_string, "ì", "i");
+				sp_inout_string := FindReplaceStrings(sp_inout_string, "ó", "o");
+				sp_inout_string := FindReplaceStrings(sp_inout_string, "ò", "o");
+				sp_inout_string := FindReplaceStrings(sp_inout_string, "ú", "u");
+				sp_inout_string := FindReplaceStrings(sp_inout_string, "ù", "u");
+				sp_inout_string := FindReplaceStrings(sp_inout_string, "ñ", "n");
+			}
+			Comment: "í";
+			StringParameter sp_inout_string {
+				Property: InOut;
 			}
 		}
 	}
