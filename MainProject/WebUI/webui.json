@@ -146,7 +146,7 @@
       "literal": {
         "componentName": "Grid",
         "props": {
-          "gridTemplateColumns": "1fr 1fr",
+          "gridTemplateColumns": "0.8fr 0.2fr",
           "gridTemplateRows": "1fr 0.3fr 2.5fr 0.3fr 1fr 0.3fr 4fr",
           "gridTemplateAreas": "\"area-a area-a\" \"area-x area-b\" \"area-c area-c\" \"area-y area-d\" \"area-e area-e\" \"area-z area-f\" \"area-g area-g\""
         },
@@ -327,38 +327,38 @@
       "literal": [
         {
           "widgetUri": "btn_addThisCity",
-          "gridArea": "area-x",
-          "dndId": "area-bbtn_addThisCity6"
+          "gridArea": "area-b",
+          "dndId": "area-xbtn_addThisCity0"
         },
         {
           "widgetUri": "lbl_titleAddLimity",
           "gridArea": "area-e",
-          "dndId": "area-elbl_titleAddLimity0"
+          "dndId": "area-elbl_titleAddLimity1"
         },
         {
           "widgetUri": "scl_addByLimit",
           "gridArea": "area-e",
-          "dndId": "area-escl_addByLimit1"
+          "dndId": "area-escl_addByLimit2"
         },
         {
           "widgetUri": "btn_addByCountry",
           "gridArea": "area-d",
-          "dndId": "area-dbtn_addByCountry2"
+          "dndId": "area-dbtn_addByCountry3"
         },
         {
           "widgetUri": "btn_addByLimity",
           "gridArea": "area-f",
-          "dndId": "area-fbtn_addByLimity3"
+          "dndId": "area-fbtn_addByLimity4"
         },
         {
           "widgetUri": "lbl_tittleAddCity",
           "gridArea": "area-a",
-          "dndId": "area-albl_tittleAddCity4"
+          "dndId": "area-albl_tittleAddCity5"
         },
         {
           "widgetUri": "scl_addByCity",
           "gridArea": "area-a",
-          "dndId": "area-ascl_addByCity5"
+          "dndId": "area-ascl_addByCity6"
         },
         {
           "widgetUri": "lbl_titleAddCountry",
@@ -694,7 +694,7 @@
       "literal": "btn_addByCountry"
     },
     "title": {
-      "literal": "run"
+      "literal": "⚙"
     }
   },
   "widgets/btn_addByLimity": {
@@ -711,7 +711,7 @@
       "literal": "btn_addByLimity"
     },
     "title": {
-      "literal": "fd"
+      "literal": "⚙"
     }
   },
   "widgets/btn_addThisCity": {
@@ -728,7 +728,7 @@
       "literal": "btn_addThisCity"
     },
     "title": {
-      "literal": "btn_addThisCity"
+      "literal": "⚙"
     }
   },
   "widgets/btn_cleanAllNodes": {
@@ -855,7 +855,7 @@
       "literal": "Add by Limit"
     },
     "name": {
-      "literal": "lbl_titleAddLimity"
+      "literal": "lbl_titleAddLimit"
     }
   },
   "widgets/lbl_tittleAddCity": {
@@ -926,10 +926,10 @@
       }
     },
     "center.latitude": {
-      "literal": 22.91792293614605
+      "literal": 6.315298538330033
     },
     "center.longitude": {
-      "literal": 80.85937500000002
+      "literal": -57.30468750000001
     },
     "heatmaps.__display_order__": {
       "literal": [
@@ -948,7 +948,8 @@
       "aimms": {
         "contents": [
           "p_longitude",
-          "p_latitude"
+          "p_latitude",
+          "p_def_nodeSize"
         ],
         "slices": [
           {
@@ -956,8 +957,8 @@
             "slice": [
               {
                 "index": "i_city",
-                "type": "free",
-                "value": "i_city"
+                "type": "subset",
+                "value": "i_node1"
               }
             ]
           },
@@ -966,12 +967,27 @@
             "slice": [
               {
                 "index": "i_city",
-                "type": "free",
-                "value": "i_city"
+                "type": "subset",
+                "value": "i_node1"
+              }
+            ]
+          },
+          {
+            "identifier": "p_def_nodeSize",
+            "slice": [
+              {
+                "index": "i_city",
+                "type": "subset",
+                "value": "i_node1"
               }
             ]
           }
         ]
+      }
+    },
+    "nodes.0.index": {
+      "literal": {
+        "identifier": "i_node1"
       }
     },
     "nodes.0.latitude": {
@@ -980,8 +996,8 @@
         "slice": [
           {
             "index": "i_city",
-            "type": "free",
-            "value": "i_city"
+            "type": "subset",
+            "value": "i_node1"
           }
         ]
       }
@@ -992,8 +1008,23 @@
         "slice": [
           {
             "index": "i_city",
-            "type": "free",
-            "value": "i_city"
+            "type": "subset",
+            "value": "i_node1"
+          }
+        ]
+      }
+    },
+    "nodes.0.maximumreferencesize": {
+      "literal": 30
+    },
+    "nodes.0.size": {
+      "literal": {
+        "identifier": "p_def_nodeSize",
+        "slice": [
+          {
+            "index": "i_city",
+            "type": "subset",
+            "value": "i_node1"
           }
         ]
       }
@@ -1062,10 +1093,10 @@
       }
     },
     "center.latitude": {
-      "literal": 7.536764322084078
+      "literal": 9.102096738726456
     },
     "center.longitude": {
-      "literal": -29.355468750000005
+      "literal": -58.71093750000001
     },
     "heatmaps.__display_order__": {
       "literal": [
@@ -1084,7 +1115,8 @@
       "aimms": {
         "contents": [
           "p_longitude",
-          "p_latitude"
+          "p_latitude",
+          "p_def_nodeSize"
         ],
         "slices": [
           {
@@ -1092,8 +1124,8 @@
             "slice": [
               {
                 "index": "i_city",
-                "type": "free",
-                "value": "i_city"
+                "type": "subset",
+                "value": "i_node1"
               }
             ]
           },
@@ -1102,12 +1134,27 @@
             "slice": [
               {
                 "index": "i_city",
-                "type": "free",
-                "value": "i_city"
+                "type": "subset",
+                "value": "i_node1"
+              }
+            ]
+          },
+          {
+            "identifier": "p_def_nodeSize",
+            "slice": [
+              {
+                "index": "i_city",
+                "type": "subset",
+                "value": "i_node1"
               }
             ]
           }
         ]
+      }
+    },
+    "nodes.0.index": {
+      "literal": {
+        "identifier": "i_node1"
       }
     },
     "nodes.0.latitude": {
@@ -1116,8 +1163,8 @@
         "slice": [
           {
             "index": "i_city",
-            "type": "free",
-            "value": "i_city"
+            "type": "subset",
+            "value": "i_node1"
           }
         ]
       }
@@ -1128,8 +1175,23 @@
         "slice": [
           {
             "index": "i_city",
-            "type": "free",
-            "value": "i_city"
+            "type": "subset",
+            "value": "i_node1"
+          }
+        ]
+      }
+    },
+    "nodes.0.maximumreferencesize": {
+      "literal": 30
+    },
+    "nodes.0.size": {
+      "literal": {
+        "identifier": "p_def_nodeSize",
+        "slice": [
+          {
+            "index": "i_city",
+            "type": "subset",
+            "value": "i_node1"
           }
         ]
       }
@@ -1138,7 +1200,7 @@
       "literal": "Improved Tour (Simultaneous)"
     },
     "zoom": {
-      "literal": 3
+      "literal": 2
     }
   },
   "widgets/map_initialTour": {
@@ -1160,14 +1222,14 @@
             "identifier": "p_init_tourConnect",
             "slice": [
               {
-                "index": "i_city1",
+                "index": "i_node1",
                 "type": "free",
-                "value": "i_city1"
+                "value": "i_node1"
               },
               {
-                "index": "i_city2",
+                "index": "i_node2",
                 "type": "free",
-                "value": "i_city2"
+                "value": "i_node2"
               }
             ]
           }
@@ -1185,23 +1247,26 @@
         "identifier": "p_init_tourConnect",
         "slice": [
           {
-            "index": "i_city1",
+            "index": "i_node1",
             "type": "free",
-            "value": "i_city1"
+            "value": "i_node1"
           },
           {
-            "index": "i_city2",
+            "index": "i_node2",
             "type": "free",
-            "value": "i_city2"
+            "value": "i_node2"
           }
         ]
       }
     },
+    "arcs.0.width.dynamic": {
+      "literal": false
+    },
     "center.latitude": {
-      "literal": -10.31491928581316
+      "literal": 19.973348786110614
     },
     "center.longitude": {
-      "literal": -70.31250000000002
+      "literal": -43.94531250000001
     },
     "heatmaps.__display_order__": {
       "literal": [
@@ -1220,7 +1285,8 @@
       "aimms": {
         "contents": [
           "p_longitude",
-          "p_latitude"
+          "p_latitude",
+          "p_def_nodeSize"
         ],
         "slices": [
           {
@@ -1228,8 +1294,8 @@
             "slice": [
               {
                 "index": "i_city",
-                "type": "free",
-                "value": "i_city"
+                "type": "subset",
+                "value": "i_node1"
               }
             ]
           },
@@ -1238,12 +1304,27 @@
             "slice": [
               {
                 "index": "i_city",
-                "type": "free",
-                "value": "i_city"
+                "type": "subset",
+                "value": "i_node1"
+              }
+            ]
+          },
+          {
+            "identifier": "p_def_nodeSize",
+            "slice": [
+              {
+                "index": "i_city",
+                "type": "subset",
+                "value": "i_node1"
               }
             ]
           }
         ]
+      }
+    },
+    "nodes.0.index": {
+      "literal": {
+        "identifier": "i_node1"
       }
     },
     "nodes.0.latitude": {
@@ -1252,8 +1333,8 @@
         "slice": [
           {
             "index": "i_city",
-            "type": "free",
-            "value": "i_city"
+            "type": "subset",
+            "value": "i_node1"
           }
         ]
       }
@@ -1264,8 +1345,23 @@
         "slice": [
           {
             "index": "i_city",
-            "type": "free",
-            "value": "i_city"
+            "type": "subset",
+            "value": "i_node1"
+          }
+        ]
+      }
+    },
+    "nodes.0.maximumreferencesize": {
+      "literal": 30
+    },
+    "nodes.0.size": {
+      "literal": {
+        "identifier": "p_def_nodeSize",
+        "slice": [
+          {
+            "index": "i_city",
+            "type": "subset",
+            "value": "i_node1"
           }
         ]
       }
@@ -1274,7 +1370,7 @@
       "literal": "Initial Tour"
     },
     "zoom": {
-      "literal": 3
+      "literal": 2
     }
   },
   "widgets/scl_addByCity": {
@@ -1310,6 +1406,9 @@
         ]
       }
     },
+    "contents.numdecimals": {
+      "literal": 0
+    },
     "name": {
       "literal": "scl_addByCountry"
     }
@@ -1327,6 +1426,9 @@
           "p_maxCities"
         ]
       }
+    },
+    "contents.numdecimals": {
+      "literal": 0
     },
     "name": {
       "literal": "scl_addByLimit"

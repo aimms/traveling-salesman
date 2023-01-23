@@ -1,8 +1,11 @@
-== Info: Found bundle for host api.positionstack.com: 0x26161fe5178 [serially]
-== Info: Re-using existing connection! (#0) with host api.positionstack.com
-== Info: Connected to api.positionstack.com (104.21.65.172) port 80 (#0)
-=> Send header, 145 bytes
-GET /v1/forward?access_key=54c8e0e21241f8f235ff0e7329aa989b&query=Aldan&limit=1&country=RU HTTP/1.1
+== Info: Too old connection (139 seconds), disconnect it
+== Info: Connection 1 seems to be dead!
+== Info: Closing connection 1
+== Info: Hostname in DNS cache was stale, zapped
+== Info:   Trying 172.67.164.241:80...
+== Info: Connected to api.positionstack.com (172.67.164.241) port 80 (#2)
+=> Send header, 148 bytes
+GET /v1/forward?access_key=54c8e0e21241f8f235ff0e7329aa989b&query=Campinas&limit=1&country=BR HTTP/1.1
 Host: api.positionstack.com
 Accept: */*
 
@@ -10,7 +13,7 @@ Accept: */*
 <= Recv header, 17 bytes
 HTTP/1.1 200 OK
 <= Recv header, 37 bytes
-Date: Tue, 10 Jan 2023 18:23:49 GMT
+Date: Mon, 23 Jan 2023 21:29:51 GMT
 <= Recv header, 32 bytes
 Content-Type: application/json
 <= Recv header, 28 bytes
@@ -26,7 +29,7 @@ accept-encoding: gzip
 <= Recv header, 34 bytes
 cache-control: no-cache, private
 <= Recv header, 65 bytes
-x-apilayer-transaction-id: 31719ad8-1fe8-4b82-a67e-8d4b93b5da4c
+x-apilayer-transaction-id: 11f8269c-81a5-4b9c-beea-03dd9364a63a
 <= Recv header, 32 bytes
 access-control-allow-origin: *
 <= Recv header, 56 bytes
@@ -36,29 +39,29 @@ access-control-allow-headers: *
 <= Recv header, 22 bytes
 x-quota-limit: 25000
 <= Recv header, 26 bytes
-x-quota-remaining: 23873
+x-quota-remaining: 23770
 <= Recv header, 22 bytes
 x-increment-usage: 1
 <= Recv header, 23 bytes
-x-request-time: 0.081
+x-request-time: 0.219
 <= Recv header, 26 bytes
 CF-Cache-Status: DYNAMIC
-<= Recv header, 266 bytes
-Report-To: {"endpoints":[{"url":"https:\/\/a.nel.cloudflare.com\/report\/v3?s=QyltGwayaMp%2BujksClQgco2yZVvPt4mpVOEbl8ItHNrImMmzxUP1tb2m7quEyLbSXN9c8rIFuJ3pwyXZ7aOmJGEexZ7qGR2E7xmtO0%2Bteg65nmjPBN6t%2BWRPgPpykrSkvwNGxCEBbNg%3D"}],"group":"cf-nel","max_age":604800}
+<= Recv header, 268 bytes
+Report-To: {"endpoints":[{"url":"https:\/\/a.nel.cloudflare.com\/report\/v3?s=qmjZj8CnbteGVQJHxG%2BPCxd4vANVoB1cRHzPzl9lmW5xT8wqwGLFEnEjyPoeo7aLY%2F%2FUheQ8HP3VmDXWjudzT7j7g3tTkt7O3vX1vNqzTaPP3SQdpq4ihAlGpLev12RMa%2FYqs2RaBGA%3D"}],"group":"cf-nel","max_age":604800}
 <= Recv header, 67 bytes
 NEL: {"success_fraction":0,"report_to":"cf-nel","max_age":604800}
 <= Recv header, 20 bytes
 Server: cloudflare
 <= Recv header, 30 bytes
-CF-RAY: 7877722e5d17a62f-GRU
+CF-RAY: 78e3a08ce9e4a4bc-GRU
 <= Recv header, 54 bytes
 alt-svc: h3=":443"; ma=86400, h3-29=":443"; ma=86400
 <= Recv header, 2 bytes
 
-<= Recv data, 369 bytes
-165
-{"data":[{"latitude":58.602315,"longitude":125.383794,"type":"locality","name":"Aldan","number":null,"postal_code":null,"street":null,"confidence":1,"region":"Sakha","region_code":"SK","county":null,"locality":"Aldan","administrative_area":null,"neighbourhood":null,"country":"Russia","country_code":"RUS","continent":"Europe","label":"Aldan, SK, Russia"}]}
+<= Recv data, 402 bytes
+186
+{"data":[{"latitude":-22.904243,"longitude":-47.109468,"type":"locality","name":"Campinas","number":null,"postal_code":null,"street":null,"confidence":1,"region":"Sao Paulo","region_code":"SP","county":"Campinas","locality":"Campinas","administrative_area":"Campinas","neighbourhood":null,"country":"Brazil","country_code":"BRA","continent":"South America","label":"Campinas, SP, Brazil"}]}
 0
 
 
-== Info: Connection #0 to host api.positionstack.com left intact
+== Info: Connection #2 to host api.positionstack.com left intact

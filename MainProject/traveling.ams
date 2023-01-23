@@ -49,6 +49,7 @@ Model Main_TravelingSalesman {
 					Text: "The set of cities in the tour";
 					Index: i_city1, i_city2, i_city;
 					Parameter: ep_city;
+					webui::AnnotationsIdentifier: sp_def_nodeAnnotation;
 				}
 				Set s_citiesASCII {
 					Index: i_city_ascii;
@@ -163,6 +164,7 @@ Model Main_TravelingSalesman {
 				Parameter p_init_tourConnect {
 					IndexDomain: (i_node1,i_node2);
 					Text: "City i connected to city j in initial tour";
+					webui::TooltipIdentifier: sp_def_arcTooltip(i_node1,i_node2);
 				}
 				ElementParameter ep_init_nextCity {
 					IndexDomain: i_city;
@@ -539,6 +541,29 @@ Model Main_TravelingSalesman {
 				StringParameter sp_def_toursPrimaryActions {
 					IndexDomain: webui::indexPageActionSpec;
 					Definition: data { displaytext : "Run All",  icon : "aimms-airplane",  procedure : "pr_runAll",  state : "active" };
+				}
+				Parameter p_def_nodeSize {
+					IndexDomain: i_city;
+					Definition: 2;
+					webui::TooltipIdentifier: sp_def_nodeTooltip(i_city);
+				}
+				StringParameter sp_def_nodeTooltip {
+					IndexDomain: i_city | exists(i_node1 | i_node1 = i_city) or exists(i_node2 | i_node2 = i_city);
+					Definition: {
+						"<p style=\"text-align: left;\"><em>" + i_city + "</em></p>" +
+						"<p style=\"text-align: left;\"><strong>Latitude: </strong>" + p_latitude(i_city) + "</p>" +
+						"<p style=\"text-align: left;\"><strong>Longitude: </strong>" + p_longitude(i_city) + "</p>"
+					}
+				}
+				StringParameter sp_def_arcTooltip {
+					IndexDomain: (i_node1,i_node2) | i_node1 <> i_node2;
+					Definition: {
+						"<p style=\"text-align: left;\">From <em>" + i_node1 + "</em> to <em>" + i_node2 + "</em>.</p>"
+					}
+				}
+				StringParameter sp_def_nodeAnnotation {
+					IndexDomain: i_city;
+					Definition: "node";
 				}
 			}
 			Section Add_Cities_DialogPage {

@@ -1,0 +1,9 @@
+.annotation-node{
+  fill: var(--secondary);
+}
+
+.aimms-widget[data-widget\.uri="btn_addThisCity"]  .ui-button,
+.aimms-widget[data-widget\.uri="btn_addByCountry"]  .ui-button,
+.aimms-widget[data-widget\.uri="btn_addByLimity"]  .ui-button  {
+  width: 40px;
+}
