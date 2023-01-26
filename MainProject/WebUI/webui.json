@@ -929,7 +929,7 @@
       "literal": 6.315298538330033
     },
     "center.longitude": {
-      "literal": -57.30468750000001
+      "literal": 55.19531250000001
     },
     "heatmaps.__display_order__": {
       "literal": [
@@ -1093,10 +1093,10 @@
       }
     },
     "center.latitude": {
-      "literal": 9.102096738726456
+      "literal": -17.978733095556156
     },
     "center.longitude": {
-      "literal": -58.71093750000001
+      "literal": -20.039062500000005
     },
     "heatmaps.__display_order__": {
       "literal": [
@@ -1263,10 +1263,10 @@
       "literal": false
     },
     "center.latitude": {
-      "literal": 19.973348786110614
+      "literal": -3.513421045640032
     },
     "center.longitude": {
-      "literal": -43.94531250000001
+      "literal": -10.546875000000002
     },
     "heatmaps.__display_order__": {
       "literal": [

@@ -592,10 +592,10 @@ Model Main_TravelingSalesman {
 				}
 				Procedure pr_addByCountry {
 					Body: {
-						empty ep_country, p_latitude, p_longitude;
+						empty ep_country;
 						
 						ep_country := StringToElement(s_countries, sp_addByCountry, 0);
-						p_loc_counter := 1;
+						p_loc_counter := 0;
 						
 						if sp_addByCountry and ep_country then
 						    block 
@@ -616,7 +616,7 @@ Model Main_TravelingSalesman {
 						    endfor;    
 						    endblock;
 						
-						    while p_loc_counter <= p_maxCities do
+						    while p_loc_counter < p_maxCities do
 						        p_loc_randomNewId := ceil(uniform(val(first(i_loc_newid)), val(last(i_loc_newid))));
 						        ep_loc_newId := StringToElement(s_loc_newIds, p_loc_randomNewId, 0);
 						        ep_city := first(i_city | exists(i_id |  bp_loc_oldId_x_newId(i_id, ep_loc_newId) and bp_city_x_id(i_city, i_id)));
@@ -624,6 +624,10 @@ Model Main_TravelingSalesman {
 						        sp_loc_cityASCII := first(i_city_ascii | bp_city_x_cityASCII(ep_city, i_city_ascii));
 						
 						        if ep_country and sp_loc_cityASCII then
+						
+						            sp_loc_message := 100 * (p_loc_counter/$ p_maxCities) + " % - Fetching: " + sp_loc_cityASCII + " - " + ep_country;
+						            webui::SetProgressMessage(sp_loc_message);
+						
 						            pr_callAPIQuery(sp_loc_cityASCII, ep_country);
 						            p_loc_counter += 1;
 						        endif;
@@ -641,12 +645,15 @@ Model Main_TravelingSalesman {
 						Parameter: ep_loc_newId;
 					}
 					StringParameter sp_loc_cityASCII;
+					StringParameter sp_loc_message;
 					ElementParameter ep_loc_cityCountry {
 						Range: s_countries;
 					}
 					Parameter p_loc_randomNewId;
 					Parameter p_loc_counter;
-					Parameter p_loc_cardinalityOfCitiesFromCountry;
+					Parameter p_loc_cardinalityOfCitiesFromCountry {
+						InitialData: 1;
+					}
 					Parameter bp_loc_oldId_x_newId {
 						IndexDomain: (i_id,i_loc_newid);
 						Range: binary;
@@ -654,9 +661,11 @@ Model Main_TravelingSalesman {
 				}
 				Procedure pr_addByLimit {
 					Body: {
-						empty ep_country, ep_city, p_latitude, p_longitude;
+						empty ep_country, ep_city;
 						
-						while p_loc_counter <= p_maxCities do
+						p_loc_counter:= 0;
+						
+						while p_loc_counter < p_maxCities do
 						    p_loc_randomId := ceil(uniform(val(first(i_id)), val(last(i_id))));
 						    ep_id := StringToElement(s_ids, p_loc_randomId, 0);
 						
@@ -666,6 +675,9 @@ Model Main_TravelingSalesman {
 						    sp_loc_cityASCII := first(i_city_ascii | bp_city_x_cityASCII(ep_city, i_city_ascii));
 						
 						    if ep_country and sp_loc_cityASCII then
+						        sp_loc_message := 100 * (p_loc_counter/$ p_maxCities) + " % - Fetching: " + sp_loc_cityASCII + " - " + ep_country;
+						        webui::SetProgressMessage(sp_loc_message);
+						
 						        pr_callAPIQuery(sp_loc_cityASCII, ep_country);
 						        p_loc_counter += 1;
 						    endif;
@@ -680,6 +692,7 @@ Model Main_TravelingSalesman {
 					}
 					Parameter p_loc_randomId;
 					StringParameter sp_loc_cityASCII;
+					StringParameter sp_loc_message;
 				}
 				Procedure pr_cleanAllNodes {
 					Body: {

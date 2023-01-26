@@ -1,11 +1,8 @@
-== Info: Too old connection (139 seconds), disconnect it
-== Info: Connection 1 seems to be dead!
-== Info: Closing connection 1
-== Info: Hostname in DNS cache was stale, zapped
-== Info:   Trying 172.67.164.241:80...
-== Info: Connected to api.positionstack.com (172.67.164.241) port 80 (#2)
-=> Send header, 148 bytes
-GET /v1/forward?access_key=54c8e0e21241f8f235ff0e7329aa989b&query=Campinas&limit=1&country=BR HTTP/1.1
+== Info: Found bundle for host api.positionstack.com: 0x1cc6e620b68 [serially]
+== Info: Re-using existing connection! (#7) with host api.positionstack.com
+== Info: Connected to api.positionstack.com (172.67.164.241) port 80 (#7)
+=> Send header, 162 bytes
+GET /v1/forward?access_key=54c8e0e21241f8f235ff0e7329aa989b&query=Governador%20Valadares&limit=1&country=BR HTTP/1.1
 Host: api.positionstack.com
 Accept: */*
 
@@ -13,7 +10,7 @@ Accept: */*
 <= Recv header, 17 bytes
 HTTP/1.1 200 OK
 <= Recv header, 37 bytes
-Date: Mon, 23 Jan 2023 21:29:51 GMT
+Date: Wed, 25 Jan 2023 19:45:20 GMT
 <= Recv header, 32 bytes
 Content-Type: application/json
 <= Recv header, 28 bytes
@@ -29,7 +26,7 @@ accept-encoding: gzip
 <= Recv header, 34 bytes
 cache-control: no-cache, private
 <= Recv header, 65 bytes
-x-apilayer-transaction-id: 11f8269c-81a5-4b9c-beea-03dd9364a63a
+x-apilayer-transaction-id: 48caf568-fbbb-40f6-a069-f45653b65b24
 <= Recv header, 32 bytes
 access-control-allow-origin: *
 <= Recv header, 56 bytes
@@ -39,29 +36,31 @@ access-control-allow-headers: *
 <= Recv header, 22 bytes
 x-quota-limit: 25000
 <= Recv header, 26 bytes
-x-quota-remaining: 23770
+x-quota-remaining: 23699
 <= Recv header, 22 bytes
 x-increment-usage: 1
 <= Recv header, 23 bytes
-x-request-time: 0.219
+x-request-time: 0.070
 <= Recv header, 26 bytes
 CF-Cache-Status: DYNAMIC
-<= Recv header, 268 bytes
-Report-To: {"endpoints":[{"url":"https:\/\/a.nel.cloudflare.com\/report\/v3?s=qmjZj8CnbteGVQJHxG%2BPCxd4vANVoB1cRHzPzl9lmW5xT8wqwGLFEnEjyPoeo7aLY%2F%2FUheQ8HP3VmDXWjudzT7j7g3tTkt7O3vX1vNqzTaPP3SQdpq4ihAlGpLev12RMa%2FYqs2RaBGA%3D"}],"group":"cf-nel","max_age":604800}
+<= Recv header, 272 bytes
+Report-To: {"endpoints":[{"url":"https:\/\/a.nel.cloudflare.com\/report\/v3?s=DsgHF9dB2uetoxg%2FkDHwtJOXeQM9UA7vm9Fb085jJwNz67FYiHcrBSboxDVu1pN%2FFKKU5IPDJhSM443RDgTzqbmHqrBEYDdqRD25ebbp0x9aN4oAiv2ePukGYmouyq%2B%2Bn%2F%2F2YVq9ynE%3D"}],"group":"cf-nel","max_age":604800}
 <= Recv header, 67 bytes
 NEL: {"success_fraction":0,"report_to":"cf-nel","max_age":604800}
 <= Recv header, 20 bytes
 Server: cloudflare
 <= Recv header, 30 bytes
-CF-RAY: 78e3a08ce9e4a4bc-GRU
+CF-RAY: 78f382378b4ea49c-GRU
 <= Recv header, 54 bytes
 alt-svc: h3=":443"; ma=86400, h3-29=":443"; ma=86400
 <= Recv header, 2 bytes
 
-<= Recv data, 402 bytes
-186
-{"data":[{"latitude":-22.904243,"longitude":-47.109468,"type":"locality","name":"Campinas","number":null,"postal_code":null,"street":null,"confidence":1,"region":"Sao Paulo","region_code":"SP","county":"Campinas","locality":"Campinas","administrative_area":"Campinas","neighbourhood":null,"country":"Brazil","country_code":"BRA","continent":"South America","label":"Campinas, SP, Brazil"}]}
+<= Recv data, 460 bytes
+1c5
+{"data":[{"latitude":-18.876989,"longitude":-41.928484,"type":"locality","name":"Governador Valadares","number":null,"postal_code":null,"street":null,"confidence":1,"region":"Minas Gerais","region_code":"MG","county":"Governador Valadares","locality":"Governador Valadares","administrative_area":"Governador Valadares","neighbourhood":null,"country":"Brazil","country_code":"BRA","continent":"South America","label":"Governador Valadares, MG, Brazil"}]}
+
+<= Recv data, 5 bytes
 0
 
 
-== Info: Connection #2 to host api.positionstack.com left intact
+== Info: Connection #7 to host api.positionstack.com left intact
