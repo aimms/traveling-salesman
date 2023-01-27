@@ -79,3 +79,5 @@
 "sp_toursSidePanel" "sp_def_toursSidePanel" "2023-01-10 18:12:51"
 "p_nodeSize" "p_def_nodeSize" "2023-01-23 20:41:53"
 "Copy_sp_def_nodeTooltip" "sp_def_arcTooltip" "2023-01-23 20:51:28"
+"MyItemActions" "sp_nodeItemActions" "2023-01-27 18:00:25"
+"sp_nodeItemActions" "sp_def_nodeItemActions" "2023-01-27 18:00:29"

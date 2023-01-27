@@ -9,3 +9,20 @@
 .aimms-widget[data-widget\.uri="btn_addByLimity"]  .ui-button  {
   width: 40px;
 }
+
+.sidepanel-container .sidepanel-tab.active {
+  background-color: var(--primaryDark);
+}
+
+.sidepanel-container .sidepanel-tab .sidepanel-icon, 
+.sidepanel-container .sidepanel-tab:hover {
+  color: var(--primaryDark);
+}
+
+.sidepanel-container .sidepanel-tab.active{
+  color: var(--color_bg_widget-canvas,#fff);
+} 
+
+.sidepanel-container .sidepanel-tab {
+  height: 150px;
+}

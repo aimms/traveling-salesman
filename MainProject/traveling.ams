@@ -126,7 +126,7 @@ Model Main_TravelingSalesman {
 				Parameter p_def_iterationLimit {
 					Text: "Maximum number of iterations to improve tour";
 					Definition: {
-						floor(p_maxCities / 3);
+						floor(card(s_nodes) / 3);
 					}
 				}
 				Parameter p_def_maxNeighbors {
@@ -415,7 +415,7 @@ Model Main_TravelingSalesman {
 						ep_node := First(s_nodes);
 						
 						while (p_cyc_swaps < p_def_iterationLimit 
-						        and p_loc_uselessLoops <= p_maxCities) do
+						        and p_loc_uselessLoops <= card(s_nodes)) do
 						
 						    GMP::ProgressWindow::DisplayLine(1, "Phase", "Select cities");
 						
@@ -530,12 +530,19 @@ Model Main_TravelingSalesman {
 		}
 		Section Pages {
 			Section Tours_Page {
+				Procedure pr_deleteNode {
+					Body: {
+						empty p_latitude(ep_city);
+						empty p_longitude(ep_city);
+					}
+				}
 				StringParameter sp_def_toursSidePanel {
 					IndexDomain: (webui::indexPageExtension,webui::indexSidePanelSpec);
 					Definition: {
 						data 
 						{ ( 1, displayText ) : "New Network"   ,  ( 1, pageId      ) : "new_network"   ,  ( 1, state       ) : "active"        ,
-						  ( 2, displayText ) : "Tour Distances",  ( 2, pageId      ) : "tour_distances",  ( 2, state       ) : "active"         }
+						  ( 2, displayText ) : "Tour Distances",  ( 2, pageId      ) : "tour_distances",  ( 2, icon        ) : "aimms-info2"   ,
+						  ( 2, state       ) : "active"         }
 					}
 				}
 				StringParameter sp_def_toursPrimaryActions {
@@ -564,6 +571,14 @@ Model Main_TravelingSalesman {
 				StringParameter sp_def_nodeAnnotation {
 					IndexDomain: i_city;
 					Definition: "node";
+				}
+				StringParameter sp_def_nodeItemActions {
+					IndexDomain: (webui::indexWidgetItemActionSpec,webui::indexPageExtension,webui::indexWidgetActionSpec);
+					Definition: {
+						data 
+						{ ( p_def_nodeSize, 1, displaytext ) : "Delete this node"  ,  ( p_def_nodeSize, 1, icon        ) : "aimms-cross" ,
+						  ( p_def_nodeSize, 1, procedure   ) : "pr_deleteNode"  ,  ( p_def_nodeSize, 1, state       ) : "active" }
+					}
 				}
 			}
 			Section Add_Cities_DialogPage {

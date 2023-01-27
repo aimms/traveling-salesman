@@ -6,4 +6,6 @@
 		</Template>
 	</Template>
 	<Template Name="Page Size" PageGUID="A8DD668B-5AEE-4646-A1EE-D2FE04E2FB1C" />
+	<Page Name="All Data Pages" PageGUID="ADB886F2-835E-492F-91FE-A45090A05A0C" />
+	<Page Name="[Data Page] sp_def_nodeItemActions" PageGUID="B01406ED-6170-4D45-B994-53FBE32A29A4" />
 </TemplateManager>

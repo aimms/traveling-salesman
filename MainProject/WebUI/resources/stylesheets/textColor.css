@@ -16,7 +16,8 @@ input.boolean-cell-editor-contents {
 .title-addon,
 .tag-label>.label,
 .ui-dialog .ui-dialog-title,
-.page-container__dialog-header .title{
+.page-container__dialog-header .title,
+.sidepanel-header .side-panel__header-text{
   text-transform: uppercase;
   text-shadow: 1px 1px 0px var(--primaryDark);
   color: whitesmoke;
@@ -29,3 +30,4 @@ input.boolean-cell-editor-contents {
 .widget-menu-container .widget-menu-items-wrapper .widget-menu-item .title {
   color: var(--primaryDark);
 }
+

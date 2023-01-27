@@ -1,1 +1,6 @@
 <?xml version="1.0"?>
+<PageManager>
+	<Page Name="All Data Pages" PageGUID="ADB886F2-835E-492F-91FE-A45090A05A0C">
+		<Page Name="[Data Page] sp_def_nodeItemActions" PageGUID="B01406ED-6170-4D45-B994-53FBE32A29A4" />
+	</Page>
+</PageManager>

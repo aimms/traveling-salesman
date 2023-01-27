@@ -1,8 +1,8 @@
-== Info: Found bundle for host api.positionstack.com: 0x1cc6e620b68 [serially]
-== Info: Re-using existing connection! (#7) with host api.positionstack.com
-== Info: Connected to api.positionstack.com (172.67.164.241) port 80 (#7)
-=> Send header, 162 bytes
-GET /v1/forward?access_key=54c8e0e21241f8f235ff0e7329aa989b&query=Governador%20Valadares&limit=1&country=BR HTTP/1.1
+== Info: Found bundle for host api.positionstack.com: 0x1ca43d24d88 [serially]
+== Info: Re-using existing connection! (#5) with host api.positionstack.com
+== Info: Connected to api.positionstack.com (104.21.65.172) port 80 (#5)
+=> Send header, 147 bytes
+GET /v1/forward?access_key=54c8e0e21241f8f235ff0e7329aa989b&query=Winneba&limit=1&country=GH HTTP/1.1
 Host: api.positionstack.com
 Accept: */*
 
@@ -10,7 +10,7 @@ Accept: */*
 <= Recv header, 17 bytes
 HTTP/1.1 200 OK
 <= Recv header, 37 bytes
-Date: Wed, 25 Jan 2023 19:45:20 GMT
+Date: Fri, 27 Jan 2023 18:48:59 GMT
 <= Recv header, 32 bytes
 Content-Type: application/json
 <= Recv header, 28 bytes
@@ -26,7 +26,7 @@ accept-encoding: gzip
 <= Recv header, 34 bytes
 cache-control: no-cache, private
 <= Recv header, 65 bytes
-x-apilayer-transaction-id: 48caf568-fbbb-40f6-a069-f45653b65b24
+x-apilayer-transaction-id: 80ed0d0b-1390-4db0-9234-0cf1afcc357d
 <= Recv header, 32 bytes
 access-control-allow-origin: *
 <= Recv header, 56 bytes
@@ -36,31 +36,29 @@ access-control-allow-headers: *
 <= Recv header, 22 bytes
 x-quota-limit: 25000
 <= Recv header, 26 bytes
-x-quota-remaining: 23699
+x-quota-remaining: 23622
 <= Recv header, 22 bytes
 x-increment-usage: 1
 <= Recv header, 23 bytes
-x-request-time: 0.070
+x-request-time: 0.061
 <= Recv header, 26 bytes
 CF-Cache-Status: DYNAMIC
-<= Recv header, 272 bytes
-Report-To: {"endpoints":[{"url":"https:\/\/a.nel.cloudflare.com\/report\/v3?s=DsgHF9dB2uetoxg%2FkDHwtJOXeQM9UA7vm9Fb085jJwNz67FYiHcrBSboxDVu1pN%2FFKKU5IPDJhSM443RDgTzqbmHqrBEYDdqRD25ebbp0x9aN4oAiv2ePukGYmouyq%2B%2Bn%2F%2F2YVq9ynE%3D"}],"group":"cf-nel","max_age":604800}
+<= Recv header, 274 bytes
+Report-To: {"endpoints":[{"url":"https:\/\/a.nel.cloudflare.com\/report\/v3?s=Xffp4PA9YIOGWzyA8g8LUxmXXOUzgA8OZ%2FLYzor%2BYctu%2F04qL08G1UDMnZo6iGam%2FQlRFRDElZm55Crqge0Xpqa%2BIWJl5hecJx1ry0fyX1OoS%2BNdEfxSFqjQupuUnqD%2B0t5qeZl3Dbk%3D"}],"group":"cf-nel","max_age":604800}
 <= Recv header, 67 bytes
 NEL: {"success_fraction":0,"report_to":"cf-nel","max_age":604800}
 <= Recv header, 20 bytes
 Server: cloudflare
 <= Recv header, 30 bytes
-CF-RAY: 78f382378b4ea49c-GRU
+CF-RAY: 7903aa68fb370139-GRU
 <= Recv header, 54 bytes
 alt-svc: h3=":443"; ma=86400, h3-29=":443"; ma=86400
 <= Recv header, 2 bytes
 
-<= Recv data, 460 bytes
-1c5
-{"data":[{"latitude":-18.876989,"longitude":-41.928484,"type":"locality","name":"Governador Valadares","number":null,"postal_code":null,"street":null,"confidence":1,"region":"Minas Gerais","region_code":"MG","county":"Governador Valadares","locality":"Governador Valadares","administrative_area":"Governador Valadares","neighbourhood":null,"country":"Brazil","country_code":"BRA","continent":"South America","label":"Governador Valadares, MG, Brazil"}]}
-
-<= Recv data, 5 bytes
+<= Recv data, 386 bytes
+176
+{"data":[{"latitude":5.35113,"longitude":-0.62313,"type":"locality","name":"Winneba","number":null,"postal_code":null,"street":null,"confidence":1,"region":"Central","region_code":"CP","county":"Awutu Efutu Senya","locality":"Winneba","administrative_area":null,"neighbourhood":null,"country":"Ghana","country_code":"GHA","continent":"Africa","label":"Winneba, CP, Ghana"}]}
 0
 
 
-== Info: Connection #7 to host api.positionstack.com left intact
+== Info: Connection #5 to host api.positionstack.com left intact

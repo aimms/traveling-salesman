@@ -926,10 +926,39 @@
       }
     },
     "center.latitude": {
-      "literal": 6.315298538330033
+      "literal": -12.897489183755893
     },
     "center.longitude": {
-      "literal": 55.19531250000001
+      "literal": -27.773437500000005
+    },
+    "contextmenu": {
+      "aimms": {
+        "contents": [
+          "sp_def_nodeItemActions"
+        ],
+        "slices": [
+          {
+            "identifier": "sp_def_nodeItemActions",
+            "slice": [
+              {
+                "index": "webui::indexWidgetItemActionSpec",
+                "type": "free",
+                "value": "webui::indexWidgetItemActionSpec"
+              },
+              {
+                "index": "webui::indexPageExtension",
+                "type": "free",
+                "value": "webui::indexPageExtension"
+              },
+              {
+                "index": "webui::indexWidgetActionSpec",
+                "type": "free",
+                "value": "webui::indexWidgetActionSpec"
+              }
+            ]
+          }
+        ]
+      }
     },
     "heatmaps.__display_order__": {
       "literal": [
@@ -987,7 +1016,13 @@
     },
     "nodes.0.index": {
       "literal": {
-        "identifier": "i_node1"
+        "identifier": "i_node1",
+        "focus": [
+          {
+            "index": "i_node1",
+            "value": "ep_city"
+          }
+        ]
       }
     },
     "nodes.0.latitude": {
@@ -1093,10 +1128,39 @@
       }
     },
     "center.latitude": {
-      "literal": -17.978733095556156
+      "literal": -1.0546279422758745
     },
     "center.longitude": {
-      "literal": -20.039062500000005
+      "literal": -19.335937500000005
+    },
+    "contextmenu": {
+      "aimms": {
+        "contents": [
+          "sp_def_nodeItemActions"
+        ],
+        "slices": [
+          {
+            "identifier": "sp_def_nodeItemActions",
+            "slice": [
+              {
+                "index": "webui::indexWidgetItemActionSpec",
+                "type": "free",
+                "value": "webui::indexWidgetItemActionSpec"
+              },
+              {
+                "index": "webui::indexPageExtension",
+                "type": "free",
+                "value": "webui::indexPageExtension"
+              },
+              {
+                "index": "webui::indexWidgetActionSpec",
+                "type": "free",
+                "value": "webui::indexWidgetActionSpec"
+              }
+            ]
+          }
+        ]
+      }
     },
     "heatmaps.__display_order__": {
       "literal": [
@@ -1154,7 +1218,13 @@
     },
     "nodes.0.index": {
       "literal": {
-        "identifier": "i_node1"
+        "identifier": "i_node1",
+        "focus": [
+          {
+            "index": "i_node1",
+            "value": "ep_city"
+          }
+        ]
       }
     },
     "nodes.0.latitude": {
@@ -1263,10 +1333,39 @@
       "literal": false
     },
     "center.latitude": {
-      "literal": -3.513421045640032
+      "literal": 5.965753671065536
     },
     "center.longitude": {
-      "literal": -10.546875000000002
+      "literal": -0.3515625
+    },
+    "contextmenu": {
+      "aimms": {
+        "contents": [
+          "sp_def_nodeItemActions"
+        ],
+        "slices": [
+          {
+            "identifier": "sp_def_nodeItemActions",
+            "slice": [
+              {
+                "index": "webui::indexWidgetItemActionSpec",
+                "type": "free",
+                "value": "webui::indexWidgetItemActionSpec"
+              },
+              {
+                "index": "webui::indexPageExtension",
+                "type": "free",
+                "value": "webui::indexPageExtension"
+              },
+              {
+                "index": "webui::indexWidgetActionSpec",
+                "type": "free",
+                "value": "webui::indexWidgetActionSpec"
+              }
+            ]
+          }
+        ]
+      }
     },
     "heatmaps.__display_order__": {
       "literal": [
@@ -1324,7 +1423,13 @@
     },
     "nodes.0.index": {
       "literal": {
-        "identifier": "i_node1"
+        "identifier": "i_node1",
+        "focus": [
+          {
+            "index": "i_node1",
+            "value": "ep_city"
+          }
+        ]
       }
     },
     "nodes.0.latitude": {
@@ -1483,7 +1588,7 @@
       "literal": "text"
     },
     "contents": {
-      "literal": "<div><br></div>"
+      "literal": "<div><span style=\"font-size: 32px;\"><b>Story&nbsp;</b></span></div><div><br></div><div><span style=\"font-size: 18px;\">This example illustrates some of AIMMS control flow statements by means of the traveling salesman 2-opt heuristic. </span></div><div><span style=\"font-size: 18px;\">In the model tree, you will find some declarations to define the problem. In addition, you will find:</span></div><div><br></div><ul><li><span style=\"font-size: 18px;\">A procedure and some declarations to compute and visualize an initial tour constructed by starting at some city and successively selecting the next city as the closest city not yet part of the tour.</span></li><li><span style=\"font-size: 18px;\">A procedure and some declarations to compute and visualize an improved tour constructed by repetitively swapping those two arcs in the tour by means of the 2-opt heuristic that give the largest overall distance improvement, until no further improvement is possible or the iteration limit is reached.</span></li><li><span style=\"font-size: 18px;\">A procedure and some declarations to compute and visualize an improved tour constructed by repetitively swapping the next arc in the (modified) tour with that neighbor arc which gives the largest distance improvement, until the iteration limit is reached or a full cycle over the tour gives no further improvement.</span></li></ul><div><br></div><div><span style=\"font-size: 18px;\">When you run the procedures, the information in the progress window is updated by the functions in the GMP Progress Window library.</span></div>"
     },
     "name": {
       "literal": "txt_story"

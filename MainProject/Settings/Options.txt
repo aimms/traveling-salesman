@@ -11,6 +11,7 @@ external_string_character_encoding WINDOWS-1252
 * CPLEX 12.10
 * CPLEX 22.1
 * CPOptimizer 22.1
+* GUROBI 10.0
 * GUROBI 9.5
 * IPOPT 3.11
 * Knitro 12.3
@@ -24,4 +25,5 @@ external_string_character_encoding WINDOWS-1252
 * Environment
 Project_Title "Traveling Salesman"
 Default_UI 0
+Open_WebUI_on_Startup 1
 Check_for_old_style_WebUI_annotations 0
