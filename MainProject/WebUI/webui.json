@@ -47,23 +47,49 @@
                 "children": []
               },
               {
+                "name": "Network",
+                "type": "pagev2-grid",
+                "slug": "network",
+                "children": [
+                  {
+                    "name": "Network Help",
+                    "type": "pagev2-grid-sidepanel",
+                    "slug": "network_help",
+                    "children": []
+                  }
+                ]
+              },
+              {
                 "name": "Tours",
                 "type": "pagev2-grid",
                 "slug": "tours",
                 "children": [
                   {
-                    "name": "New Network",
+                    "name": "Heuristic Help",
                     "type": "pagev2-grid-sidepanel",
-                    "slug": "new_network",
-                    "children": []
-                  },
-                  {
-                    "name": "Tour Distances",
-                    "type": "pagev2-grid-sidepanel",
-                    "slug": "tour_distances",
+                    "slug": "heuristic_help",
                     "children": []
                   }
                 ]
+              },
+              {
+                "name": "Exact",
+                "type": "pagev2-grid",
+                "slug": "exact",
+                "children": [
+                  {
+                    "name": "Exact Help",
+                    "type": "pagev2-grid-sidepanel",
+                    "slug": "exact_help",
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "name": "Comparison",
+                "type": "pagev2-grid",
+                "slug": "comparison",
+                "children": []
               }
             ]
           }
@@ -238,6 +264,103 @@
       "literal": "Layout10 Copy"
     }
   },
+  "layouts/custom_a248d3ab-a3fe-4824-b012-651c2a8ec116": {
+    "definition": {
+      "literal": {
+        "componentName": "Grid",
+        "props": {
+          "gridTemplateColumns": "3fr 0.8fr 0.12fr",
+          "gridTemplateRows": "1fr 0.2fr 1fr 0.2fr 1fr 0.2fr",
+          "gridTemplateAreas": "\"area-a area-b area-b\" \"area-a area-x area-e\" \"area-a area-c area-c\" \"area-a area-y area-f\" \"area-a area-d area-d\"  \"area-a area-z area-g\""
+        },
+        "items": [
+          {
+            "componentName": "WidgetArea",
+            "props": {
+              "gridArea": "area-a",
+              "name": "Area A",
+              "gridAutoFlow": "column"
+            }
+          },
+          {
+            "componentName": "WidgetArea",
+            "props": {
+              "gridArea": "area-b",
+              "name": "Area B",
+              "gridAutoFlow": "row"
+            }
+          },
+          {
+            "componentName": "WidgetArea",
+            "props": {
+              "gridArea": "area-c",
+              "name": "Area C",
+              "gridAutoFlow": "row"
+            }
+          },
+          {
+            "componentName": "WidgetArea",
+            "props": {
+              "gridArea": "area-d",
+              "name": "Area D",
+              "gridAutoFlow": "row"
+            }
+          },
+          {
+            "componentName": "WidgetArea",
+            "props": {
+              "gridArea": "area-e",
+              "name": "Area E",
+              "gridAutoFlow": "row"
+            }
+          },
+          {
+            "componentName": "WidgetArea",
+            "props": {
+              "gridArea": "area-f",
+              "name": "Area F",
+              "gridAutoFlow": "row"
+            }
+          },
+          {
+            "componentName": "WidgetArea",
+            "props": {
+              "gridArea": "area-g",
+              "name": "Area G",
+              "gridAutoFlow": "row"
+            }
+          },
+          {
+            "componentName": "WidgetArea",
+            "props": {
+              "gridArea": "area-x",
+              "name": "Area X",
+              "gridAutoFlow": "row"
+            }
+          },
+          {
+            "componentName": "WidgetArea",
+            "props": {
+              "gridArea": "area-y",
+              "name": "Area Y",
+              "gridAutoFlow": "row"
+            }
+          },
+          {
+            "componentName": "WidgetArea",
+            "props": {
+              "gridArea": "area-z",
+              "name": "Area Z",
+              "gridAutoFlow": "row"
+            }
+          }
+        ]
+      }
+    },
+    "displayName": {
+      "literal": "Layout10 Copy"
+    }
+  },
   "layouts/custom_afa86eba-6e6a-4077-a063-bf443788a472": {
     "definition": {
       "literal": {
@@ -277,6 +400,119 @@
     },
     "displayName": {
       "literal": "Layout7 Copy"
+    }
+  },
+  "pages/comparison": {
+    "aimms.widget.type": {
+      "literal": "pagev2-grid"
+    },
+    "bindings": {
+      "literal": [
+        {
+          "widgetUri": "scl_initialTour",
+          "gridArea": "area-a",
+          "dndId": "area-ascl_initialTour0"
+        },
+        {
+          "widgetUri": "scl_timeComparison",
+          "gridArea": "area-b",
+          "dndId": "Unassigned widgetsscl_timeComparison"
+        }
+      ]
+    },
+    "widgets": {
+      "literal": [
+        {
+          "uri": "scl_initialTour",
+          "layoutInfo": {
+            "width": "2",
+            "height": "1"
+          }
+        },
+        {
+          "uri": "scl_timeComparison",
+          "layoutInfo": {
+            "width": "2",
+            "height": "1"
+          }
+        }
+      ]
+    }
+  },
+  "pages/exact": {
+    "aimms.widget.type": {
+      "literal": "pagev2-grid"
+    },
+    "bindings": {
+      "literal": [
+        {
+          "widgetUri": "map_improvedTourSimultaneous_1",
+          "gridArea": "area-a",
+          "dndId": "Unassigned widgetsmap_improvedTourSimultaneous_10"
+        }
+      ]
+    },
+    "layoutId": {
+      "literal": "Layout11"
+    },
+    "onload": {
+      "aimms": {
+        "run": "pr_runAll"
+      }
+    },
+    "primarypageaction": {
+      "aimms": {
+        "contents": [
+          "sp_def_exactPrimaryActions"
+        ],
+        "slices": [
+          {
+            "identifier": "sp_def_exactPrimaryActions",
+            "slice": [
+              {
+                "index": "webui::indexPageActionSpec",
+                "type": "free",
+                "value": "webui::indexPageActionSpec"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "sidepanels": {
+      "aimms": {
+        "contents": [
+          "sp_def_exactSidePanel"
+        ],
+        "slices": [
+          {
+            "identifier": "sp_def_exactSidePanel",
+            "slice": [
+              {
+                "index": "webui::indexPageExtension",
+                "type": "free",
+                "value": "webui::indexPageExtension"
+              },
+              {
+                "index": "webui::indexSidePanelSpec",
+                "type": "free",
+                "value": "webui::indexSidePanelSpec"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "widgets": {
+      "literal": [
+        {
+          "uri": "map_improvedTourSimultaneous_1",
+          "layoutInfo": {
+            "width": "2",
+            "height": "1"
+          }
+        }
+      ]
     }
   },
   "pages/home": {
@@ -319,123 +555,90 @@
       ]
     }
   },
-  "pages/new_network": {
+  "pages/network": {
     "aimms.widget.type": {
-      "literal": "pagev2-grid-sidepanel"
+      "literal": "pagev2-grid"
     },
     "bindings": {
       "literal": [
         {
           "widgetUri": "btn_addThisCity",
-          "gridArea": "area-b",
-          "dndId": "area-xbtn_addThisCity0"
-        },
-        {
-          "widgetUri": "lbl_titleAddLimity",
           "gridArea": "area-e",
-          "dndId": "area-elbl_titleAddLimity1"
-        },
-        {
-          "widgetUri": "scl_addByLimit",
-          "gridArea": "area-e",
-          "dndId": "area-escl_addByLimit2"
+          "dndId": "area-bbtn_addThisCity5"
         },
         {
           "widgetUri": "btn_addByCountry",
-          "gridArea": "area-d",
-          "dndId": "area-dbtn_addByCountry3"
+          "gridArea": "area-f",
+          "dndId": "area-fbtn_addByCountry0"
         },
         {
           "widgetUri": "btn_addByLimity",
-          "gridArea": "area-f",
-          "dndId": "area-fbtn_addByLimity4"
+          "gridArea": "area-g",
+          "dndId": "area-gbtn_addByLimity1"
         },
         {
-          "widgetUri": "lbl_tittleAddCity",
-          "gridArea": "area-a",
-          "dndId": "area-albl_tittleAddCity5"
+          "widgetUri": "scl_newNetworkInfo",
+          "gridArea": "Unassigned widgets",
+          "dndId": "Unassigned widgetsscl_newNetworkInfo2"
+        },
+        {
+          "widgetUri": "btn_cleanAllNodes",
+          "gridArea": "area-b",
+          "dndId": "area-bbtn_cleanAllNodes3"
         },
         {
           "widgetUri": "scl_addByCity",
-          "gridArea": "area-a",
-          "dndId": "area-ascl_addByCity6"
-        },
-        {
-          "widgetUri": "lbl_titleAddCountry",
-          "gridArea": "area-c",
-          "dndId": "area-clbl_titleAddCountry7"
+          "gridArea": "area-b",
+          "dndId": "area-bscl_addByCity4"
         },
         {
           "widgetUri": "scl_addByCountry",
           "gridArea": "area-c",
-          "dndId": "area-cscl_addByCountry8"
+          "dndId": "area-cscl_addByCountry6"
         },
         {
-          "widgetUri": "lbl_networkInfo",
-          "gridArea": "area-g",
-          "dndId": "area-glbl_networkInfo9"
+          "widgetUri": "scl_addByLimit",
+          "gridArea": "area-d",
+          "dndId": "area-dscl_addByLimit7"
         },
         {
-          "widgetUri": "scl_newNetworkInfo",
-          "gridArea": "area-g",
-          "dndId": "area-gscl_newNetworkInfo10"
-        },
-        {
-          "widgetUri": "btn_cleanAllNodes",
-          "gridArea": "area-g",
-          "dndId": "area-gbtn_cleanAllNodes11"
+          "widgetUri": "map_allNodes",
+          "gridArea": "area-a",
+          "dndId": "area-amap_allNodes8"
         }
       ]
     },
     "layoutId": {
-      "literal": "custom_02bece4f-d0aa-4135-872b-8ffbeb15dc61"
+      "literal": "custom_a248d3ab-a3fe-4824-b012-651c2a8ec116"
+    },
+    "sidepanels": {
+      "aimms": {
+        "contents": [
+          "sp_def_networkSidePanel"
+        ],
+        "slices": [
+          {
+            "identifier": "sp_def_networkSidePanel",
+            "slice": [
+              {
+                "index": "webui::indexPageExtension",
+                "type": "free",
+                "value": "webui::indexPageExtension"
+              },
+              {
+                "index": "webui::indexSidePanelSpec",
+                "type": "free",
+                "value": "webui::indexSidePanelSpec"
+              }
+            ]
+          }
+        ]
+      }
     },
     "widgets": {
       "literal": [
         {
           "uri": "scl_newNetworkInfo",
-          "layoutInfo": {
-            "width": "2",
-            "height": "1"
-          }
-        },
-        {
-          "uri": "btn_cleanAllNodes",
-          "layoutInfo": {
-            "width": "2",
-            "height": "1"
-          }
-        },
-        {
-          "uri": "scl_addByCity",
-          "layoutInfo": {
-            "width": "2",
-            "height": "1"
-          }
-        },
-        {
-          "uri": "scl_addByCountry",
-          "layoutInfo": {
-            "width": "2",
-            "height": "1"
-          }
-        },
-        {
-          "uri": "scl_addByLimit",
-          "layoutInfo": {
-            "width": "2",
-            "height": "1"
-          }
-        },
-        {
-          "uri": "btn_addThisCity",
-          "layoutInfo": {
-            "width": "2",
-            "height": "1"
-          }
-        },
-        {
-          "uri": "btn_addByCountry",
           "layoutInfo": {
             "width": "2",
             "height": "1"
@@ -449,34 +652,60 @@
           }
         },
         {
-          "uri": "lbl_tittleAddCity",
+          "uri": "btn_addByCountry",
           "layoutInfo": {
             "width": "2",
             "height": "1"
           }
         },
         {
-          "uri": "lbl_titleAddCountry",
+          "uri": "btn_addThisCity",
           "layoutInfo": {
             "width": "2",
             "height": "1"
           }
         },
         {
-          "uri": "lbl_titleAddLimity",
+          "uri": "scl_addByLimit",
           "layoutInfo": {
             "width": "2",
             "height": "1"
           }
         },
         {
-          "uri": "lbl_networkInfo",
+          "uri": "scl_addByCountry",
+          "layoutInfo": {
+            "width": "2",
+            "height": "1"
+          }
+        },
+        {
+          "uri": "scl_addByCity",
+          "layoutInfo": {
+            "width": "2",
+            "height": "1"
+          }
+        },
+        {
+          "uri": "btn_cleanAllNodes",
+          "layoutInfo": {
+            "width": "2",
+            "height": "1"
+          }
+        },
+        {
+          "uri": "map_allNodes",
           "layoutInfo": {
             "width": "2",
             "height": "1"
           }
         }
       ]
+    }
+  },
+  "pages/network_help": {
+    "widgets": {
+      "literal": []
     }
   },
   "pages/story": {
@@ -507,43 +736,6 @@
       ]
     }
   },
-  "pages/tour_distances": {
-    "aimms.widget.type": {
-      "literal": "pagev2-grid-sidepanel"
-    },
-    "bindings": {
-      "literal": [
-        {
-          "widgetUri": "lbl_distanceTitle",
-          "gridArea": "area-a",
-          "dndId": "area-albl_distanceTitle1"
-        },
-        {
-          "widgetUri": "scl_initialTour",
-          "gridArea": "area-a",
-          "dndId": "area-ascl_initialTour0"
-        }
-      ]
-    },
-    "widgets": {
-      "literal": [
-        {
-          "uri": "scl_initialTour",
-          "layoutInfo": {
-            "width": "2",
-            "height": "1"
-          }
-        },
-        {
-          "uri": "lbl_distanceTitle",
-          "layoutInfo": {
-            "width": "2",
-            "height": "1"
-          }
-        }
-      ]
-    }
-  },
   "pages/tours": {
     "aimms.widget.type": {
       "literal": "pagev2-grid"
@@ -551,29 +743,14 @@
     "bindings": {
       "literal": [
         {
-          "widgetUri": "btn_runCycTour",
-          "gridArea": "area-c",
-          "dndId": "area-cbtn_runCycTour1"
-        },
-        {
           "widgetUri": "map_improvedTourCyclic",
           "gridArea": "area-c",
           "dndId": "area-cmap_improvedTourCyclic2"
         },
         {
-          "widgetUri": "btn_runInitialTour",
-          "gridArea": "area-a",
-          "dndId": "area-abtn_runInitialTour3"
-        },
-        {
           "widgetUri": "map_initialTour",
           "gridArea": "area-a",
           "dndId": "area-amap_initialTour4"
-        },
-        {
-          "widgetUri": "btn_runSimTour",
-          "gridArea": "area-b",
-          "dndId": "area-bbtn_runSimTour5"
         },
         {
           "widgetUri": "map_improvedTourSimultaneous",
@@ -593,11 +770,11 @@
     "primarypageaction": {
       "aimms": {
         "contents": [
-          "sp_def_toursPrimaryActions"
+          "sp_def_heuristicPrimaryActions"
         ],
         "slices": [
           {
-            "identifier": "sp_def_toursPrimaryActions",
+            "identifier": "sp_def_heuristicPrimaryActions",
             "slice": [
               {
                 "index": "webui::indexPageActionSpec",
@@ -612,11 +789,11 @@
     "sidepanels": {
       "aimms": {
         "contents": [
-          "sp_def_toursSidePanel"
+          "sp_def_heuristicSidePanel"
         ],
         "slices": [
           {
-            "identifier": "sp_def_toursSidePanel",
+            "identifier": "sp_def_heuristicSidePanel",
             "slice": [
               {
                 "index": "webui::indexPageExtension",
@@ -651,27 +828,6 @@
         },
         {
           "uri": "map_improvedTourSimultaneous",
-          "layoutInfo": {
-            "width": "2",
-            "height": "1"
-          }
-        },
-        {
-          "uri": "btn_runInitialTour",
-          "layoutInfo": {
-            "width": "2",
-            "height": "1"
-          }
-        },
-        {
-          "uri": "btn_runCycTour",
-          "layoutInfo": {
-            "width": "2",
-            "height": "1"
-          }
-        },
-        {
-          "uri": "btn_runSimTour",
           "layoutInfo": {
             "width": "2",
             "height": "1"
@@ -748,57 +904,6 @@
       "literal": "delete all nodes"
     }
   },
-  "widgets/btn_runCycTour": {
-    "action": {
-      "literal": {
-        "type": "procedure",
-        "value": "pr_improveTourCyclic"
-      }
-    },
-    "aimms.widget.type": {
-      "literal": "button"
-    },
-    "name": {
-      "literal": "btn_runCycTour"
-    },
-    "title": {
-      "literal": "Improve Tour (Cyclic)"
-    }
-  },
-  "widgets/btn_runInitialTour": {
-    "action": {
-      "literal": {
-        "type": "procedure",
-        "value": "pr_findInitialTour"
-      }
-    },
-    "aimms.widget.type": {
-      "literal": "button"
-    },
-    "name": {
-      "literal": "btn_runInitialTour"
-    },
-    "title": {
-      "literal": "Run Initial Tour"
-    }
-  },
-  "widgets/btn_runSimTour": {
-    "action": {
-      "literal": {
-        "type": "procedure",
-        "value": "pr_improveTourSimultaneous"
-      }
-    },
-    "aimms.widget.type": {
-      "literal": "button"
-    },
-    "name": {
-      "literal": "btn_runSimTour"
-    },
-    "title": {
-      "literal": "Improve Tour (Simultaneous)"
-    }
-  },
   "widgets/img_homeLogo": {
     "aimms.widget.type": {
       "literal": "image"
@@ -814,59 +919,159 @@
       "literal": "img_homeLogo"
     }
   },
-  "widgets/lbl_distanceTitle": {
+  "widgets/map_allNodes": {
     "aimms.widget.type": {
-      "literal": "label"
+      "literal": "map-v2"
     },
-    "contents": {
-      "literal": "Distances"
+    "arcs.__display_order__": {
+      "literal": [
+        "arcs.0"
+      ]
+    },
+    "center.latitude": {
+      "literal": -18.646245142670609
+    },
+    "center.longitude": {
+      "literal": 47.46127043758007
+    },
+    "contextmenu": {
+      "aimms": {
+        "contents": [
+          "sp_def_nodeItemActions"
+        ],
+        "slices": [
+          {
+            "identifier": "sp_def_nodeItemActions",
+            "slice": [
+              {
+                "index": "webui::indexWidgetItemActionSpec",
+                "type": "free",
+                "value": "webui::indexWidgetItemActionSpec"
+              },
+              {
+                "index": "webui::indexPageExtension",
+                "type": "free",
+                "value": "webui::indexPageExtension"
+              },
+              {
+                "index": "webui::indexWidgetActionSpec",
+                "type": "free",
+                "value": "webui::indexWidgetActionSpec"
+              }
+            ]
+          }
+        ]
+      }
     },
     "name": {
-      "literal": "lbl_distanceTitle"
-    }
-  },
-  "widgets/lbl_networkInfo": {
-    "aimms.widget.type": {
-      "literal": "label"
+      "literal": "map_allNodes"
     },
-    "contents": {
-      "literal": "Network Info"
+    "nodes.__display_order__": {
+      "literal": [
+        "nodes.0"
+      ]
     },
-    "name": {
-      "literal": "lbl_networkInfo"
-    }
-  },
-  "widgets/lbl_titleAddCountry": {
-    "aimms.widget.type": {
-      "literal": "label"
+    "nodes.0": {
+      "aimms": {
+        "contents": [
+          "p_longitude",
+          "p_latitude",
+          "p_def_nodeSize"
+        ],
+        "slices": [
+          {
+            "identifier": "p_longitude",
+            "slice": [
+              {
+                "index": "i_city",
+                "type": "subset",
+                "value": "i_node1"
+              }
+            ]
+          },
+          {
+            "identifier": "p_latitude",
+            "slice": [
+              {
+                "index": "i_city",
+                "type": "subset",
+                "value": "i_node1"
+              }
+            ]
+          },
+          {
+            "identifier": "p_def_nodeSize",
+            "slice": [
+              {
+                "index": "i_city",
+                "type": "subset",
+                "value": "i_node1"
+              }
+            ]
+          }
+        ]
+      }
     },
-    "contents": {
-      "literal": "Add by Country"
+    "nodes.0.index": {
+      "literal": {
+        "focus": [
+          {
+            "index": "i_node1",
+            "value": "ep_city"
+          }
+        ],
+        "identifier": "i_node1"
+      }
     },
-    "name": {
-      "literal": "lbl_titleAddCountry"
-    }
-  },
-  "widgets/lbl_titleAddLimity": {
-    "aimms.widget.type": {
-      "literal": "label"
+    "nodes.0.latitude": {
+      "literal": {
+        "identifier": "p_latitude",
+        "slice": [
+          {
+            "index": "i_city",
+            "type": "subset",
+            "value": "i_node1"
+          }
+        ]
+      }
     },
-    "contents": {
-      "literal": "Add by Limit"
+    "nodes.0.longitude": {
+      "literal": {
+        "identifier": "p_longitude",
+        "slice": [
+          {
+            "index": "i_city",
+            "type": "subset",
+            "value": "i_node1"
+          }
+        ]
+      }
     },
-    "name": {
-      "literal": "lbl_titleAddLimit"
-    }
-  },
-  "widgets/lbl_tittleAddCity": {
-    "aimms.widget.type": {
-      "literal": "label"
+    "nodes.0.maximumreferencesize": {
+      "literal": 30
     },
-    "contents": {
-      "literal": "Add by City"
+    "nodes.0.size": {
+      "literal": {
+        "identifier": "p_def_nodeSize",
+        "slice": [
+          {
+            "index": "i_city",
+            "type": "subset",
+            "value": "i_node1"
+          }
+        ]
+      }
     },
-    "name": {
-      "literal": "lbl_titleAddCity"
+    "title": {
+      "aimms": {
+        "contents": [
+          "sp_mapTitle"
+        ],
+        "slices": []
+      }
+    },
+    "zoom": {
+      "literal": 2
     }
   },
   "widgets/map_improvedTourCyclic": {
@@ -926,10 +1131,10 @@
       }
     },
     "center.latitude": {
-      "literal": -12.897489183755893
+      "literal": -3.864254615721396
     },
     "center.longitude": {
-      "literal": -27.773437500000005
+      "literal": 49.75907572967174
     },
     "contextmenu": {
       "aimms": {
@@ -1128,10 +1333,10 @@
       }
     },
     "center.latitude": {
-      "literal": -1.0546279422758745
+      "literal": 4.915832801313164
     },
     "center.longitude": {
-      "literal": -19.335937500000005
+      "literal": -22.148437500000005
     },
     "contextmenu": {
       "aimms": {
@@ -1273,6 +1478,208 @@
       "literal": 2
     }
   },
+  "widgets/map_improvedTourSimultaneous_1": {
+    "aimms.widget.type": {
+      "literal": "map-v2"
+    },
+    "arcs.__display_order__": {
+      "literal": [
+        "arcs.0"
+      ]
+    },
+    "arcs.0": {
+      "aimms": {
+        "contents": [
+          "p_calc_solutionTour"
+        ],
+        "slices": [
+          {
+            "identifier": "p_calc_solutionTour",
+            "slice": [
+              {
+                "index": "i_node1",
+                "type": "free",
+                "value": "i_node1"
+              },
+              {
+                "index": "i_node2",
+                "type": "free",
+                "value": "i_node2"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "arcs.0.label.hide": {
+      "literal": true
+    },
+    "arcs.0.line.straight": {
+      "literal": true
+    },
+    "arcs.0.value": {
+      "literal": {
+        "identifier": "p_calc_solutionTour",
+        "slice": [
+          {
+            "index": "i_node1",
+            "type": "free",
+            "value": "i_node1"
+          },
+          {
+            "index": "i_node2",
+            "type": "free",
+            "value": "i_node2"
+          }
+        ]
+      }
+    },
+    "center.latitude": {
+      "literal": 16.804541076383456
+    },
+    "center.longitude": {
+      "literal": 13.535156250000002
+    },
+    "contextmenu": {
+      "aimms": {
+        "contents": [
+          "sp_def_nodeItemActions"
+        ],
+        "slices": [
+          {
+            "identifier": "sp_def_nodeItemActions",
+            "slice": [
+              {
+                "index": "webui::indexWidgetItemActionSpec",
+                "type": "free",
+                "value": "webui::indexWidgetItemActionSpec"
+              },
+              {
+                "index": "webui::indexPageExtension",
+                "type": "free",
+                "value": "webui::indexPageExtension"
+              },
+              {
+                "index": "webui::indexWidgetActionSpec",
+                "type": "free",
+                "value": "webui::indexWidgetActionSpec"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "heatmaps.__display_order__": {
+      "literal": [
+        "heatmaps.0"
+      ]
+    },
+    "name": {
+      "literal": "map_exactTour"
+    },
+    "nodes.__display_order__": {
+      "literal": [
+        "nodes.0"
+      ]
+    },
+    "nodes.0": {
+      "aimms": {
+        "contents": [
+          "p_longitude",
+          "p_latitude",
+          "p_def_nodeSize"
+        ],
+        "slices": [
+          {
+            "identifier": "p_longitude",
+            "slice": [
+              {
+                "index": "i_city",
+                "type": "subset",
+                "value": "i_node1"
+              }
+            ]
+          },
+          {
+            "identifier": "p_latitude",
+            "slice": [
+              {
+                "index": "i_city",
+                "type": "subset",
+                "value": "i_node1"
+              }
+            ]
+          },
+          {
+            "identifier": "p_def_nodeSize",
+            "slice": [
+              {
+                "index": "i_city",
+                "type": "subset",
+                "value": "i_node1"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "nodes.0.index": {
+      "literal": {
+        "identifier": "i_node1",
+        "focus": [
+          {
+            "index": "i_node1",
+            "value": "ep_city"
+          }
+        ]
+      }
+    },
+    "nodes.0.latitude": {
+      "literal": {
+        "identifier": "p_latitude",
+        "slice": [
+          {
+            "index": "i_city",
+            "type": "subset",
+            "value": "i_node1"
+          }
+        ]
+      }
+    },
+    "nodes.0.longitude": {
+      "literal": {
+        "identifier": "p_longitude",
+        "slice": [
+          {
+            "index": "i_city",
+            "type": "subset",
+            "value": "i_node1"
+          }
+        ]
+      }
+    },
+    "nodes.0.maximumreferencesize": {
+      "literal": 30
+    },
+    "nodes.0.size": {
+      "literal": {
+        "identifier": "p_def_nodeSize",
+        "slice": [
+          {
+            "index": "i_city",
+            "type": "subset",
+            "value": "i_node1"
+          }
+        ]
+      }
+    },
+    "title": {
+      "literal": "MIP Solution"
+    },
+    "zoom": {
+      "literal": 2
+    }
+  },
   "widgets/map_initialTour": {
     "aimms.widget.type": {
       "literal": "map-v2"
@@ -1333,10 +1740,10 @@
       "literal": false
     },
     "center.latitude": {
-      "literal": 5.965753671065536
+      "literal": -26.74561038219901
     },
     "center.longitude": {
-      "literal": -0.3515625
+      "literal": -82.05037083268573
     },
     "contextmenu": {
       "aimms": {
@@ -1482,9 +1889,6 @@
     "aimms.widget.type": {
       "literal": "scalar"
     },
-    "compact": {
-      "literal": 1
-    },
     "contents": {
       "aimms": {
         "contents": [
@@ -1496,7 +1900,7 @@
       "literal": "scl_addByCity"
     },
     "title": {
-      "literal": ""
+      "literal": "Add by City"
     }
   },
   "widgets/scl_addByCountry": {
@@ -1516,14 +1920,14 @@
     },
     "name": {
       "literal": "scl_addByCountry"
+    },
+    "title": {
+      "literal": "Add by Country"
     }
   },
   "widgets/scl_addByLimit": {
     "aimms.widget.type": {
       "literal": "scalar"
-    },
-    "compact": {
-      "literal": 1
     },
     "contents": {
       "aimms": {
@@ -1537,6 +1941,9 @@
     },
     "name": {
       "literal": "scl_addByLimit"
+    },
+    "title": {
+      "literal": "Add by Limit"
     }
   },
   "widgets/scl_initialTour": {
@@ -1548,7 +1955,9 @@
         "contents": [
           "p_init_tourDistance",
           "p_cyc_tourDistance",
-          "p_sim_tourDistance"
+          "p_sim_tourDistance",
+          "p_exactObjective",
+          "p_lowerBound"
         ]
       }
     },
@@ -1560,6 +1969,9 @@
     },
     "name": {
       "literal": "scl_tourDistances"
+    },
+    "title": {
+      "literal": "Total Distance per Solve Type"
     }
   },
   "widgets/scl_newNetworkInfo": {
@@ -1581,6 +1993,17 @@
     },
     "name": {
       "literal": "scl_newNetworkInfo"
+    }
+  },
+  "widgets/scl_timeComparison": {
+    "aimms.widget.type": {
+      "literal": "scalar"
+    },
+    "name": {
+      "literal": "scl_timeComparison"
+    },
+    "title": {
+      "literal": "Total time per solve type "
     }
   },
   "widgets/txt_story": {

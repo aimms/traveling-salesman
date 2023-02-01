@@ -90,6 +90,9 @@ Model Main_TravelingSalesman {
 						        and p_longitude(i_city)}
 					}
 				}
+				Set s_subtours {
+					SubsetOf: s_nodes;
+				}
 				Parameter p_def_cardinalityOfNodes {
 					Definition: card(s_nodes);
 				}
@@ -98,7 +101,7 @@ Model Main_TravelingSalesman {
 					SubsetOf: s_cities;
 					Text: "The set of neighbors of city i";
 					OrderBy: user;
-					Definition: NBest(i_node2 | (i_node1 <> i_node2), -p_def_directDistance(i_node1,i_node2), p_def_maxNeighbors);
+					Definition: NBest(i_node2 | (i_node1 <> i_node2), -p_def_haversineDistance(i_node1,i_node2), p_def_maxNeighbors);
 				}
 				Parameter p_maxCities {
 					Text: "Maximum number of cities in the tour";
@@ -118,10 +121,22 @@ Model Main_TravelingSalesman {
 					Text: "Y-Coordinate of city c";
 					InitialData: 0;
 				}
-				Parameter p_def_directDistance {
-					IndexDomain: (i_node1,i_node2);
+				Parameter p_def_haversineDistance {
+					IndexDomain: (i_node1,i_node2) | i_node1 <> i_node2;
 					Text: "Distance from city i to city j";
-					Definition: sqrt( (p_latitude(i_node2) - p_latitude(i_node1))^2 + (p_longitude(i_node2) - p_longitude(i_node1))^2 );
+					Definition: {
+						((6371.0 ) * arccos[cos(radians(90 - P_latitude(i_node1)))*
+						           cos(radians(90 - P_latitude(i_node2))) 
+						         + 
+						        sin(radians(90 - P_latitude(i_node1)))* 
+						           sin(radians(90 - P_latitude(i_node2)))*
+						           cos(radians(p_longitude(i_node1)-p_longitude(i_node2)))
+						      ] )
+					}
+					Comment: {
+						"! Formula also present on http://www.movable-type.co.uk/scripts/latlong.html section Spherical Law of Cosines.
+						! calculate distance from haversine formulas"
+					}
 				}
 				Parameter p_def_iterationLimit {
 					Text: "Maximum number of iterations to improve tour";
@@ -137,366 +152,542 @@ Model Main_TravelingSalesman {
 				}
 			}
 		}
-		Section Finding_Tours {
-			Procedure Initialize_Progress_Window {
-				Body: {
-					GMP::ProgressWindow::DisplayLine( 2, "Node Swaps", "" );
-					GMP::ProgressWindow::DisplayLine( 3, "Objective", "" );
-					GMP::ProgressWindow::DisplayProgramStatus( '' );
-					GMP::ProgressWindow::DisplaySolverStatus( '' );
-				}
-			}
-			Procedure pr_runAll {
-				Body: {
-					pr_findInitialTour;
-					pr_improveTourCyclic;
-					pr_improveTourSimultaneous;
-				}
-			}
-			Section Initial_Tour {
-				Comment: {
-					"This section contains all declarations and procedures necessary to
-					compute and visualize the initial tour."
-				}
-				Parameter p_init_tourDistance {
-					Text: "Total distance of the initial tour";
-				}
-				Parameter p_init_tourConnect {
-					IndexDomain: (i_node1,i_node2);
-					Text: "City i connected to city j in initial tour";
-					webui::TooltipIdentifier: sp_def_arcTooltip(i_node1,i_node2);
-				}
-				ElementParameter ep_init_nextCity {
-					IndexDomain: i_city;
-					Text: "Next city of city c in initial tour";
-					Range: s_cities;
-				}
-				ElementParameter ep_init_prevCity {
-					IndexDomain: i_city;
-					Text: "Previous city of city c in initial tour";
-					Range: s_cities;
-				}
-				Parameter p_init_tourInitialized {
-					Text: "Flag to indicate that an initial tour has been computed for a newly created tour";
-				}
-				Procedure pr_findInitialTour {
+		Section Math_Model {
+			Section Heuristic {
+				Procedure pr_runAll {
 					Body: {
-						empty Initial_Tour;
+						pr_findInitialTour;
+						pr_improveTourCyclic;
+						pr_improveTourSimultaneous;
+					}
+				}
+				Section Initial_Tour {
+					Comment: {
+						"This section contains all declarations and procedures necessary to
+						compute and visualize the initial tour."
+					}
+					Parameter p_init_tourDistance {
+						Text: "Total distance of the initial tour";
+					}
+					Parameter p_init_tourConnect {
+						IndexDomain: (i_node1,i_node2);
+						Text: "City i connected to city j in initial tour";
+						webui::TooltipIdentifier: sp_def_arcTooltip(i_node1,i_node2);
+					}
+					ElementParameter ep_init_nextCity {
+						IndexDomain: i_city;
+						Text: "Next city of city c in initial tour";
+						Range: s_cities;
+					}
+					ElementParameter ep_init_prevCity {
+						IndexDomain: i_city;
+						Text: "Previous city of city c in initial tour";
+						Range: s_cities;
+					}
+					Parameter p_init_tourInitialized {
+						Text: "Flag to indicate that an initial tour has been computed for a newly created tour";
+					}
+					Procedure pr_findInitialTour {
+						Body: {
+							empty Initial_Tour, p_init_tourConnect;
+							
+							s_loc_remainingCities := s_nodes;
+							
+							! We start adding the first city to the tour
+							ep_node := First(s_nodes);
+							s_loc_remainingCities -= ep_node;
+							
+							! For every other city, the next city in the tour is the one closest to it not yet chosen
+							while (Card(s_loc_remainingCities) <> 0) do
+							    ep_init_nextCity(ep_node) 
+							    :=  argmin(i_node1 in s_loc_remainingCities, p_def_haversineDistance(ep_node,i_node1));
+							
+							    ep_node := ep_init_nextCity(ep_node);
+							    s_loc_remainingCities -= ep_node;
+							endwhile;
+							
+							! Finally, close the tour
+							ep_init_nextCity(ep_node) := First(s_nodes);
+							
+							ep_init_prevCity(ep_init_nextCity(i_node1)) := i_node1;
+							p_init_tourConnect(i_node1,ep_init_nextCity(i_node1)) := 1;
+							p_init_tourDistance := sum(i_node1, p_def_haversineDistance(i_node1,ep_init_nextCity(i_node1)));
+							
+							p_init_tourInitialized := 1;
+						}
+						Comment: {
+							"This procedure computes an initial tour by starting at the first city,
+							and successively adding the closest remaining city."
+						}
+						Set s_loc_remainingCities {
+							SubsetOf: s_cities;
+						}
+					}
+				}
+				Section Improve_Tour_Simultaneous {
+					Comment: {
+						"This section contains all identifiers and the procedure necessary to compute
+						and visualize improved tours using an algorithm that selects the neighbor of a
+						city for swapping, considering all cities in the tour simultaneously."
+					}
+					Parameter p_sim_distanceChange {
+						IndexDomain: (i_node1,i_node2);
+						Text: "Improvement in total tour distance by swapping city i with neighbor j in simultaneous algorithm";
+						Default: -inf;
+						Definition: p_def_haversineDistance(i_node1,p_sim_nextCity(i_node1)) + p_def_haversineDistance(i_node2,p_sim_nextCity(i_node2)) - (p_def_haversineDistance(i_node1,i_node2) + p_def_haversineDistance(p_sim_nextCity(i_node1),p_sim_nextCity(i_node2)));
+					}
+					Parameter p_sim_maxChange {
+						Text: "Maximum possible distance improvement in simultaneous algorithm";
+						Definition: Max((i_node1,i_node2 in s_neighbors(i_node1)), p_sim_distanceChange(i_node1,i_node2));
+					}
+					Parameter p_sim_swaps {
+						Text: "Number of performed swaps in simultaneous algorithm";
+					}
+					Parameter p_sim_tourDistance {
+						Text: "Total tour distance after current iteration in simultaneous algorithm";
+						InitialData: 0;
+					}
+					Parameter p_sim_tourConnect {
+						IndexDomain: (i_node1,i_node2);
+						Text: "City i connected to city j after current iteration in simultaneous algorithm";
+					}
+					ElementParameter p_sim_nextCity {
+						IndexDomain: i_city;
+						Text: "Next city of city c after current iteration in simultaneous algorithm";
+						Range: s_cities;
+					}
+					ElementParameter p_sim_prevCity {
+						IndexDomain: i_city;
+						Text: "Previous city of city c after current iteration in simultaneous algorithm";
+						Range: s_cities;
+					}
+					Parameter p_sim_initialized {
+						Text: "Flag to indicate that simultaneous algorithm has been initialized";
+					}
+					Procedure pr_improveTourSimultaneous {
+						Body: {
+							empty Improve_Tour_Simultaneous;
+							
+							if not p_init_tourInitialized then 
+							    pr_findInitialTour; 
+							endif;
+							
+							if (not p_sim_initialized) then
+							   p_sim_nextCity(i_node1) := ep_init_nextCity(i_node1);
+							   p_sim_prevCity(i_node1) := ep_init_prevCity(i_node1);
+							   p_sim_initialized := 1;
+							   p_sim_swaps := 0;
+							endif;
+							
+							while (p_sim_maxChange > 0 and LoopCount <= p_def_iterationLimit) do
+							
+							    p_sim_swaps += 1;
+							
+							    ! Select City and NewNext as a (i,j) tuple which reaches the maximum change
+							    for ((i_node1,i_node2) | p_sim_distanceChange(i_node1,i_node2) = p_sim_maxChange) do
+							        ep_node := i_node1;
+							        ep_loc_nextCity := i_node2;
+							        break;
+							    endfor;
+							
+							    block ! Swap cities in tour.
+							        ! This is the hairy part of the algorithm. The direction of the tour changes from
+							        ! City to NewNext as part of the 2-opt heuristic. To modify the next and previous
+							        ! city references we have to walk over the subtour, carefully making sure we don't
+							        ! destroy any information while reversing the direction.
+							
+							        ! Set up a link from the old destinations of City to the old destination of NewNext in the tour
+							        ep_loc_OCity := p_sim_nextCity(ep_node);
+							        ep_loc_DCity := p_sim_nextCity(ep_loc_nextCity);
+							        p_sim_nextCity(ep_loc_OCity) := ep_loc_DCity;
+							        p_sim_prevCity(ep_loc_DCity) := ep_loc_OCity;
+							
+							        ! Reverse the chain from the old destination of City to NextNew
+							        ep_loc_OCity := ep_loc_nextCity;
+							        ep_loc_DCity := p_sim_prevCity(ep_loc_OCity);
+							
+							        while ( ep_loc_DCity <> ep_node ) do
+							            ep_loc_ODCity := ep_loc_DCity;
+							            p_sim_nextCity(ep_loc_OCity) := ep_loc_ODCity;
+							            ep_loc_DCity := p_sim_prevCity(ep_loc_ODCity);
+							            p_sim_prevCity(ep_loc_ODCity) := ep_loc_OCity;
+							            ep_loc_OCity := ep_loc_ODCity;
+							        endwhile;
+							
+							        ! Finally, setup the link from City to NextNew
+							        p_sim_nextCity(ep_node) := ep_loc_nextCity;
+							        p_sim_prevCity(ep_loc_nextCity) := ep_node;
+							    endblock; 
+							
+							    block ! Update network flow object.
+							        empty p_sim_tourConnect;
+							        p_sim_tourConnect(i_node1, p_sim_nextCity(i_node1)) := 1;
+							        p_sim_tourDistance := sum(i_node1, p_def_haversineDistance(i_node1, p_sim_nextCity(i_node1)));
+							    endblock; 
+							
+							endwhile;
+						}
+						ElementParameter ep_loc_nextCity {
+							Range: s_cities;
+						}
+						ElementParameter ep_loc_OCity {
+							Range: s_cities;
+						}
+						ElementParameter ep_loc_DCity {
+							Range: s_cities;
+						}
+						ElementParameter ep_loc_ODCity {
+							Range: s_cities;
+						}
+					}
+				}
+				Section Improve_Tour_Cyclic {
+					Comment: {
+						"This section contains all identifiers and the procedure necessary to compute
+						and visualize improved tours using an algorithm that selects that neighbor of the
+						next city in the (modified) tour for swapping which causes the largest distance
+						improvement."
+					}
+					Macro p_cyc_distanceChange {
+						Text: "Improvement in total tour distance by swapping city i with neighbor j in cyclic algorithm";
+						Arguments: (i_node1,i_node2);
+						Definition: p_def_haversineDistance(i_node1,p_cyc_nextCity(i_node1)) + p_def_haversineDistance(i_node2,p_cyc_nextCity(i_node2)) - (p_def_haversineDistance(i_node1,i_node2) + p_def_haversineDistance(p_cyc_nextCity(i_node1),p_cyc_nextCity(i_node2)));
+					}
+					Parameter p_cyc_swaps {
+						Text: "Number of performed swaps in cyclic algorithm";
+					}
+					Parameter p_cyc_tourDistance {
+						Text: "Total tour distance after current iteration in cyclic algorithm";
+						InitialData: 0;
+					}
+					Parameter p_cyc_tourConnect {
+						IndexDomain: (i_node1,i_node2);
+						Text: "City i connected to city j after current iteration in cyclic algorithm";
+					}
+					ElementParameter p_cyc_nextCity {
+						IndexDomain: i_city;
+						Text: "Next city of city c after current iteration in cyclic algorithm";
+						Range: s_cities;
+					}
+					ElementParameter p_cyc_prevCity {
+						IndexDomain: i_city;
+						Text: "Previous city of city c after current iteration in cyclic algorithm";
+						Range: s_cities;
+					}
+					Parameter p_cyc_initialized {
+						Text: "Flag to indicate that cyclic algorithm has been initialized";
+					}
+					Procedure pr_improveTourCyclic {
+						Body: {
+							empty Improve_Tour_Cyclic;
+							
+							if not p_init_tourInitialized then 
+							    pr_findInitialTour; 
+							endif;
+							
+							if (not p_cyc_initialized) then
+							   p_cyc_nextCity(i_node1) := ep_init_nextCity(i_node1);
+							   p_cyc_prevCity(i_node1) := ep_init_prevCity(i_node1);
+							   p_cyc_initialized := 1;
+							   p_cyc_swaps := 0;
+							endif;
+							
+							p_loc_uselessLoops := 0;
+							ep_node := First(s_nodes);
+							
+							while (p_cyc_swaps < p_def_iterationLimit 
+							        and p_loc_uselessLoops <= card(s_nodes)) do
+							
+							    p_loc_uselessLoops += 1;
+							
+							    ! Select a NewNext to be swapped with City
+							    ep_loc_nextCity := argmax(i_node1 in s_neighbors(ep_node), p_cyc_distanceChange(ep_node,i_node1));
+							
+							    if (p_cyc_distanceChange(ep_node, ep_loc_nextCity) > 0) then
+							        p_cyc_swaps += 1;
+							        p_loc_uselessLoops := 0;
+							
+							        block ! Swap cities in tour.
+							            ! This is the hairy part of the algorithm. The direction of the tour changes from
+							            ! City to NewNext as part of the 2-opt heuristic. To modify the next and previous
+							            ! city references we have to walk over the subtour, carefully making sure we don't
+							            ! destroy any information while reversing the direction.
+							
+							            ! Set up a link from the old destinations of City to the old destination of NewNext in the tour
+							            ep_loc_OCity := p_cyc_NextCity(ep_node);
+							            ep_loc_DCity := p_cyc_nextCity(ep_loc_nextCity);
+							            p_cyc_nextCity(ep_loc_OCity) := ep_loc_DCity;
+							            p_cyc_prevCity(ep_loc_DCity) := ep_loc_OCity;
+							
+							            ! Reverse the chain from the old destination of City to NextNew
+							            ep_loc_OCity := ep_loc_nextCity;
+							            ep_loc_DCity := p_cyc_prevCity(ep_loc_OCity);
+							
+							            while ( ep_loc_DCity <> ep_node ) do
+							                 ep_loc_ODCity := ep_loc_DCity;
+							                 p_cyc_NextCity(ep_loc_OCity) := ep_loc_ODCity;
+							                 ep_loc_DCity := p_cyc_prevCity(ep_loc_ODCity);
+							                 p_cyc_prevCity(ep_loc_ODCity) := ep_loc_OCity;
+							                 ep_loc_OCity := ep_loc_ODCity;
+							            endwhile;
+							
+							            ! Finally, setup the link from City to NextNew
+							            p_cyc_NextCity(ep_node) := ep_loc_nextCity;
+							            p_cyc_PrevCity(ep_loc_nextCity) := ep_node;
+							        endblock;
+							
+							        block ! Update network flow object.
+							            empty p_cyc_tourConnect;
+							            p_cyc_TourConnect(i_node1,p_cyc_NextCity(i_node1)) := 1;
+							            p_cyc_TourDistance := sum(i_node1, p_def_haversineDistance(i_node1,p_cyc_nextCity(i_node1)));
+							
+							        endblock;
+							    endif;
+							
+							    ep_node := p_cyc_nextCity(ep_node);
+							endwhile;
+						}
+						Parameter p_loc_uselessLoops {
+							Text: "Counter for counting number of iterations without tour improvement";
+						}
+						ElementParameter ep_loc_nextCity {
+							Range: s_cities;
+						}
+						ElementParameter ep_loc_OCity {
+							Range: s_cities;
+						}
+						ElementParameter ep_loc_DCity {
+							Range: s_cities;
+						}
+						ElementParameter ep_loc_ODCity {
+							Range: s_cities;
+						}
+					}
+				}
+			}
+			Section Exact {
+				Set s_TSPConstraints {
+					SubsetOf: AllConstraints;
+					Definition: AllConstraints - data { 'c_subtourElimination' };
+				}
+				MathematicalProgram mp_TSP {
+					Objective: v_objective;
+					Direction: minimize;
+					Constraints: s_TSPConstraints;
+					Variables: AllVariables;
+					Type: ep_modelType;
+				}
+				Variable v_objective {
+					Range: free;
+					Definition: sum( (i_node1,i_node2), p_def_haversineDistance(i_node1,i_node2) * v_networkTour(i_node1,i_node2) );
+				}
+				Variable v_networkTour {
+					IndexDomain: (i_node1,i_node2) | i_node1 > i_node2;
+					Range: binary;
+					RelaxStatus: p_relaxStatus;
+				}
+				Constraint c_subtourElimination {
+					Definition: {
+						sum((i_node1,i_node2) | 
+						        i_node1 in s_subtours 
+						        and not i_node2 in s_subtours, 
+						    v_networkTour(i_node1,i_node2) 
+						    + v_networkTour(i_node2,i_node1)) 
+						>= 2
+					}
+				}
+				Constraint c_degreeCheck {
+					IndexDomain: i_node2;
+					Definition: {
+						sum(i_node1, 
+						    v_networkTour(i_node1,i_node2) 
+						    + v_networkTour(i_node2,i_node1)) 
+						= 2
+					}
+				}
+				ElementParameter ep_GMP {
+					Range: AllGeneratedMathematicalPrograms;
+				}
+				Parameter p_calc_solutionTour {
+					IndexDomain: (i_node1,i_node2);
+				}
+				Parameter bp_showSolutionWithSubtours {
+					Text: "Show incumbents with subtours";
+					Range: binary;
+					Property: NoSave;
+					InitialData: 1;
+				}
+				Parameter p_exactObjective;
+				Parameter p_relaxStatus {
+					InitialData: 0;
+				}
+				ElementParameter ep_modelType {
+					Range: AllMathematicalProgrammingTypes;
+				}
+				Procedure pr_callbackLazy {
+					Arguments: ep_in_thisSession;
+					Body: {
+						! Retrieve solution from solver session and send it to the AIMMS variables.
+						GMP::Solution::RetrieveFromSolverSession(ep_in_thisSession, 1);
+						GMP::Solution::SendToModelSelection(ep_GMP, 1, AllVariables, Suffices);
 						
-						Initialize_Progress_Window;
-						GMP::ProgressWindow::DisplayLine( 1, "Phase", "Find Initial Tour" );
+						pr_determineSubtours(ep_in_thisSession);
 						
-						empty p_init_tourConnect;
+						return 1;
+					}
+					ElementParameter ep_in_thisSession {
+						Range: AllSolverSessions;
+						Property: Input;
+					}
+					Set Suffices {
+						SubsetOf: AllSuffixNames;
+						InitialData: data { 'Level' };
+					}
+				}
+				Procedure pr_determineSubtours {
+					Arguments: ep_in_thisSession;
+					Body: {
+						empty s_subtours, p_loc_foundSubtour;
+						
 						s_loc_remainingCities := s_nodes;
 						
-						! We start adding the first city to the tour
-						ep_node := First(s_nodes);
-						s_loc_remainingCities -= ep_node;
+						! We start adding the first city to the tour.
+						ep_loc_firstCity := First(s_loc_remainingCities);
+						ep_loc_city := ep_loc_firstCity;
+						s_loc_remainingCities -= ep_loc_city;
+						s_subtours := ep_loc_city;
 						
-						! For every other city, the next city in the tour is the one closest to it not yet chosen
-						while (Card(s_loc_remainingCities) <> 0) do
-						    ep_init_nextCity(ep_node) 
-						    :=  argmin(i_node1 in s_loc_remainingCities, p_def_directDistance(ep_node,i_node1));
+						while Card(s_loc_remainingCities) > 0 do
+							! For every other city, the next city in the tour is the one closest to it not yet chosen.
+						    ep_loc_initNextCity(ep_loc_city) 
+						    :=  argmax(i_city in s_loc_remainingCities, 
+						            v_networkTour(ep_loc_city, i_city) 
+						            + v_networkTour(i_city, ep_loc_city));
 						
-						    ep_node := ep_init_nextCity(ep_node);
-						    s_loc_remainingCities -= ep_node;
+						    if (v_networkTour(ep_loc_city, ep_loc_initNextCity(ep_loc_city)) + v_networkTour(ep_loc_initNextCity(ep_loc_city), ep_loc_city) > 0.5) then
+						    	! Add city to current (sub)tour.
+						    	ep_loc_city := ep_loc_initNextCity(ep_loc_city);
+						    	s_loc_remainingCities -= ep_loc_city;
+						    	s_subtours += ep_loc_city;
+						    else
+						    	! Close the (sub)tour.
+						    	ep_loc_initNextCity(ep_loc_city) := ep_loc_firstCity;
+						
+						    	if Card(s_subtours) < Card(s_nodes) then
+						    		! Add lazy constraints that forbid the subtour just found.
+									GMP::SolverSession::GenerateCut(ep_in_thisSession, c_subtourElimination);
+									p_loc_foundSubtour := 1;
+								endif;
+						
+								! Start next subtour by adding the first remaining city.
+						    	ep_loc_firstCity := First(s_loc_remainingCities);
+								ep_loc_city := ep_loc_firstCity;
+								s_loc_remainingCities -= ep_loc_city;
+								s_subtours := ep_loc_city;
+						    endif;
 						endwhile;
 						
-						! Finally, close the tour
-						ep_init_nextCity(ep_node) := First(s_nodes);
+						! Finally, close the last subtour.
+						ep_loc_initNextCity(ep_loc_city) := ep_loc_firstCity;
 						
-						ep_init_prevCity(ep_init_nextCity(i_node1)) := i_node1;
-						p_init_tourConnect(i_node1,ep_init_nextCity(i_node1)) := 1;
-						p_init_tourDistance := sum(i_node1, p_def_directDistance(i_node1,ep_init_nextCity(i_node1)));
+						if Card(s_subtours) < Card(s_nodes) then
+							! Add lazy constraints that forbid the last subtour.
+							GMP::SolverSession::GenerateCut(ep_in_thisSession, c_subtourElimination);
+							p_loc_foundSubtour := 1;
+						endif;
 						
-						p_init_tourInitialized := 1;
+						! Determine tour to display on page.
+						if not p_loc_foundSubtour 
+						    or bp_showSolutionWithSubtours then
+						
+							empty p_calc_solutionTour;
+							p_calc_solutionTour(i_city, ep_loc_initNextCity(i_city)) := 1;
+						endif;
 					}
 					Comment: {
-						"This procedure computes an initial tour by starting at the first city,
-						and successively adding the closest remaining city."
+						"This lazy constraint callback is called whenever the solver finds a new candidate incumbent
+						solution. It checks whether the incumbent solution found by the solver contains subtours.
+						If yes, then subtour elimination constraints are added, using GMP::SolverSession::GenerateCut,
+						that forbid these subtours. If not, then the incumbent solution forms a true solution of the
+						TSP problem, as it contains only one tour."
 					}
 					Set s_loc_remainingCities {
-						SubsetOf: s_cities;
+						SubsetOf: s_nodes;
+					}
+					ElementParameter ep_in_thisSession {
+						Range: AllSolverSessions;
+						Property: Input;
+					}
+					ElementParameter ep_loc_city {
+						Range: s_nodes;
+					}
+					ElementParameter ep_loc_firstCity {
+						Range: s_nodes;
+					}
+					ElementParameter ep_loc_initNextCity {
+						IndexDomain: i_city;
+						Range: s_nodes;
+					}
+					Parameter p_loc_foundSubtour {
+						Range: binary;
 					}
 				}
-			}
-			Section Improve_Tour_Simultaneous {
-				Comment: {
-					"This section contains all identifiers and the procedure necessary to compute
-					and visualize improved tours using an algorithm that selects the neighbor of a
-					city for swapping, considering all cities in the tour simultaneously."
-				}
-				Parameter p_sim_distanceChange {
-					IndexDomain: (i_node1,i_node2);
-					Text: "Improvement in total tour distance by swapping city i with neighbor j in simultaneous algorithm";
-					Default: -inf;
-					Definition: p_def_directDistance(i_node1,p_sim_nextCity(i_node1)) + p_def_directDistance(i_node2,p_sim_nextCity(i_node2)) - (p_def_directDistance(i_node1,i_node2) + p_def_directDistance(p_sim_nextCity(i_node1),p_sim_nextCity(i_node2)));
-				}
-				Parameter p_sim_maxChange {
-					Text: "Maximum possible distance improvement in simultaneous algorithm";
-					Definition: Max((i_node1,i_node2 in s_neighbors(i_node1)), p_sim_distanceChange(i_node1,i_node2));
-				}
-				Parameter p_sim_swaps {
-					Text: "Number of performed swaps in simultaneous algorithm";
-				}
-				Parameter p_sim_tourDistance {
-					Text: "Total tour distance after current iteration in simultaneous algorithm";
-					InitialData: 0;
-				}
-				Parameter p_sim_tourConnect {
-					IndexDomain: (i_node1,i_node2);
-					Text: "City i connected to city j after current iteration in simultaneous algorithm";
-				}
-				ElementParameter p_sim_nextCity {
-					IndexDomain: i_city;
-					Text: "Next city of city c after current iteration in simultaneous algorithm";
-					Range: s_cities;
-				}
-				ElementParameter p_sim_prevCity {
-					IndexDomain: i_city;
-					Text: "Previous city of city c after current iteration in simultaneous algorithm";
-					Range: s_cities;
-				}
-				Parameter p_sim_initialized {
-					Text: "Flag to indicate that simultaneous algorithm has been initialized";
-				}
-				Procedure pr_improveTourSimultaneous {
+				Procedure pr_emptyExactSolution {
 					Body: {
-						empty Improve_Tour_Simultaneous;
+						empty v_networkTour, p_calc_solutionTour;
 						
-						Initialize_Progress_Window;
-						GMP::ProgressWindow::DisplaySolver("Simultaneous Approach");
-						GMP::ProgressWindow::DisplayLine(1, "Phase", "");
+						MonitoredIdentifiers := AllIdentifiers;
 						
-						if not p_init_tourInitialized then 
-						    pr_findInitialTour; 
-						endif;
-						
-						if (not p_sim_initialized) then
-						   p_sim_nextCity(i_node1) := ep_init_nextCity(i_node1);
-						   p_sim_prevCity(i_node1) := ep_init_prevCity(i_node1);
-						   p_sim_initialized := 1;
-						   p_sim_swaps := 0;
-						endif;
-						
-						while (p_sim_maxChange > 0 and LoopCount <= p_def_iterationLimit) do
-						    GMP::ProgressWindow::DisplayLine( 1, "Phase", "Select cities" );
-						
-						    p_sim_swaps += 1;
-						
-						    ! Select City and NewNext as a (i,j) tuple which reaches the maximum change
-						    for ((i_node1,i_node2) | p_sim_distanceChange(i_node1,i_node2) = p_sim_maxChange) do
-						        ep_node := i_node1;
-						        ep_loc_nextCity := i_node2;
-						        break;
-						    endfor;
-						
-						    block ! Swap cities in tour.
-						        ! This is the hairy part of the algorithm. The direction of the tour changes from
-						        ! City to NewNext as part of the 2-opt heuristic. To modify the next and previous
-						        ! city references we have to walk over the subtour, carefully making sure we don't
-						        ! destroy any information while reversing the direction.
-						
-						        GMP::ProgressWindow::DisplayLine(1, "Phase", "Swap Cities");
-						
-						        ! Set up a link from the old destinations of City to the old destination of NewNext in the tour
-						        ep_loc_OCity := p_sim_nextCity(ep_node);
-						        ep_loc_DCity := p_sim_nextCity(ep_loc_nextCity);
-						        p_sim_nextCity(ep_loc_OCity) := ep_loc_DCity;
-						        p_sim_prevCity(ep_loc_DCity) := ep_loc_OCity;
-						
-						        ! Reverse the chain from the old destination of City to NextNew
-						        ep_loc_OCity := ep_loc_nextCity;
-						        ep_loc_DCity := p_sim_prevCity(ep_loc_OCity);
-						
-						        while ( ep_loc_DCity <> ep_node ) do
-						            ep_loc_ODCity := ep_loc_DCity;
-						            p_sim_nextCity(ep_loc_OCity) := ep_loc_ODCity;
-						            ep_loc_DCity := p_sim_prevCity(ep_loc_ODCity);
-						            p_sim_prevCity(ep_loc_ODCity) := ep_loc_OCity;
-						            ep_loc_OCity := ep_loc_ODCity;
-						        endwhile;
-						
-						        ! Finally, setup the link from City to NextNew
-						        p_sim_nextCity(ep_node) := ep_loc_nextCity;
-						        p_sim_prevCity(ep_loc_nextCity) := ep_node;
-						    endblock; 
-						
-						    block ! Update network flow object.
-						        empty p_sim_tourConnect;
-						        p_sim_tourConnect(i_node1, p_sim_nextCity(i_node1)) := 1;
-						        p_sim_tourDistance := sum(i_node1, p_def_directDistance(i_node1, p_sim_nextCity(i_node1)));
-						    endblock; 
-						
-						    block ! Update Progress Window.
-						        GMP::ProgressWindow::DisplayLine(3, "Objective", p_sim_tourDistance);
-						        GMP::ProgressWindow::DisplayLine(2, "Node Swaps", p_sim_swaps);
-						    endblock; 
-						endwhile;
-						
-						block ! Update Progress Window.
-						    GMP::ProgressWindow::DisplayLine(3, "Objective", p_sim_tourDistance);
-						    GMP::ProgressWindow::DisplayLine(2, "Node Swaps", p_sim_swaps);
-						endblock; 
-						
-						GMP::ProgressWindow::DisplayProgramStatus('LocallyOptimal');
-						GMP::ProgressWindow::DisplaySolverStatus('NormalCompletion');
+						DataChangeMonitorReset(DataManagementMonitorID, MonitoredIdentifiers);
 					}
-					ElementParameter ep_loc_nextCity {
-						Range: s_cities;
+					Comment: {
+						"To avoid a dialog that will ask the user to save the case if the \'Select instance\'
+						button is pressed."
 					}
-					ElementParameter ep_loc_OCity {
-						Range: s_cities;
-					}
-					ElementParameter ep_loc_DCity {
-						Range: s_cities;
-					}
-					ElementParameter ep_loc_ODCity {
-						Range: s_cities;
+					Set MonitoredIdentifiers {
+						SubsetOf: AllIdentifiers;
 					}
 				}
-			}
-			Section Improve_Tour_Cyclic {
-				Comment: {
-					"This section contains all identifiers and the procedure necessary to compute
-					and visualize improved tours using an algorithm that selects that neighbor of the
-					next city in the (modified) tour for swapping which causes the largest distance
-					improvement."
-				}
-				Macro p_cyc_distanceChange {
-					Text: "Improvement in total tour distance by swapping city i with neighbor j in cyclic algorithm";
-					Arguments: (i_node1,i_node2);
-					Definition: p_def_directDistance(i_node1,p_cyc_nextCity(i_node1)) + p_def_directDistance(i_node2,p_cyc_nextCity(i_node2)) - (p_def_directDistance(i_node1,i_node2) + p_def_directDistance(p_cyc_nextCity(i_node1),p_cyc_nextCity(i_node2)));
-				}
-				Parameter p_cyc_swaps {
-					Text: "Number of performed swaps in cyclic algorithm";
-				}
-				Parameter p_cyc_tourDistance {
-					Text: "Total tour distance after current iteration in cyclic algorithm";
-					InitialData: 0;
-				}
-				Parameter p_cyc_tourConnect {
-					IndexDomain: (i_node1,i_node2);
-					Text: "City i connected to city j after current iteration in cyclic algorithm";
-				}
-				ElementParameter p_cyc_nextCity {
-					IndexDomain: i_city;
-					Text: "Next city of city c after current iteration in cyclic algorithm";
-					Range: s_cities;
-				}
-				ElementParameter p_cyc_prevCity {
-					IndexDomain: i_city;
-					Text: "Previous city of city c after current iteration in cyclic algorithm";
-					Range: s_cities;
-				}
-				Parameter p_cyc_initialized {
-					Text: "Flag to indicate that cyclic algorithm has been initialized";
-				}
-				Procedure pr_improveTourCyclic {
+				Procedure pr_solveModel {
 					Body: {
-						empty Improve_Tour_Cyclic;
+						empty p_calc_solutionTour;
 						
-						Initialize_Progress_Window;
-						GMP::ProgressWindow::DisplaySolver("Cyclic Approach");
-						GMP::ProgressWindow::DisplayLine(1, "Phase", "");
+						p_relaxStatus := 0;
+						ep_modelType := 'MIP';
 						
-						if not p_init_tourInitialized then 
-						    pr_findInitialTour; 
+						ep_GMP := GMP::Instance::Generate(mp_TSP);
+						
+						GMP::Instance::SetCallbackAddLazyConstraint(ep_GMP, 'pr_callbackLazy');
+						
+						GMP::Instance::Solve(ep_GMP);
+						
+						if GMP::Solution::Count(ep_GMP) >= 1 then
+							pr_determineSubtours('');
 						endif;
 						
-						if (not p_cyc_initialized) then
-						   p_cyc_nextCity(i_node1) := ep_init_nextCity(i_node1);
-						   p_cyc_prevCity(i_node1) := ep_init_prevCity(i_node1);
-						   p_cyc_initialized := 1;
-						   p_cyc_swaps := 0;
-						endif;
-						
-						p_loc_uselessLoops := 0;
-						ep_node := First(s_nodes);
-						
-						while (p_cyc_swaps < p_def_iterationLimit 
-						        and p_loc_uselessLoops <= card(s_nodes)) do
-						
-						    GMP::ProgressWindow::DisplayLine(1, "Phase", "Select cities");
-						
-						    p_loc_uselessLoops += 1;
-						
-						    ! Select a NewNext to be swapped with City
-						    ep_loc_nextCity := argmax(i_node1 in s_neighbors(ep_node), p_cyc_distanceChange(ep_node,i_node1));
-						
-						    if (p_cyc_distanceChange(ep_node, ep_loc_nextCity) > 0) then
-						        p_cyc_swaps += 1;
-						        p_loc_uselessLoops := 0;
-						
-						        block ! Swap cities in tour.
-						            ! This is the hairy part of the algorithm. The direction of the tour changes from
-						            ! City to NewNext as part of the 2-opt heuristic. To modify the next and previous
-						            ! city references we have to walk over the subtour, carefully making sure we don't
-						            ! destroy any information while reversing the direction.
-						
-						            GMP::ProgressWindow::DisplayLine( 1, "Phase", "Swap Cities" );
-						
-						            ! Set up a link from the old destinations of City to the old destination of NewNext in the tour
-						            ep_loc_OCity := p_cyc_NextCity(ep_node);
-						            ep_loc_DCity := p_cyc_nextCity(ep_loc_nextCity);
-						            p_cyc_nextCity(ep_loc_OCity) := ep_loc_DCity;
-						            p_cyc_prevCity(ep_loc_DCity) := ep_loc_OCity;
-						
-						            ! Reverse the chain from the old destination of City to NextNew
-						            ep_loc_OCity := ep_loc_nextCity;
-						            ep_loc_DCity := p_cyc_prevCity(ep_loc_OCity);
-						
-						            while ( ep_loc_DCity <> ep_node ) do
-						                 ep_loc_ODCity := ep_loc_DCity;
-						                 p_cyc_NextCity(ep_loc_OCity) := ep_loc_ODCity;
-						                 ep_loc_DCity := p_cyc_prevCity(ep_loc_ODCity);
-						                 p_cyc_prevCity(ep_loc_ODCity) := ep_loc_OCity;
-						                 ep_loc_OCity := ep_loc_ODCity;
-						            endwhile;
-						
-						            ! Finally, setup the link from City to NextNew
-						            p_cyc_NextCity(ep_node) := ep_loc_nextCity;
-						            p_cyc_PrevCity(ep_loc_nextCity) := ep_node;
-						        endblock;
-						
-						        block ! Update network flow object.
-						            empty p_cyc_tourConnect;
-						            p_cyc_TourConnect(i_node1,p_cyc_NextCity(i_node1)) := 1;
-						            p_cyc_TourDistance := sum(i_node1, p_def_directDistance(i_node1,p_cyc_nextCity(i_node1)));
-						
-						        endblock;
-						
-						        block ! Update Progress Window.
-						            GMP::ProgressWindow::DisplayLine(3,"Objective", p_cyc_TourDistance);
-						            GMP::ProgressWindow::DisplayLine(2, "Node Swaps", p_cyc_Swaps);
-						        endblock;
-						    endif;
-						
-						    ep_node := p_cyc_nextCity(ep_node);
-						endwhile;
-						
-						GMP::ProgressWindow::DisplayProgramStatus('LocallyOptimal');
-						GMP::ProgressWindow::DisplaySolverStatus('NormalCompletion');
-						
-						block ! Update Progress Window.
-						    GMP::ProgressWindow::DisplayLine(3,"Objective", p_cyc_tourDistance);
-						    GMP::ProgressWindow::DisplayLine(2, "Node Swaps", p_cyc_swaps);
-						endblock;
+						p_exactObjective := v_objective;
 					}
-					Parameter p_loc_uselessLoops {
-						Text: "Counter for counting number of iterations without tour improvement";
+				}
+				Section Lower_Bound {
+					Parameter p_relaxedTourSolution {
+						IndexDomain: (i_node1,i_node2);
 					}
-					ElementParameter ep_loc_nextCity {
-						Range: s_cities;
-					}
-					ElementParameter ep_loc_OCity {
-						Range: s_cities;
-					}
-					ElementParameter ep_loc_DCity {
-						Range: s_cities;
-					}
-					ElementParameter ep_loc_ODCity {
-						Range: s_cities;
+					Parameter p_lowerBound;
+					Procedure pr_solveRelaxedModel {
+						Body: {
+							empty Lower_Bound;
+							
+							p_relaxStatus := 1;
+							ep_modelType := 'LP';
+							
+							ep_GMP := GMP::Instance::Generate(mp_TSP);
+							GMP::Instance::SetCallbackAddLazyConstraint(ep_GMP, 'pr_callbackLazy');
+							
+							GMP::Instance::Solve(ep_GMP);
+							
+							p_relaxedTourSolution(i_node1, i_node2) := v_networkTour(i_node1,i_node2);
+							p_lowerBound := v_objective;
+						}
 					}
 				}
 			}
@@ -514,45 +705,42 @@ Model Main_TravelingSalesman {
 				IndexDomain: (webui::indexWorkflowOrder,webui::indexNoOfPages,webui::indexWorkflowPageSpec);
 				Definition: {
 					data 
-					{ ( 1, 1, displayText       ) : "Welcome"            ,  ( 1, 1, icon              ) : "aimms-happy"        ,
-					  ( 1, 1, pageId            ) : "home"               ,  ( 1, 1, tooltip           ) : "welcome"            ,
-					  ( 1, 1, workflowPageState ) : "active"             ,  ( 1, 1, pageDataState     ) : "Incomplete"         ,
-					  ( 1, 1, redirectPageId    ) : "home"               ,  ( 1, 2, displayText       ) : "Story"              ,
-					  ( 1, 2, icon              ) : "aimms-lamp5"        ,  ( 1, 2, pageId            ) : "story"              ,
-					  ( 1, 2, tooltip           ) : "Problem description",  ( 1, 2, workflowPageState ) : "active"             ,
-					  ( 1, 2, pageDataState     ) : "Incomplete"         ,  ( 1, 2, redirectPageId    ) : "home"               ,
-					  ( 1, 3, displayText       ) : "Tours"              ,  ( 1, 3, icon              ) : "aimms-finish"       ,
-					  ( 1, 3, pageId            ) : "tours"              ,  ( 1, 3, tooltip           ) : "Possible Tours"     ,
-					  ( 1, 3, workflowPageState ) : "active"             ,  ( 1, 3, pageDataState     ) : "Incomplete"         ,
-					  ( 1, 3, redirectPageId    ) : "home"                }
+					{ ( 1, 1, displayText       ) : "Welcome"             ,  ( 1, 1, icon              ) : "aimms-happy"         ,
+					  ( 1, 1, pageId            ) : "home"                ,  ( 1, 1, tooltip           ) : "Welcome"             ,
+					  ( 1, 1, workflowPageState ) : "active"              ,  ( 1, 1, pageDataState     ) : "Incomplete"          ,
+					  ( 1, 1, redirectPageId    ) : "home"                ,  ( 1, 2, displayText       ) : "Story"               ,
+					  ( 1, 2, icon              ) : "aimms-lamp5"         ,  ( 1, 2, pageId            ) : "story"               ,
+					  ( 1, 2, tooltip           ) : "Problem description" ,  ( 1, 2, workflowPageState ) : "active"              ,
+					  ( 1, 2, pageDataState     ) : "Incomplete"          ,  ( 1, 2, redirectPageId    ) : "home"                ,
+					  ( 1, 3, displayText       ) : "Network"             ,  ( 1, 3, icon              ) : "aimms-map"           ,
+					  ( 1, 3, pageId            ) : "network"             ,  ( 1, 3, tooltip           ) : "Building the network",
+					  ( 1, 3, workflowPageState ) : "active"              ,  ( 1, 3, pageDataState     ) : "Incomplete"          ,
+					  ( 1, 3, redirectPageId    ) : "home"                ,  ( 1, 4, displayText       ) : "Heuristic"           ,
+					  ( 1, 4, icon              ) : "aimms-finish"        ,  ( 1, 4, pageId            ) : "tours"               ,
+					  ( 1, 4, tooltip           ) : "Heuristic tours"     ,  ( 1, 4, workflowPageState ) : "active"              ,
+					  ( 1, 4, pageDataState     ) : "Incomplete"          ,  ( 1, 4, redirectPageId    ) : "home"                ,
+					  ( 1, 5, displayText       ) : "Exact"               ,  ( 1, 5, icon              ) : "aimms-target"        ,
+					  ( 1, 5, pageId            ) : "exact"               ,  ( 1, 5, tooltip           ) : "Exact tour"          ,
+					  ( 1, 5, workflowPageState ) : "active"              ,  ( 1, 5, pageDataState     ) : "Incomplete"          ,
+					  ( 1, 5, redirectPageId    ) : "home"                ,  ( 1, 6, displayText       ) : "Comparison"          ,
+					  ( 1, 6, icon              ) : "aimms-trophy3"       ,  ( 1, 6, pageId            ) : "comparison"          ,
+					  ( 1, 6, tooltip           ) : "Tour comparisons"    ,  ( 1, 6, workflowPageState ) : "active"              ,
+					  ( 1, 6, pageDataState     ) : "Incomplete"          ,  ( 1, 6, redirectPageId    ) : "home"                 }
 				}
 			}
 		}
 		Section Pages {
-			Section Tours_Page {
-				Procedure pr_deleteNode {
-					Body: {
-						empty p_latitude(ep_city);
-						empty p_longitude(ep_city);
-					}
-				}
-				StringParameter sp_def_toursSidePanel {
-					IndexDomain: (webui::indexPageExtension,webui::indexSidePanelSpec);
+			Section Network_Page {
+				StringParameter sp_mapTitle {
 					Definition: {
-						data 
-						{ ( 1, displayText ) : "New Network"   ,  ( 1, pageId      ) : "new_network"   ,  ( 1, state       ) : "active"        ,
-						  ( 2, displayText ) : "Tour Distances",  ( 2, pageId      ) : "tour_distances",  ( 2, icon        ) : "aimms-info2"   ,
-						  ( 2, state       ) : "active"         }
+						"The network has " + card(s_nodes) + " nodes.";
 					}
 				}
-				StringParameter sp_def_toursPrimaryActions {
-					IndexDomain: webui::indexPageActionSpec;
-					Definition: data { displaytext : "Run All",  icon : "aimms-airplane",  procedure : "pr_runAll",  state : "active" };
-				}
-				Parameter p_def_nodeSize {
-					IndexDomain: i_city;
-					Definition: 2;
-					webui::TooltipIdentifier: sp_def_nodeTooltip(i_city);
+				StringParameter sp_addThisCity;
+				StringParameter sp_addByCountry;
+				Parameter p_def_unableToFetch {
+					InitialData: 0;
+					webui::FlagsIdentifier: sp_readOnlyFlag;
 				}
 				StringParameter sp_def_nodeTooltip {
 					IndexDomain: i_city | exists(i_node1 | i_node1 = i_city) or exists(i_node2 | i_node2 = i_city);
@@ -561,6 +749,11 @@ Model Main_TravelingSalesman {
 						"<p style=\"text-align: left;\"><strong>Latitude: </strong>" + p_latitude(i_city) + "</p>" +
 						"<p style=\"text-align: left;\"><strong>Longitude: </strong>" + p_longitude(i_city) + "</p>"
 					}
+				}
+				Parameter p_def_nodeSize {
+					IndexDomain: i_city;
+					Definition: 2;
+					webui::TooltipIdentifier: sp_def_nodeTooltip(i_city);
 				}
 				StringParameter sp_def_arcTooltip {
 					IndexDomain: (i_node1,i_node2) | i_node1 <> i_node2;
@@ -580,13 +773,9 @@ Model Main_TravelingSalesman {
 						  ( p_def_nodeSize, 1, procedure   ) : "pr_deleteNode"  ,  ( p_def_nodeSize, 1, state       ) : "active" }
 					}
 				}
-			}
-			Section Add_Cities_DialogPage {
-				StringParameter sp_addThisCity;
-				StringParameter sp_addByCountry;
-				Parameter p_def_unableToFetch {
-					InitialData: 0;
-					webui::FlagsIdentifier: sp_readOnlyFlag;
+				StringParameter sp_def_networkSidePanel {
+					IndexDomain: (webui::indexPageExtension,webui::indexSidePanelSpec);
+					Definition: data { ( 1, displayText ) : "Help",  ( 1, pageId ) : "network_help",  ( 1, icon ) : "aimms-info2",  ( 1, state ) : "active" };
 				}
 				Procedure pr_addThisCity {
 					Body: {
@@ -713,6 +902,32 @@ Model Main_TravelingSalesman {
 					Body: {
 						empty API_Inputs;
 					}
+				}
+				Procedure pr_deleteNode {
+					Body: {
+						empty p_latitude(ep_city);
+						empty p_longitude(ep_city);
+					}
+				}
+			}
+			Section Heuristic_Page {
+				StringParameter sp_def_heuristicPrimaryActions {
+					IndexDomain: webui::indexPageActionSpec;
+					Definition: data { displaytext : "Run",  icon : "aimms-airplane",  procedure : "pr_runAll",  state : "active" };
+				}
+				StringParameter sp_def_heuristicSidePanel {
+					IndexDomain: (webui::indexPageExtension,webui::indexSidePanelSpec);
+					Definition: data { ( 1, displayText ) : "Help",  ( 1, pageId ) : "network_help",  ( 1, icon ) : "aimms-info2",  ( 1, state ) : "active" };
+				}
+			}
+			Section Exact_Page {
+				StringParameter sp_def_exactPrimaryActions {
+					IndexDomain: webui::indexPageActionSpec;
+					Definition: data { displaytext : "Run",  icon : "aimms-airplane",  procedure : "pr_solveModel",  state : "active" };
+				}
+				StringParameter sp_def_exactSidePanel {
+					IndexDomain: (webui::indexPageExtension,webui::indexSidePanelSpec);
+					Definition: data { ( 1, displayText ) : "Help",  ( 1, pageId ) : "network_help",  ( 1, icon ) : "aimms-info2",  ( 1, state ) : "active" };
 				}
 			}
 		}
