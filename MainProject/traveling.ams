@@ -256,6 +256,7 @@ Model Main_TravelingSalesman {
 						Text: "Next city of city c after current iteration in simultaneous algorithm";
 						Range: s_cities;
 					}
+					StringParameter qisadhaiss;
 					ElementParameter p_sim_prevCity {
 						IndexDomain: i_city;
 						Text: "Previous city of city c after current iteration in simultaneous algorithm";
@@ -278,6 +279,7 @@ Model Main_TravelingSalesman {
 							   p_sim_initialized := 1;
 							   p_sim_swaps := 0;
 							endif;
+							
 							
 							while (p_sim_maxChange > 0 and LoopCount <= p_def_iterationLimit) do
 							
@@ -319,11 +321,15 @@ Model Main_TravelingSalesman {
 							        p_sim_prevCity(ep_loc_nextCity) := ep_node;
 							    endblock; 
 							
-							    block ! Update network flow object.
-							        empty p_sim_tourConnect;
-							        p_sim_tourConnect(i_node1, p_sim_nextCity(i_node1)) := 1;
-							        p_sim_tourDistance := sum(i_node1, p_def_haversineDistance(i_node1, p_sim_nextCity(i_node1)));
-							    endblock; 
+							    qisadhaiss := CurrentToString("%c%y-%m-%d %H:%M:%S");
+							    qisadhaiss :=  
+							        MomentToString(
+							        "%c%y-%m-%d %H:%M:%S",   ! (input) a string expression
+							        [s],         ! (input) a time unit
+							        qisadhaiss,  ! (input) a string expression
+							        0[s]);  
+							
+							    ScheduleAt(qisadhaiss, 'frubas');
 							
 							endwhile;
 						}
@@ -338,6 +344,15 @@ Model Main_TravelingSalesman {
 						}
 						ElementParameter ep_loc_ODCity {
 							Range: s_cities;
+						}
+					}
+					Procedure frubas {
+						Body: {
+							block ! Update network flow object.
+							    empty p_sim_tourConnect;
+							    p_sim_tourConnect(i_node1, p_sim_nextCity(i_node1)) := 1;
+							    p_sim_tourDistance := sum(i_node1, p_def_haversineDistance(i_node1, p_sim_nextCity(i_node1)));
+							endblock;
 						}
 					}
 				}
@@ -666,6 +681,8 @@ Model Main_TravelingSalesman {
 						endif;
 						
 						p_exactObjective := v_objective;
+						
+						pr_solveRelaxedModel;
 					}
 				}
 				Section Lower_Bound {

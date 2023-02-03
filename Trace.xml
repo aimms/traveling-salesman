@@ -1,8 +1,8 @@
-== Info: Found bundle for host api.positionstack.com: 0x27e8d4e4c08 [serially]
-== Info: Re-using existing connection! (#2) with host api.positionstack.com
-== Info: Connected to api.positionstack.com (172.67.164.241) port 80 (#2)
-=> Send header, 147 bytes
-GET /v1/forward?access_key=54c8e0e21241f8f235ff0e7329aa989b&query=Brovary&limit=1&country=UA HTTP/1.1
+== Info: Found bundle for host api.positionstack.com: 0x201f4965988 [serially]
+== Info: Re-using existing connection! (#1) with host api.positionstack.com
+== Info: Connected to api.positionstack.com (104.21.65.172) port 80 (#1)
+=> Send header, 150 bytes
+GET /v1/forward?access_key=54c8e0e21241f8f235ff0e7329aa989b&query=Itapetinga&limit=1&country=BR HTTP/1.1
 Host: api.positionstack.com
 Accept: */*
 
@@ -10,7 +10,7 @@ Accept: */*
 <= Recv header, 17 bytes
 HTTP/1.1 200 OK
 <= Recv header, 37 bytes
-Date: Wed, 01 Feb 2023 19:59:22 GMT
+Date: Fri, 03 Feb 2023 19:29:34 GMT
 <= Recv header, 32 bytes
 Content-Type: application/json
 <= Recv header, 28 bytes
@@ -26,7 +26,7 @@ accept-encoding: gzip
 <= Recv header, 34 bytes
 cache-control: no-cache, private
 <= Recv header, 65 bytes
-x-apilayer-transaction-id: 8cff3c83-d0a6-4d19-8855-44109c850426
+x-apilayer-transaction-id: ff272fc5-1c52-43c3-9a44-6836c912c58a
 <= Recv header, 32 bytes
 access-control-allow-origin: *
 <= Recv header, 56 bytes
@@ -36,29 +36,31 @@ access-control-allow-headers: *
 <= Recv header, 22 bytes
 x-quota-limit: 25000
 <= Recv header, 26 bytes
-x-quota-remaining: 24860
+x-quota-remaining: 24720
 <= Recv header, 22 bytes
 x-increment-usage: 1
 <= Recv header, 23 bytes
-x-request-time: 0.067
+x-request-time: 0.087
 <= Recv header, 26 bytes
 CF-Cache-Status: DYNAMIC
-<= Recv header, 276 bytes
-Report-To: {"endpoints":[{"url":"https:\/\/a.nel.cloudflare.com\/report\/v3?s=IAPldB%2BhW%2Bt2q5oT8266r%2FOuY6wuL%2BBW8blbSLFGaw69zpWGbLZMwEWe3v%2BUhRMB%2F57cJORku46%2Bb7lhAFNpsYbYJVpcsiFk3PknNmh%2BAzWx7xeSVWmRei1Nb6ATaT2HC2kZgG0ueJk%3D"}],"group":"cf-nel","max_age":604800}
+<= Recv header, 270 bytes
+Report-To: {"endpoints":[{"url":"https:\/\/a.nel.cloudflare.com\/report\/v3?s=nfrugzXvMl48aG92BLBP2OYZ9sInqiwjHpyau0uEog%2FtL7KfuRZij2bq4brT6oLatdH32ZsUXr8nlYN6WgfYVPF6zZCCWPoJa%2FTsx%2B8MSOBKwNbWQwzTOIvjfwi4qRRQSxLVq%2B%2BWmI8%3D"}],"group":"cf-nel","max_age":604800}
 <= Recv header, 67 bytes
 NEL: {"success_fraction":0,"report_to":"cf-nel","max_age":604800}
 <= Recv header, 20 bytes
 Server: cloudflare
 <= Recv header, 30 bytes
-CF-RAY: 792d44657afc4d4d-GRU
+CF-RAY: 793d937a383fa638-GRU
 <= Recv header, 54 bytes
 alt-svc: h3=":443"; ma=86400, h3-29=":443"; ma=86400
 <= Recv header, 2 bytes
 
-<= Recv data, 388 bytes
-178
-{"data":[{"latitude":50.521189,"longitude":30.818203,"type":"locality","name":"Brovary","number":null,"postal_code":null,"street":null,"confidence":1,"region":"Kiev","region_code":"KV","county":"Brovars\u0027ka","locality":"Brovary","administrative_area":null,"neighbourhood":null,"country":"Ukraine","country_code":"UKR","continent":"Europe","label":"Brovary, KV, Ukraine"}]}
+<= Recv data, 417 bytes
+19a
+{"data":[{"latitude":-23.592477,"longitude":-48.044392,"type":"locality","name":"Itapetininga","number":null,"postal_code":null,"street":null,"confidence":1,"region":"Sao Paulo","region_code":"SP","county":"Itapetininga","locality":"Itapetininga","administrative_area":"Itapetininga","neighbourhood":null,"country":"Brazil","country_code":"BRA","continent":"South America","label":"Itapetininga, SP, Brazil"}]}
+
+<= Recv data, 5 bytes
 0
 
 
-== Info: Connection #2 to host api.positionstack.com left intact
+== Info: Connection #1 to host api.positionstack.com left intact

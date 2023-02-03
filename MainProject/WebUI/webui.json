@@ -409,14 +409,19 @@
     "bindings": {
       "literal": [
         {
+          "widgetUri": "scl_timeComparison",
+          "gridArea": "area-b",
+          "dndId": "area-bscl_timeComparison1"
+        },
+        {
           "widgetUri": "scl_initialTour",
           "gridArea": "area-a",
           "dndId": "area-ascl_initialTour0"
         },
         {
-          "widgetUri": "scl_timeComparison",
-          "gridArea": "area-b",
-          "dndId": "Unassigned widgetsscl_timeComparison"
+          "widgetUri": "test",
+          "gridArea": "area-a",
+          "dndId": "Unassigned widgetstest"
         }
       ]
     },
@@ -431,6 +436,13 @@
         },
         {
           "uri": "scl_timeComparison",
+          "layoutInfo": {
+            "width": "2",
+            "height": "1"
+          }
+        },
+        {
+          "uri": "test",
           "layoutInfo": {
             "width": "2",
             "height": "1"
@@ -706,6 +718,9 @@
   "pages/network_help": {
     "widgets": {
       "literal": []
+    },
+    "aimms.widget.type": {
+      "literal": "pagev2-grid-sidepanel"
     }
   },
   "pages/story": {
@@ -761,11 +776,6 @@
     },
     "layoutId": {
       "literal": "custom_afa86eba-6e6a-4077-a063-bf443788a472"
-    },
-    "onload": {
-      "aimms": {
-        "run": "pr_runAll"
-      }
     },
     "primarypageaction": {
       "aimms": {
@@ -929,10 +939,10 @@
       ]
     },
     "center.latitude": {
-      "literal": -18.646245142670609
+      "literal": -2.284550660236957
     },
     "center.longitude": {
-      "literal": 47.46127043758007
+      "literal": -22.73170054449493
     },
     "contextmenu": {
       "aimms": {
@@ -1131,10 +1141,10 @@
       }
     },
     "center.latitude": {
-      "literal": -3.864254615721396
+      "literal": 26.745610382199027
     },
     "center.longitude": {
-      "literal": 49.75907572967174
+      "literal": 1.2304687500000003
     },
     "contextmenu": {
       "aimms": {
@@ -1333,10 +1343,10 @@
       }
     },
     "center.latitude": {
-      "literal": 4.915832801313164
+      "literal": -15.623036831528252
     },
     "center.longitude": {
-      "literal": -22.148437500000005
+      "literal": -51.4599609375
     },
     "contextmenu": {
       "aimms": {
@@ -1475,7 +1485,7 @@
       "literal": "Improved Tour (Simultaneous)"
     },
     "zoom": {
-      "literal": 2
+      "literal": 4
     }
   },
   "widgets/map_improvedTourSimultaneous_1": {
@@ -1535,10 +1545,10 @@
       }
     },
     "center.latitude": {
-      "literal": 16.804541076383456
+      "literal": 16.13026201203477
     },
     "center.longitude": {
-      "literal": 13.535156250000002
+      "literal": 41.83593750000001
     },
     "contextmenu": {
       "aimms": {
@@ -1740,10 +1750,10 @@
       "literal": false
     },
     "center.latitude": {
-      "literal": -26.74561038219901
+      "literal": 23.241346102386136
     },
     "center.longitude": {
-      "literal": -82.05037083268573
+      "literal": -55.561568013515699
     },
     "contextmenu": {
       "aimms": {
@@ -2004,6 +2014,22 @@
     },
     "title": {
       "literal": "Total time per solve type "
+    }
+  },
+  "widgets/test": {
+    "aimms.widget.type": {
+      "literal": "selectionbox-v2"
+    },
+    "contents": {
+      "aimms": {
+        "contents": [
+          "ep_city"
+        ],
+        "slices": []
+      }
+    },
+    "name": {
+      "literal": "test"
     }
   },
   "widgets/txt_story": {
