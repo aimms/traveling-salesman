@@ -256,7 +256,8 @@ Model Main_TravelingSalesman {
 						Text: "Next city of city c after current iteration in simultaneous algorithm";
 						Range: s_cities;
 					}
-					StringParameter qisadhaiss;
+					StringParameter sp_time;
+					StringParameter sp_timeNEW;
 					ElementParameter p_sim_prevCity {
 						IndexDomain: i_city;
 						Text: "Previous city of city c after current iteration in simultaneous algorithm";
@@ -321,15 +322,7 @@ Model Main_TravelingSalesman {
 							        p_sim_prevCity(ep_loc_nextCity) := ep_node;
 							    endblock; 
 							
-							    qisadhaiss := CurrentToString("%c%y-%m-%d %H:%M:%S");
-							    qisadhaiss :=  
-							        MomentToString(
-							        "%c%y-%m-%d %H:%M:%S",   ! (input) a string expression
-							        [s],         ! (input) a time unit
-							        qisadhaiss,  ! (input) a string expression
-							        0[s]);  
-							
-							    ScheduleAt(qisadhaiss, 'frubas');
+							    newprocedure;
 							
 							endwhile;
 						}
@@ -346,13 +339,25 @@ Model Main_TravelingSalesman {
 							Range: s_cities;
 						}
 					}
-					Procedure frubas {
+					Procedure newprocedure {
 						Body: {
 							block ! Update network flow object.
 							    empty p_sim_tourConnect;
 							    p_sim_tourConnect(i_node1, p_sim_nextCity(i_node1)) := 1;
 							    p_sim_tourDistance := sum(i_node1, p_def_haversineDistance(i_node1, p_sim_nextCity(i_node1)));
 							endblock;
+							
+							sp_time := CurrentToString("%c%y-%m-%d %H:%M:%S");
+							sp_timeNEW :=  
+							    MomentToString(
+							    "%c%y-%m-%d %H:%M:%S",   ! (input) a string expression
+							    [s],         ! (input) a time unit
+							    sp_time,  ! (input) a string expression
+							    2[s]);  
+							
+							display sp_time, sp_timeNEW;
+							
+							ScheduleAt(sp_timeNEW, 'newprocedure');
 						}
 					}
 				}
@@ -499,7 +504,6 @@ Model Main_TravelingSalesman {
 				Variable v_networkTour {
 					IndexDomain: (i_node1,i_node2) | i_node1 > i_node2;
 					Range: binary;
-					RelaxStatus: p_relaxStatus;
 				}
 				Constraint c_subtourElimination {
 					Definition: {
@@ -533,9 +537,6 @@ Model Main_TravelingSalesman {
 					InitialData: 1;
 				}
 				Parameter p_exactObjective;
-				Parameter p_relaxStatus {
-					InitialData: 0;
-				}
 				ElementParameter ep_modelType {
 					Range: AllMathematicalProgrammingTypes;
 				}
@@ -665,15 +666,12 @@ Model Main_TravelingSalesman {
 				}
 				Procedure pr_solveModel {
 					Body: {
-						empty p_calc_solutionTour;
+						empty Exact;
 						
-						p_relaxStatus := 0;
 						ep_modelType := 'MIP';
-						
 						ep_GMP := GMP::Instance::Generate(mp_TSP);
 						
 						GMP::Instance::SetCallbackAddLazyConstraint(ep_GMP, 'pr_callbackLazy');
-						
 						GMP::Instance::Solve(ep_GMP);
 						
 						if GMP::Solution::Count(ep_GMP) >= 1 then
@@ -681,6 +679,8 @@ Model Main_TravelingSalesman {
 						endif;
 						
 						p_exactObjective := v_objective;
+						
+						GMP::Instance::Delete(ep_GMP);
 						
 						pr_solveRelaxedModel;
 					}
@@ -694,11 +694,8 @@ Model Main_TravelingSalesman {
 						Body: {
 							empty Lower_Bound;
 							
-							p_relaxStatus := 1;
-							ep_modelType := 'LP';
-							
+							ep_modelType := 'MIP';
 							ep_GMP := GMP::Instance::Generate(mp_TSP);
-							GMP::Instance::SetCallbackAddLazyConstraint(ep_GMP, 'pr_callbackLazy');
 							
 							GMP::Instance::Solve(ep_GMP);
 							
