@@ -166,8 +166,8 @@ Model Main_TravelingSalesman {
 				Procedure pr_runAll {
 					Body: {
 						pr_findInitialTour; 
-						pr_refreshingImproveTourCyclic;
-						pr_refreshingImproveTourSimultaneous;
+						pr_improveTourCyclic;
+						pr_improveTourSimultaneous;
 					}
 				}
 				Section Initial_Tour {
@@ -285,30 +285,81 @@ Model Main_TravelingSalesman {
 					Parameter p_sim_timeElapsed {
 						Unit: s;
 					}
-					Parameter sdf;
-					Procedure pr_refreshingImproveTourSimultaneous {
+					Procedure pr_improveTourCyclic {
 						Body: {
-							empty Improve_Tour_Simultaneous;
-							
-							stopwatch::pr_start;
+							empty Improve_Tour_Cyclic;
 							
 							if not p_init_tourInitialized then 
 							    pr_findInitialTour; 
 							endif;
 							
-							if (not p_sim_initialized) then
-							   p_sim_nextCity(i_node1) := ep_init_nextCity(i_node1);
-							   p_sim_prevCity(i_node1) := ep_init_prevCity(i_node1);
-							   p_sim_initialized := 1;
-							   p_sim_swaps := 0;
+							stopwatch::pr_start;
+							if (not p_cyc_initialized) then
+							   p_cyc_nextCity(i_node1) := ep_init_nextCity(i_node1);
+							   p_cyc_prevCity(i_node1) := ep_init_prevCity(i_node1);
+							   p_cyc_initialized := 1;
+							   p_cyc_swaps := 0;
 							endif;
 							
-							p_cyc_uselessLoops := 0;
+							p_loc_uselessLoops := 0;
 							ep_node := First(s_nodes);
 							
-							pr_singleIterationImproveTourSimultaneous();
+							while (p_cyc_swaps < p_def_iterationLimit 
+							        and p_loc_uselessLoops <= card(s_nodes)) do
+							
+							    p_loc_uselessLoops += 1;
+							
+							    ! Select a NewNext to be swapped with City
+							    ep_loc_nextCity := argmax(i_node1 in s_neighbors(ep_node), p_cyc_distanceChange(ep_node,i_node1));
+							
+							    if (p_cyc_distanceChange(ep_node, ep_loc_nextCity) > 0) then
+							        p_cyc_swaps += 1;
+							        p_loc_uselessLoops := 0;
+							
+							        block ! Swap cities in tour.
+							            ! This is the hairy part of the algorithm. The direction of the tour changes from
+							            ! City to NewNext as part of the 2-opt heuristic. To modify the next and previous
+							            ! city references we have to walk over the subtour, carefully making sure we don't
+							            ! destroy any information while reversing the direction.
+							
+							            ! Set up a link from the old destinations of City to the old destination of NewNext in the tour
+							            ep_loc_OCity := p_cyc_NextCity(ep_node);
+							            ep_loc_DCity := p_cyc_nextCity(ep_loc_nextCity);
+							            p_cyc_nextCity(ep_loc_OCity) := ep_loc_DCity;
+							            p_cyc_prevCity(ep_loc_DCity) := ep_loc_OCity;
+							
+							            ! Reverse the chain from the old destination of City to NextNew
+							            ep_loc_OCity := ep_loc_nextCity;
+							            ep_loc_DCity := p_cyc_prevCity(ep_loc_OCity);
+							
+							            while ( ep_loc_DCity <> ep_node ) do
+							                 ep_loc_ODCity := ep_loc_DCity;
+							                 p_cyc_NextCity(ep_loc_OCity) := ep_loc_ODCity;
+							                 ep_loc_DCity := p_cyc_prevCity(ep_loc_ODCity);
+							                 p_cyc_prevCity(ep_loc_ODCity) := ep_loc_OCity;
+							                 ep_loc_OCity := ep_loc_ODCity;
+							            endwhile;
+							
+							            ! Finally, setup the link from City to NextNew
+							            p_cyc_NextCity(ep_node) := ep_loc_nextCity;
+							            p_cyc_PrevCity(ep_loc_nextCity) := ep_node;
+							        endblock;
+							
+							        block ! Update network flow object.
+							            empty p_cyc_tourConnect;
+							            p_cyc_TourConnect(i_node1,p_cyc_NextCity(i_node1)) := 1;
+							            p_cyc_TourDistance := sum(i_node1, p_def_haversineDistance(i_node1,p_cyc_nextCity(i_node1)));
+							
+							        endblock;
+							    endif;
+							
+							    ep_node := p_cyc_nextCity(ep_node);
+							endwhile;
 							
 							p_sim_timeElapsed := stopwatch::fnc_elapsed;
+						}
+						Parameter p_loc_uselessLoops {
+							Text: "Counter for counting number of iterations without tour improvement";
 						}
 						ElementParameter ep_loc_nextCity {
 							Range: s_cities;
@@ -321,6 +372,49 @@ Model Main_TravelingSalesman {
 						}
 						ElementParameter ep_loc_ODCity {
 							Range: s_cities;
+						}
+					}
+					Procedure pr_refreshingImproveTourSimultaneous {
+						Arguments: (sp_in_userAnswer);
+						Body: {
+							if sp_in_userAnswer = "Yes" then
+							    empty Improve_Tour_Simultaneous;
+							
+							    stopwatch::pr_start;
+							
+							    if not p_init_tourInitialized then 
+							        pr_findInitialTour; 
+							    endif;
+							
+							    if (not p_sim_initialized) then
+							    p_sim_nextCity(i_node1) := ep_init_nextCity(i_node1);
+							    p_sim_prevCity(i_node1) := ep_init_prevCity(i_node1);
+							    p_sim_initialized := 1;
+							    p_sim_swaps := 0;
+							    endif;
+							
+							    p_cyc_uselessLoops := 0;
+							    ep_node := First(s_nodes);
+							
+							    pr_singleIterationImproveTourSimultaneous();
+							
+							    p_sim_timeElapsed := stopwatch::fnc_elapsed;
+							endif;
+						}
+						ElementParameter ep_loc_nextCity {
+							Range: s_cities;
+						}
+						ElementParameter ep_loc_OCity {
+							Range: s_cities;
+						}
+						ElementParameter ep_loc_DCity {
+							Range: s_cities;
+						}
+						ElementParameter ep_loc_ODCity {
+							Range: s_cities;
+						}
+						StringParameter sp_in_userAnswer {
+							Property: Input;
 						}
 					}
 					Procedure pr_singleIterationImproveTourSimultaneous {
@@ -379,7 +473,7 @@ Model Main_TravelingSalesman {
 									p_in_noSecs   :  1[s], 
 									ep_in_payLoad :  'pr_singleIterationImproveTourSimultaneous');
 							else	        
-							    sdf :=1;
+							    !dsdf :=1;
 							endif ;
 						}
 						ElementParameter ep_loc_nextCity {
@@ -433,25 +527,75 @@ Model Main_TravelingSalesman {
 						Text: "Flag to indicate that cyclic algorithm has been initialized";
 					}
 					Parameter p_cyc_uselessLoops;
-					Procedure pr_refreshingImproveTourCyclic {
+					Parameter p_cyc_timeElapsed {
+						Unit: s;
+					}
+					Procedure pr_improveTourSimultaneous {
 						Body: {
-							empty Improve_Tour_Cyclic;
+							empty Improve_Tour_Simultaneous;
 							
 							if not p_init_tourInitialized then 
 							    pr_findInitialTour; 
 							endif;
 							
-							if (not p_cyc_initialized) then
-							   p_cyc_nextCity(i_node1) := ep_init_nextCity(i_node1);
-							   p_cyc_prevCity(i_node1) := ep_init_prevCity(i_node1);
-							   p_cyc_initialized := 1;
-							   p_cyc_swaps := 0;
+							stopwatch::pr_start;
+							if (not p_sim_initialized) then
+							   p_sim_nextCity(i_node1) := ep_init_nextCity(i_node1);
+							   p_sim_prevCity(i_node1) := ep_init_prevCity(i_node1);
+							   p_sim_initialized := 1;
+							   p_sim_swaps := 0;
 							endif;
 							
-							p_cyc_uselessLoops := 0;
-							ep_node := First(s_nodes);
 							
-							pr_singleIterationImproveTourCyclic();
+							while (p_sim_maxChange > 0 and LoopCount <= p_def_iterationLimit) do
+							
+							    p_sim_swaps += 1;
+							
+							    ! Select City and NewNext as a (i,j) tuple which reaches the maximum change
+							    for ((i_node1,i_node2) | p_sim_distanceChange(i_node1,i_node2) = p_sim_maxChange) do
+							        ep_node := i_node1;
+							        ep_loc_nextCity := i_node2;
+							        break;
+							    endfor;
+							
+							    block ! Swap cities in tour.
+							        ! This is the hairy part of the algorithm. The direction of the tour changes from
+							        ! City to NewNext as part of the 2-opt heuristic. To modify the next and previous
+							        ! city references we have to walk over the subtour, carefully making sure we don't
+							        ! destroy any information while reversing the direction.
+							
+							        ! Set up a link from the old destinations of City to the old destination of NewNext in the tour
+							        ep_loc_OCity := p_sim_nextCity(ep_node);
+							        ep_loc_DCity := p_sim_nextCity(ep_loc_nextCity);
+							        p_sim_nextCity(ep_loc_OCity) := ep_loc_DCity;
+							        p_sim_prevCity(ep_loc_DCity) := ep_loc_OCity;
+							
+							        ! Reverse the chain from the old destination of City to NextNew
+							        ep_loc_OCity := ep_loc_nextCity;
+							        ep_loc_DCity := p_sim_prevCity(ep_loc_OCity);
+							
+							        while ( ep_loc_DCity <> ep_node ) do
+							            ep_loc_ODCity := ep_loc_DCity;
+							            p_sim_nextCity(ep_loc_OCity) := ep_loc_ODCity;
+							            ep_loc_DCity := p_sim_prevCity(ep_loc_ODCity);
+							            p_sim_prevCity(ep_loc_ODCity) := ep_loc_OCity;
+							            ep_loc_OCity := ep_loc_ODCity;
+							        endwhile;
+							
+							        ! Finally, setup the link from City to NextNew
+							        p_sim_nextCity(ep_node) := ep_loc_nextCity;
+							        p_sim_prevCity(ep_loc_nextCity) := ep_node;
+							    endblock; 
+							
+							    block ! Update network flow object.
+							        empty p_sim_tourConnect;
+							        p_sim_tourConnect(i_node1, p_sim_nextCity(i_node1)) := 1;
+							        p_sim_tourDistance := sum(i_node1, p_def_haversineDistance(i_node1, p_sim_nextCity(i_node1)));
+							    endblock;
+							
+							endwhile;
+							
+							p_cyc_timeElapsed := stopwatch::fnc_elapsed;
 						}
 						ElementParameter ep_loc_nextCity {
 							Range: s_cities;
@@ -466,8 +610,48 @@ Model Main_TravelingSalesman {
 							Range: s_cities;
 						}
 					}
+					Procedure pr_refreshingImproveTourCyclic {
+						Arguments: (sp_in_userAnswer);
+						Body: {
+							if sp_in_userAnswer = "Yes" then
+							    empty Improve_Tour_Cyclic;
+							
+							    if not p_init_tourInitialized then 
+							        pr_findInitialTour; 
+							    endif;
+							
+							    if (not p_cyc_initialized) then
+							    p_cyc_nextCity(i_node1) := ep_init_nextCity(i_node1);
+							    p_cyc_prevCity(i_node1) := ep_init_prevCity(i_node1);
+							    p_cyc_initialized := 1;
+							    p_cyc_swaps := 0;
+							    endif;
+							
+							    p_cyc_uselessLoops := 0;
+							    ep_node := First(s_nodes);
+							
+							    pr_singleIterationImproveTourCyclic();
+							endif;
+						}
+						ElementParameter ep_loc_nextCity {
+							Range: s_cities;
+						}
+						ElementParameter ep_loc_OCity {
+							Range: s_cities;
+						}
+						ElementParameter ep_loc_DCity {
+							Range: s_cities;
+						}
+						ElementParameter ep_loc_ODCity {
+							Range: s_cities;
+						}
+						StringParameter sp_in_userAnswer {
+							Property: Input;
+						}
+					}
 					Procedure pr_singleIterationImproveTourCyclic {
 						Body: {
+							
 							p_cyc_uselessLoops += 1;
 							
 							! Select a ep_loc_nextCity to be swapped with City
@@ -592,6 +776,9 @@ Model Main_TravelingSalesman {
 				Parameter p_exactObjective;
 				ElementParameter ep_modelType {
 					Range: AllMathematicalProgrammingTypes;
+				}
+				Parameter p_exactTimeElapsed {
+					Unit: s;
 				}
 				Procedure pr_callbackLazy {
 					Arguments: ep_in_thisSession;
@@ -721,6 +908,7 @@ Model Main_TravelingSalesman {
 					Body: {
 						empty Exact;
 						
+						stopwatch::pr_start;
 						ep_modelType := 'MIP';
 						ep_GMP := GMP::Instance::Generate(mp_TSP);
 						
@@ -732,6 +920,7 @@ Model Main_TravelingSalesman {
 						endif;
 						
 						p_exactObjective := v_objective;
+						p_exactTimeElapsed := stopwatch::fnc_elapsed;
 						
 						GMP::Instance::Delete(ep_GMP);
 						
@@ -743,10 +932,14 @@ Model Main_TravelingSalesman {
 						IndexDomain: (i_node1,i_node2);
 					}
 					Parameter p_lowerBound;
+					Parameter p_relaxedTimeElapsed {
+						Unit: s;
+					}
 					Procedure pr_solveRelaxedModel {
 						Body: {
 							empty Lower_Bound;
 							
+							stopwatch::pr_start;
 							ep_modelType := 'MIP';
 							ep_GMP := GMP::Instance::Generate(mp_TSP);
 							
@@ -754,6 +947,7 @@ Model Main_TravelingSalesman {
 							
 							p_relaxedTourSolution(i_node1, i_node2) := v_networkTour(i_node1,i_node2);
 							p_lowerBound := v_objective;
+							p_relaxedTimeElapsed := stopwatch::fnc_elapsed;
 						}
 					}
 				}
@@ -996,14 +1190,14 @@ Model Main_TravelingSalesman {
 							( 2, procedure   ) : "pr_findInitialTour",  
 							( 2, state       ) : "active", 
 						
-							( 3, displaytext ) : "Improved simultaneous",  
+							( 3, displaytext ) : "Improved Simultaneous",  
 							( 3, icon        ) : "aimms-paint-format",  
-							( 3, procedure   ) : "pr_refreshingImproveTourSimultaneous",  
+							( 3, procedure   ) : "pr_checkIterativeSimultaneous",  
 							( 3, state       ) : "active", 
 						
-							( 4, displaytext ) : "Improved cyclic",  
+							( 4, displaytext ) : "Improved Cyclic",  
 							( 4, icon        ) : "aimms-brush",  
-							( 4, procedure   ) : "pr_refreshingImproveTourCyclic",  
+							( 4, procedure   ) : "pr_checkIterativeCyclic",  
 							( 4, state       ) : "active"
 						}
 					}
@@ -1014,6 +1208,30 @@ Model Main_TravelingSalesman {
 				}
 				StringParameter sp_titleImprovedTourCyclic {
 					InitialData: "Improved Tour (Cyclic)";
+				}
+				Procedure pr_checkIterativeCyclic {
+					Body: {
+						s_loc_actions := {'No!', 'Yes'};
+						
+						webui::RequestPerformWebUIDialog(
+							title   :  "Good to know", 
+							message :  "This procedure can take a while but you will see the map changing connections. \nDo you want to proceed?", 
+							actions :  s_loc_actions, 
+							onDone  :  'pr_refreshingImproveTourCyclic');
+					}
+					Set s_loc_actions;
+				}
+				Procedure pr_checkIterativeSimultaneous {
+					Body: {
+						s_loc_actions := {'No!', 'Yes'};
+						
+						webui::RequestPerformWebUIDialog(
+							title   :  "Good to know", 
+							message :  "This procedure can take a while but you will see the map changing connections. \nDo you want to proceed?", 
+							actions :  s_loc_actions, 
+							onDone  :  'pr_refreshingImproveTourSimultaneous');
+					}
+					Set s_loc_actions;
 				}
 			}
 			Section Exact_Page {

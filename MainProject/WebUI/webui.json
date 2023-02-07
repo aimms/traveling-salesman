@@ -167,136 +167,6 @@
       }
     }
   },
-  "layouts/custom_02bece4f-d0aa-4135-872b-8ffbeb15dc61": {
-    "definition": {
-      "literal": {
-        "componentName": "Grid",
-        "props": {
-          "gridTemplateColumns": "0.8fr 0.2fr",
-          "gridTemplateRows": "1fr 0.3fr 2.5fr 0.3fr 1fr 0.3fr 4fr",
-          "gridTemplateAreas": "\"area-a area-a\" \"area-x area-b\" \"area-c area-c\" \"area-y area-d\" \"area-e area-e\" \"area-z area-f\" \"area-g area-g\""
-        },
-        "items": [
-          {
-            "componentName": "WidgetArea",
-            "props": {
-              "gridArea": "area-a",
-              "name": "Area A",
-              "gridAutoFlow": "row"
-            }
-          },
-          {
-            "componentName": "WidgetArea",
-            "props": {
-              "gridArea": "area-b",
-              "name": "Area B",
-              "gridAutoFlow": "row"
-            }
-          },
-          {
-            "componentName": "WidgetArea",
-            "props": {
-              "gridArea": "area-c",
-              "name": "Area C",
-              "gridAutoFlow": "row"
-            }
-          },
-          {
-            "componentName": "WidgetArea",
-            "props": {
-              "gridArea": "area-d",
-              "name": "Area D",
-              "gridAutoFlow": "row"
-            }
-          },
-          {
-            "componentName": "WidgetArea",
-            "props": {
-              "gridArea": "area-e",
-              "name": "Area E",
-              "gridAutoFlow": "row"
-            }
-          },
-          {
-            "componentName": "WidgetArea",
-            "props": {
-              "gridArea": "area-f",
-              "name": "Area F",
-              "gridAutoFlow": "row"
-            }
-          },
-          {
-            "componentName": "WidgetArea",
-            "props": {
-              "gridArea": "area-g",
-              "name": "Area G",
-              "gridAutoFlow": "row"
-            }
-          },
-          {
-            "componentName": "WidgetArea",
-            "props": {
-              "gridArea": "area-x",
-              "name": "Area X",
-              "gridAutoFlow": "row"
-            }
-          },
-          {
-            "componentName": "WidgetArea",
-            "props": {
-              "gridArea": "area-z",
-              "name": "Area Z",
-              "gridAutoFlow": "row"
-            }
-          },
-          {
-            "componentName": "WidgetArea",
-            "props": {
-              "gridArea": "area-y",
-              "name": "Area Y",
-              "gridAutoFlow": "row"
-            }
-          }
-        ]
-      }
-    },
-    "displayName": {
-      "literal": "Layout10 Copy"
-    }
-  },
-  "layouts/custom_08e80d82-e00f-4b69-a7dd-d48b1785616f": {
-    "definition": {
-      "literal": {
-        "componentName": "Grid",
-        "props": {
-          "gridTemplateColumns": "1fr 1fr ",
-          "gridTemplateRows": "1fr",
-          "gridTemplateAreas": "\"area-a area-a\" \"area-b area-b\""
-        },
-        "items": [
-          {
-            "componentName": "WidgetArea",
-            "props": {
-              "gridArea": "area-a",
-              "name": "Area A",
-              "gridAutoFlow": "column"
-            }
-          },
-          {
-            "componentName": "WidgetArea",
-            "props": {
-              "gridArea": "area-b",
-              "name": "Area B",
-              "gridAutoFlow": "column"
-            }
-          }
-        ]
-      }
-    },
-    "displayName": {
-      "literal": "Layout1 Copy"
-    }
-  },
   "layouts/custom_a248d3ab-a3fe-4824-b012-651c2a8ec116": {
     "definition": {
       "literal": {
@@ -391,7 +261,7 @@
       }
     },
     "displayName": {
-      "literal": "Layout10 Copy"
+      "literal": "NetworkPage"
     }
   },
   "layouts/custom_afa86eba-6e6a-4077-a063-bf443788a472": {
@@ -432,7 +302,73 @@
       }
     },
     "displayName": {
-      "literal": "Layout7 Copy"
+      "literal": "HeuristicPage"
+    }
+  },
+  "layouts/custom_b7eede6d-0fce-408a-b5f0-e9285d41c6a2": {
+    "definition": {
+      "literal": {
+        "componentName": "Grid",
+        "props": {
+          "gridTemplateColumns": "0.5fr 1fr",
+          "gridTemplateRows": "1fr",
+          "gridTemplateAreas": "\"area-a area-b\" \"area-a area-b\""
+        },
+        "items": [
+          {
+            "componentName": "WidgetArea",
+            "props": {
+              "gridArea": "area-a",
+              "name": "Area A",
+              "gridAutoFlow": "row"
+            }
+          },
+          {
+            "componentName": "WidgetArea",
+            "props": {
+              "gridArea": "area-b",
+              "name": "Area B",
+              "gridAutoFlow": "row"
+            }
+          }
+        ]
+      }
+    },
+    "displayName": {
+      "literal": "ComparisonPage"
+    }
+  },
+  "layouts/custom_c76b6978-4f0e-427a-b071-7f46c9cd29f4": {
+    "definition": {
+      "literal": {
+        "componentName": "Grid",
+        "props": {
+          "gridTemplateColumns": "1fr 1fr",
+          "gridTemplateRows": "1fr",
+          "gridTemplateAreas": "\"area-a area-b\" \"area-a area-b\""
+        },
+        "items": [
+          {
+            "componentName": "WidgetArea",
+            "props": {
+              "gridArea": "area-a",
+              "name": "Area A",
+              "gridAutoFlow": "column"
+            }
+          },
+          {
+            "componentName": "WidgetArea",
+            "props": {
+              "gridArea": "area-b",
+              "name": "Area B",
+              "gridAutoFlow": "column"
+            }
+          }
+        ]
+      }
+    },
+    "displayName": {
+      "literal": "ExactPage"
     }
   },
   "pages/comparison": {
@@ -442,16 +378,29 @@
     "bindings": {
       "literal": [
         {
-          "widgetUri": "scl_timeComparison",
-          "gridArea": "area-b",
-          "dndId": "area-bscl_timeComparison1"
-        },
-        {
           "widgetUri": "scl_initialTour",
           "gridArea": "area-a",
           "dndId": "area-ascl_initialTour0"
+        },
+        {
+          "widgetUri": "scl_timeComparison",
+          "gridArea": "area-a",
+          "dndId": "area-ascl_timeComparison1"
+        },
+        {
+          "widgetUri": "cmb_comparison_1",
+          "gridArea": "area-b",
+          "dndId": "Unassigned widgetscmb_comparison_13"
+        },
+        {
+          "widgetUri": "cmb_comparison",
+          "gridArea": "area-b",
+          "dndId": "area-bcmb_comparison2"
         }
       ]
+    },
+    "layoutId": {
+      "literal": "custom_b7eede6d-0fce-408a-b5f0-e9285d41c6a2"
     },
     "widgets": {
       "literal": [
@@ -468,6 +417,20 @@
             "width": "2",
             "height": "1"
           }
+        },
+        {
+          "uri": "cmb_comparison",
+          "layoutInfo": {
+            "width": "2",
+            "height": "1"
+          }
+        },
+        {
+          "uri": "cmb_comparison_1",
+          "layoutInfo": {
+            "width": "2",
+            "height": "1"
+          }
         }
       ]
     }
@@ -479,19 +442,19 @@
     "bindings": {
       "literal": [
         {
+          "widgetUri": "map_improvedTourSimultaneous_2",
+          "gridArea": "area-b",
+          "dndId": "area-amap_improvedTourSimultaneous_21"
+        },
+        {
           "widgetUri": "map_improvedTourSimultaneous_1",
           "gridArea": "area-a",
           "dndId": "area-amap_improvedTourSimultaneous_10"
-        },
-        {
-          "widgetUri": "map_improvedTourSimultaneous_2",
-          "gridArea": "area-a",
-          "dndId": "Unassigned widgetsmap_improvedTourSimultaneous_21"
         }
       ]
     },
     "layoutId": {
-      "literal": "custom_08e80d82-e00f-4b69-a7dd-d48b1785616f"
+      "literal": "custom_c76b6978-4f0e-427a-b071-7f46c9cd29f4"
     },
     "primarypageaction": {
       "aimms": {
@@ -966,6 +929,147 @@
       "literal": "delete all nodes"
     }
   },
+  "widgets/cmb_comparison": {
+    "aimms.widget.type": {
+      "literal": "combinationchart"
+    },
+    "contents.__display_order__": {
+      "literal": [
+        "contents.2",
+        "contents.1",
+        "contents.4",
+        "contents.0",
+        "contents.3"
+      ]
+    },
+    "contents.0.identifier": {
+      "literal": {
+        "identifier": "p_exactTimeElapsed"
+      }
+    },
+    "contents.1.identifier": {
+      "literal": {
+        "identifier": "p_cyc_timeElapsed"
+      }
+    },
+    "contents.2.identifier": {
+      "literal": {
+        "identifier": "p_init_timeElapsed"
+      }
+    },
+    "contents.3.identifier": {
+      "literal": {
+        "identifier": "p_relaxedTimeElapsed"
+      }
+    },
+    "contents.3.show.units": {
+      "literal": false
+    },
+    "contents.4.identifier": {
+      "literal": {
+        "identifier": "p_sim_timeElapsed"
+      }
+    },
+    "contents.partition": {
+      "literal": {
+        "header": [
+          "<IDENTIFIER-SET>"
+        ],
+        "grouped": [],
+        "stacked": [],
+        "aggregated": []
+      }
+    },
+    "contents.show.units": {
+      "literal": true
+    },
+    "data.labels.show": {
+      "literal": true
+    },
+    "indices.__display_order__": {
+      "literal": [
+        "indices.0"
+      ]
+    },
+    "legend.show": {
+      "literal": false
+    },
+    "name": {
+      "literal": "cmb_timeComparison"
+    }
+  },
+  "widgets/cmb_comparison_1": {
+    "aimms.widget.type": {
+      "literal": "combinationchart"
+    },
+    "contents.__display_order__": {
+      "literal": [
+        "contents.2",
+        "contents.1",
+        "contents.4",
+        "contents.0",
+        "contents.3"
+      ]
+    },
+    "contents.0.identifier": {
+      "literal": {
+        "identifier": "p_exactObjective"
+      }
+    },
+    "contents.1.identifier": {
+      "literal": {
+        "identifier": "p_cyc_tourDistance"
+      }
+    },
+    "contents.2.identifier": {
+      "literal": {
+        "identifier": "p_init_tourDistance"
+      }
+    },
+    "contents.3.identifier": {
+      "literal": {
+        "identifier": "p_lowerBound"
+      }
+    },
+    "contents.3.show.units": {
+      "literal": false
+    },
+    "contents.4.identifier": {
+      "literal": {
+        "identifier": "p_sim_tourDistance"
+      }
+    },
+    "contents.partition": {
+      "literal": {
+        "header": [
+          "<IDENTIFIER-SET>"
+        ],
+        "grouped": [],
+        "stacked": [],
+        "aggregated": []
+      }
+    },
+    "contents.show.units": {
+      "literal": true
+    },
+    "data.labels.show": {
+      "literal": true
+    },
+    "indices.__display_order__": {
+      "literal": [
+        "indices.0"
+      ]
+    },
+    "legend.show": {
+      "literal": false
+    },
+    "name": {
+      "literal": "cmb_tourComparison"
+    },
+    "transparency.index": {
+      "literal": "<IDENTIFIER-SET>"
+    }
+  },
   "widgets/img_homeLogo": {
     "aimms.widget.type": {
       "literal": "image"
@@ -1193,10 +1297,10 @@
       }
     },
     "center.latitude": {
-      "literal": 3.601142320158735
+      "literal": -15.453680224345837
     },
     "center.longitude": {
-      "literal": -1.7578125000000005
+      "literal": -56.14870948379353
     },
     "contextmenu": {
       "aimms": {
@@ -1340,7 +1444,7 @@
       }
     },
     "zoom": {
-      "literal": 3
+      "literal": 2
     }
   },
   "widgets/map_improvedTourSimultaneous": {
@@ -1400,10 +1504,10 @@
       }
     },
     "center.latitude": {
-      "literal": -1.5818302639606455
+      "literal": -0.8788717828324149
     },
     "center.longitude": {
-      "literal": -7.031250000000001
+      "literal": -62.952248891541618
     },
     "contextmenu": {
       "aimms": {
@@ -1844,7 +1948,7 @@
       ]
     },
     "name": {
-      "literal": "map_exactTour (1)"
+      "literal": "map_lowerBoundTour"
     },
     "nodes.__display_order__": {
       "literal": [
@@ -2009,10 +2113,10 @@
       "literal": false
     },
     "center.latitude": {
-      "literal": -26.194876675795216
+      "literal": -22.350075806124854
     },
     "center.longitude": {
-      "literal": -51.85546875000001
+      "literal": -59.33160012669747
     },
     "contextmenu": {
       "aimms": {
@@ -2233,6 +2337,20 @@
     "contents.numdecimals": {
       "literal": 3
     },
+    "custom.column.widths": {
+      "literal": [
+        {
+          "type": "colHeader",
+          "colKey": {},
+          "width": 26.23
+        },
+        {
+          "type": "rowHeader",
+          "colKey": "<IDENTIFIER-SET>",
+          "width": 39.5
+        }
+      ]
+    },
     "multi.line": {
       "literal": 1
     },
@@ -2267,6 +2385,20 @@
   "widgets/scl_timeComparison": {
     "aimms.widget.type": {
       "literal": "scalar"
+    },
+    "contents": {
+      "aimms": {
+        "contents": [
+          "p_init_timeElapsed",
+          "p_cyc_timeElapsed",
+          "p_sim_timeElapsed",
+          "p_exactTimeElapsed",
+          "p_relaxedTimeElapsed"
+        ]
+      }
+    },
+    "contents.numdecimals": {
+      "literal": 4
     },
     "name": {
       "literal": "scl_timeComparison"
