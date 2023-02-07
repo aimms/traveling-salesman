@@ -493,11 +493,6 @@
     "layoutId": {
       "literal": "custom_08e80d82-e00f-4b69-a7dd-d48b1785616f"
     },
-    "onload": {
-      "aimms": {
-        "run": "pr_runAll"
-      }
-    },
     "primarypageaction": {
       "aimms": {
         "contents": [
@@ -996,10 +991,10 @@
       ]
     },
     "center.latitude": {
-      "literal": -13.667338259654948
+      "literal": -4.565473550710278
     },
     "center.longitude": {
-      "literal": -60.162177493059889
+      "literal": -3.873929061151685
     },
     "contextmenu": {
       "aimms": {
@@ -1138,7 +1133,7 @@
       }
     },
     "zoom": {
-      "literal": 4
+      "literal": 2
     }
   },
   "widgets/map_improvedTourCyclic": {
@@ -1198,10 +1193,10 @@
       }
     },
     "center.latitude": {
-      "literal": -18.10408701577395
+      "literal": 3.601142320158735
     },
     "center.longitude": {
-      "literal": -49.21875000000001
+      "literal": -1.7578125000000005
     },
     "contextmenu": {
       "aimms": {
@@ -1345,7 +1340,7 @@
       }
     },
     "zoom": {
-      "literal": 4
+      "literal": 3
     }
   },
   "widgets/map_improvedTourSimultaneous": {
@@ -1405,10 +1400,10 @@
       }
     },
     "center.latitude": {
-      "literal": -15.749962572748768
+      "literal": -1.5818302639606455
     },
     "center.longitude": {
-      "literal": -52.20703125000001
+      "literal": -7.031250000000001
     },
     "contextmenu": {
       "aimms": {
@@ -1547,7 +1542,7 @@
       "literal": "Improved Tour (Simultaneous)"
     },
     "zoom": {
-      "literal": 4
+      "literal": 2
     }
   },
   "widgets/map_improvedTourSimultaneous_1": {
@@ -2014,10 +2009,10 @@
       "literal": false
     },
     "center.latitude": {
-      "literal": -20.591652120829168
+      "literal": -26.194876675795216
     },
     "center.longitude": {
-      "literal": -51.767578125
+      "literal": -51.85546875000001
     },
     "contextmenu": {
       "aimms": {
@@ -2156,7 +2151,7 @@
       "literal": "Initial Tour"
     },
     "zoom": {
-      "literal": 4
+      "literal": 3
     }
   },
   "widgets/scl_addByCity": {

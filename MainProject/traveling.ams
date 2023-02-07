@@ -165,10 +165,9 @@ Model Main_TravelingSalesman {
 				}
 				Procedure pr_runAll {
 					Body: {
-						pr_findInitialTour; ! p_init_tourconnect, p_sim_tourConnect, p_cyc_tourconnect
-						! pr_improveTourCyclic
+						pr_findInitialTour; 
 						pr_refreshingImproveTourCyclic;
-						pr_improveTourSimultaneous;
+						pr_refreshingImproveTourSimultaneous;
 					}
 				}
 				Section Initial_Tour {
@@ -197,10 +196,14 @@ Model Main_TravelingSalesman {
 					Parameter p_init_tourInitialized {
 						Text: "Flag to indicate that an initial tour has been computed for a newly created tour";
 					}
+					Parameter p_init_timeElapsed {
+						Unit: s;
+					}
 					Procedure pr_findInitialTour {
 						Body: {
 							empty Initial_Tour, p_init_tourConnect;
 							
+							stopwatch::pr_start;
 							s_loc_remainingCities := s_nodes;
 							
 							! We start adding the first city to the tour
@@ -224,6 +227,8 @@ Model Main_TravelingSalesman {
 							p_init_tourDistance := sum(i_node1, p_def_haversineDistance(i_node1,ep_init_nextCity(i_node1)));
 							
 							p_init_tourInitialized := 1;
+							
+							p_init_timeElapsed := stopwatch::fnc_elapsed;
 						}
 						Comment: {
 							"This procedure computes an initial tour by starting at the first city,
@@ -276,9 +281,16 @@ Model Main_TravelingSalesman {
 					Parameter p_sim_initialized {
 						Text: "Flag to indicate that simultaneous algorithm has been initialized";
 					}
-					Procedure pr_improveTourSimultaneous {
+					Parameter p_sim_uselessLoops;
+					Parameter p_sim_timeElapsed {
+						Unit: s;
+					}
+					Parameter sdf;
+					Procedure pr_refreshingImproveTourSimultaneous {
 						Body: {
 							empty Improve_Tour_Simultaneous;
+							
+							stopwatch::pr_start;
 							
 							if not p_init_tourInitialized then 
 							    pr_findInitialTour; 
@@ -291,17 +303,36 @@ Model Main_TravelingSalesman {
 							   p_sim_swaps := 0;
 							endif;
 							
+							p_cyc_uselessLoops := 0;
+							ep_node := First(s_nodes);
 							
-							while (p_sim_maxChange > 0 and LoopCount <= p_def_iterationLimit) do
+							pr_singleIterationImproveTourSimultaneous();
 							
+							p_sim_timeElapsed := stopwatch::fnc_elapsed;
+						}
+						ElementParameter ep_loc_nextCity {
+							Range: s_cities;
+						}
+						ElementParameter ep_loc_OCity {
+							Range: s_cities;
+						}
+						ElementParameter ep_loc_DCity {
+							Range: s_cities;
+						}
+						ElementParameter ep_loc_ODCity {
+							Range: s_cities;
+						}
+					}
+					Procedure pr_singleIterationImproveTourSimultaneous {
+						Body: {
+							p_sim_uselessLoops += 1;
+							
+							! Select a ep_loc_nextCity to be swapped with City
+							ep_loc_nextCity := argmax(i_node1 in s_neighbors(ep_node), p_sim_distanceChange(ep_node,i_node1));
+							
+							if (p_sim_distanceChange(ep_node, ep_loc_nextCity) > 0) then
 							    p_sim_swaps += 1;
-							
-							    ! Select City and NewNext as a (i,j) tuple which reaches the maximum change
-							    for ((i_node1,i_node2) | p_sim_distanceChange(i_node1,i_node2) = p_sim_maxChange) do
-							        ep_node := i_node1;
-							        ep_loc_nextCity := i_node2;
-							        break;
-							    endfor;
+							    p_sim_uselessLoops := 0;
 							
 							    block ! Swap cities in tour.
 							        ! This is the hairy part of the algorithm. The direction of the tour changes from
@@ -332,26 +363,24 @@ Model Main_TravelingSalesman {
 							        p_sim_prevCity(ep_loc_nextCity) := ep_node;
 							    endblock; 
 							
-							    !newprocedure;
-							
 								block ! Update network flow object.
-								empty p_sim_tourConnect;
-								p_sim_tourConnect(i_node1, p_sim_nextCity(i_node1)) := 1;
-								p_sim_tourDistance := sum(i_node1, p_def_haversineDistance(i_node1, p_sim_nextCity(i_node1)));
+							        empty p_sim_tourConnect;
+							        p_sim_tourConnect(i_node1, p_sim_nextCity(i_node1)) := 1;
+							        p_sim_tourDistance := sum(i_node1, p_def_haversineDistance(i_node1, p_sim_nextCity(i_node1)));
 								endblock;
+							endif;
 							
-								sp_time := CurrentToString("%c%y-%m-%d %H:%M:%S");
-								sp_timeNEW :=  
-								MomentToString(
-									"%c%y-%m-%d %H:%M:%S",   ! (input) a string expression
-									[s],         ! (input) a time unit
-									sp_time,  ! (input) a string expression
-									2[s]);  
+							ep_node := p_sim_nextCity(ep_node);
 							
-								display sp_time, sp_timeNEW;
+							if p_sim_swaps < p_def_iterationLimit
+							    and p_sim_uselessLoops <= card(s_nodes) then
 							
-							
-							endwhile;
+								pr_scheduleOver(
+									p_in_noSecs   :  1[s], 
+									ep_in_payLoad :  'pr_singleIterationImproveTourSimultaneous');
+							else	        
+							    sdf :=1;
+							endif ;
 						}
 						ElementParameter ep_loc_nextCity {
 							Range: s_cities;
@@ -364,27 +393,6 @@ Model Main_TravelingSalesman {
 						}
 						ElementParameter ep_loc_ODCity {
 							Range: s_cities;
-						}
-					}
-					Procedure newprocedure {
-						Body: {
-							block ! Update network flow object.
-							    empty p_sim_tourConnect;
-							    p_sim_tourConnect(i_node1, p_sim_nextCity(i_node1)) := 1;
-							    p_sim_tourDistance := sum(i_node1, p_def_haversineDistance(i_node1, p_sim_nextCity(i_node1)));
-							endblock;
-							
-							sp_time := CurrentToString("%c%y-%m-%d %H:%M:%S");
-							sp_timeNEW :=  
-							    MomentToString(
-							    "%c%y-%m-%d %H:%M:%S",   ! (input) a string expression
-							    [s],         ! (input) a time unit
-							    sp_time,  ! (input) a string expression
-							    2[s]);  
-							
-							display sp_time, sp_timeNEW;
-							
-							!ScheduleAt(sp_timeNEW, 'newprocedure');
 						}
 					}
 				}
@@ -424,7 +432,8 @@ Model Main_TravelingSalesman {
 					Parameter p_cyc_initialized {
 						Text: "Flag to indicate that cyclic algorithm has been initialized";
 					}
-					Procedure pr_improveTourCyclic {
+					Parameter p_cyc_uselessLoops;
+					Procedure pr_refreshingImproveTourCyclic {
 						Body: {
 							empty Improve_Tour_Cyclic;
 							
@@ -439,65 +448,10 @@ Model Main_TravelingSalesman {
 							   p_cyc_swaps := 0;
 							endif;
 							
-							p_loc_uselessLoops := 0;
+							p_cyc_uselessLoops := 0;
 							ep_node := First(s_nodes);
 							
 							pr_singleIterationImproveTourCyclic();
-							
-							while (p_cyc_swaps < p_def_iterationLimit 
-							        and p_loc_uselessLoops <= card(s_nodes)) do
-							
-							    p_loc_uselessLoops += 1;
-							
-							    ! Select a NewNext to be swapped with City
-							    ep_loc_nextCity := argmax(i_node1 in s_neighbors(ep_node), p_cyc_distanceChange(ep_node,i_node1));
-							
-							    if (p_cyc_distanceChange(ep_node, ep_loc_nextCity) > 0) then
-							        p_cyc_swaps += 1;
-							        p_loc_uselessLoops := 0;
-							
-							        block ! Swap cities in tour.
-							            ! This is the hairy part of the algorithm. The direction of the tour changes from
-							            ! City to NewNext as part of the 2-opt heuristic. To modify the next and previous
-							            ! city references we have to walk over the subtour, carefully making sure we don't
-							            ! destroy any information while reversing the direction.
-							
-							            ! Set up a link from the old destinations of City to the old destination of NewNext in the tour
-							            ep_loc_OCity := p_cyc_NextCity(ep_node);
-							            ep_loc_DCity := p_cyc_nextCity(ep_loc_nextCity);
-							            p_cyc_nextCity(ep_loc_OCity) := ep_loc_DCity;
-							            p_cyc_prevCity(ep_loc_DCity) := ep_loc_OCity;
-							
-							            ! Reverse the chain from the old destination of City to NextNew
-							            ep_loc_OCity := ep_loc_nextCity;
-							            ep_loc_DCity := p_cyc_prevCity(ep_loc_OCity);
-							
-							            while ( ep_loc_DCity <> ep_node ) do
-							                 ep_loc_ODCity := ep_loc_DCity;
-							                 p_cyc_NextCity(ep_loc_OCity) := ep_loc_ODCity;
-							                 ep_loc_DCity := p_cyc_prevCity(ep_loc_ODCity);
-							                 p_cyc_prevCity(ep_loc_ODCity) := ep_loc_OCity;
-							                 ep_loc_OCity := ep_loc_ODCity;
-							            endwhile;
-							
-							            ! Finally, setup the link from City to NextNew
-							            p_cyc_NextCity(ep_node) := ep_loc_nextCity;
-							            p_cyc_PrevCity(ep_loc_nextCity) := ep_node;
-							        endblock;
-							
-							        block ! Update network flow object.
-							            empty p_cyc_tourConnect;
-							            p_cyc_TourConnect(i_node1,p_cyc_NextCity(i_node1)) := 1;
-							            p_cyc_TourDistance := sum(i_node1, p_def_haversineDistance(i_node1,p_cyc_nextCity(i_node1)));
-							
-							        endblock;
-							    endif;
-							
-							    ep_node := p_cyc_nextCity(ep_node);
-							endwhile;
-						}
-						Parameter p_loc_uselessLoops {
-							Text: "Counter for counting number of iterations without tour improvement";
 						}
 						ElementParameter ep_loc_nextCity {
 							Range: s_cities;
@@ -512,111 +466,74 @@ Model Main_TravelingSalesman {
 							Range: s_cities;
 						}
 					}
-					Section Improve_Tour_Cyclic_with_page_refreshing {
-						Parameter p_uselessLoops;
-						Procedure pr_refreshingImproveTourCyclic {
-							Body: {
-								empty Improve_Tour_Cyclic;
-								
-								if not p_init_tourInitialized then 
-								    pr_findInitialTour; 
-								endif;
-								
-								if (not p_cyc_initialized) then
-								   p_cyc_nextCity(i_node1) := ep_init_nextCity(i_node1);
-								   p_cyc_prevCity(i_node1) := ep_init_prevCity(i_node1);
-								   p_cyc_initialized := 1;
-								   p_cyc_swaps := 0;
-								endif;
-								
-								p_uselessLoops := 0;
-								ep_node := First(s_nodes);
-								
-								pr_singleIterationImproveTourCyclic();
-							}
-							ElementParameter ep_loc_nextCity {
-								Range: s_cities;
-							}
-							ElementParameter ep_loc_OCity {
-								Range: s_cities;
-							}
-							ElementParameter ep_loc_DCity {
-								Range: s_cities;
-							}
-							ElementParameter ep_loc_ODCity {
-								Range: s_cities;
-							}
+					Procedure pr_singleIterationImproveTourCyclic {
+						Body: {
+							p_cyc_uselessLoops += 1;
+							
+							! Select a ep_loc_nextCity to be swapped with City
+							ep_loc_nextCity := argmax(i_node1 in s_neighbors(ep_node), p_cyc_distanceChange(ep_node,i_node1));
+							
+							if (p_cyc_distanceChange(ep_node, ep_loc_nextCity) > 0) then
+								p_cyc_swaps += 1;
+								p_cyc_uselessLoops := 0;
+							
+								block ! Swap cities in tour.
+									! This is the hairy part of the algorithm. The direction of the tour changes from
+									! City to NewNext as part of the 2-opt heuristic. To modify the next and previous
+									! city references we have to walk over the subtour, carefully making sure we don't
+									! destroy any information while reversing the direction.
+							
+									! Set up a link from the old destinations of City to the old destination of NewNext in the tour
+									ep_loc_OCity := p_cyc_NextCity(ep_node);
+									ep_loc_DCity := p_cyc_nextCity(ep_loc_nextCity);
+									p_cyc_nextCity(ep_loc_OCity) := ep_loc_DCity;
+									p_cyc_prevCity(ep_loc_DCity) := ep_loc_OCity;
+							
+									! Reverse the chain from the old destination of City to NextNew
+									ep_loc_OCity := ep_loc_nextCity;
+									ep_loc_DCity := p_cyc_prevCity(ep_loc_OCity);
+							
+									while ( ep_loc_DCity <> ep_node ) do
+										ep_loc_ODCity := ep_loc_DCity;
+										p_cyc_NextCity(ep_loc_OCity) := ep_loc_ODCity;
+										ep_loc_DCity := p_cyc_prevCity(ep_loc_ODCity);
+										p_cyc_prevCity(ep_loc_ODCity) := ep_loc_OCity;
+										ep_loc_OCity := ep_loc_ODCity;
+									endwhile;
+							
+									! Finally, setup the link from City to NextNew
+									p_cyc_NextCity(ep_node) := ep_loc_nextCity;
+									p_cyc_PrevCity(ep_loc_nextCity) := ep_node;
+								endblock;
+							
+								block ! Update network flow object.
+									empty p_cyc_tourConnect;
+									p_cyc_TourConnect(i_node1,p_cyc_NextCity(i_node1)) := 1;
+									p_cyc_TourDistance := sum(i_node1, p_def_haversineDistance(i_node1,p_cyc_nextCity(i_node1)));
+								endblock;
+							endif;
+							
+							ep_node := p_cyc_nextCity(ep_node);
+							
+							if p_cyc_swaps < p_def_iterationLimit
+							    and p_cyc_uselessLoops <= card(s_nodes) then
+							
+								pr_scheduleOver(
+									p_in_noSecs   :  1[s], 
+									ep_in_payLoad :  'pr_singleIterationImproveTourCyclic');
+							endif ;
 						}
-						Procedure pr_singleIterationImproveTourCyclic {
-							Body: {
-								p_uselessLoops += 1;
-								
-								! Select a NewNext to be swapped with City
-								ep_loc_nextCity := argmax(i_node1 in s_neighbors(ep_node), p_cyc_distanceChange(ep_node,i_node1));
-								
-								if (p_cyc_distanceChange(ep_node, ep_loc_nextCity) > 0) then
-									p_cyc_swaps += 1;
-									p_uselessLoops := 0;
-								
-									block ! Swap cities in tour.
-										! This is the hairy part of the algorithm. The direction of the tour changes from
-										! City to NewNext as part of the 2-opt heuristic. To modify the next and previous
-										! city references we have to walk over the subtour, carefully making sure we don't
-										! destroy any information while reversing the direction.
-								
-										! Set up a link from the old destinations of City to the old destination of NewNext in the tour
-										ep_loc_OCity := p_cyc_NextCity(ep_node);
-										ep_loc_DCity := p_cyc_nextCity(ep_loc_nextCity);
-										p_cyc_nextCity(ep_loc_OCity) := ep_loc_DCity;
-										p_cyc_prevCity(ep_loc_DCity) := ep_loc_OCity;
-								
-										! Reverse the chain from the old destination of City to NextNew
-										ep_loc_OCity := ep_loc_nextCity;
-										ep_loc_DCity := p_cyc_prevCity(ep_loc_OCity);
-								
-										while ( ep_loc_DCity <> ep_node ) do
-											ep_loc_ODCity := ep_loc_DCity;
-											p_cyc_NextCity(ep_loc_OCity) := ep_loc_ODCity;
-											ep_loc_DCity := p_cyc_prevCity(ep_loc_ODCity);
-											p_cyc_prevCity(ep_loc_ODCity) := ep_loc_OCity;
-											ep_loc_OCity := ep_loc_ODCity;
-										endwhile;
-								
-										! Finally, setup the link from City to NextNew
-										p_cyc_NextCity(ep_node) := ep_loc_nextCity;
-										p_cyc_PrevCity(ep_loc_nextCity) := ep_node;
-									endblock;
-								
-									block ! Update network flow object.
-										empty p_cyc_tourConnect;
-										p_cyc_TourConnect(i_node1,p_cyc_NextCity(i_node1)) := 1;
-										p_cyc_TourDistance := sum(i_node1, p_def_haversineDistance(i_node1,p_cyc_nextCity(i_node1)));
-									endblock;
-								endif;
-								
-								ep_node := p_cyc_nextCity(ep_node);
-								
-								!display "--------pr_singleIterationImproveTourCyclic---------",
-								!	p_cyc_swaps, p_def_iterationLimit, p_uselessLoops ;
-								if (p_cyc_swaps < p_def_iterationLimit) and 
-								   (p_uselessLoops <= card(s_nodes)   )      then
-									pr_scheduleOver(
-										p_noSecs   :  1[s], 
-										ep_payLoad :  'pr_singleIterationImproveTourCyclic');
-								endif ;
-							}
-							ElementParameter ep_loc_nextCity {
-								Range: s_cities;
-							}
-							ElementParameter ep_loc_OCity {
-								Range: s_cities;
-							}
-							ElementParameter ep_loc_DCity {
-								Range: s_cities;
-							}
-							ElementParameter ep_loc_ODCity {
-								Range: s_cities;
-							}
+						ElementParameter ep_loc_nextCity {
+							Range: s_cities;
+						}
+						ElementParameter ep_loc_OCity {
+							Range: s_cities;
+						}
+						ElementParameter ep_loc_DCity {
+							Range: s_cities;
+						}
+						ElementParameter ep_loc_ODCity {
+							Range: s_cities;
 						}
 					}
 				}
@@ -1081,7 +998,7 @@ Model Main_TravelingSalesman {
 						
 							( 3, displaytext ) : "Improved simultaneous",  
 							( 3, icon        ) : "aimms-paint-format",  
-							( 3, procedure   ) : "pr_improveTourSimultaneous",  
+							( 3, procedure   ) : "pr_refreshingImproveTourSimultaneous",  
 							( 3, state       ) : "active", 
 						
 							( 4, displaytext ) : "Improved cyclic",  
@@ -1313,6 +1230,80 @@ Model Main_TravelingSalesman {
 				Property: InOut;
 			}
 		}
+		Procedure pr_scheduleOver {
+			Arguments: (p_in_noSecs,ep_in_payLoad);
+			Body: {
+				block ! Sanity checks 
+					if p_in_noSecs <= 0[s] then
+						raise error 
+							formatString("pr_scheduleOver(%n,%e): The number of seconds should be strictly positive.", 
+								p_in_noSecs, ep_in_payLoad);
+					endif ;
+					if not ep_in_payLoad then
+						raise error 
+							formatString("pr_scheduleOver(%n,%e): Empty payload specified.", 
+								p_in_noSecs, ep_in_payLoad);
+					endif ;
+				endblock ;
+				
+				block ! Is reference date base on UTC?
+					p_loc_ogv 
+					:=  OptionGetValue(
+				            OptionName :  "use_UTC_forCaseAndStartEndDate", 
+				            Lower      :  p_loc_low, 
+				            Current    :  p_loc_scheduleAtUsesUTC, 
+				            Default    :  p_loc_def, 
+				            Upper      :  p_loc_lupp);
+				
+					if not p_loc_ogv then ! Option use_UTC_forCaseAndStartEndDate is introduced with AIMMS 4.75.
+						p_loc_scheduleAtUsesUTC := 0 ; ! Assume option use_UTC_forCaseAndStartEndDate is off.
+					endif ;
+				endblock ;
+				
+				sp_loc_refDate := "2023-01-01 00:00:00" ;
+				
+				if p_loc_scheduleAtUsesUTC then
+					sp_loc_now := CurrentToString("%c%y-%m-%d %H:%M:%S%TZ('UTC')");
+				else
+					sp_loc_now := CurrentToString("%c%y-%m-%d %H:%M:%S");
+				endif ;
+				
+				p_loc_tmpSec := CurrentToMoment([s], sp_loc_refDate) ;
+				p_loc_tmpSec += p_in_noSecs ;
+				
+				if p_loc_scheduleAtUsesUTC then
+					sp_loc_launchDate := MomentToString( "%c%y-%m-%d %H:%M:%S%TZ('UTC')", [s], sp_loc_refDate, p_loc_tmpSec );
+				else
+					sp_loc_launchDate := MomentToString( "%c%y-%m-%d %H:%M:%S", [s], sp_loc_refDate, p_loc_tmpSec );
+				endif ;
+				
+				! Nb ScheduleAt is precise up to a second.
+				if not ScheduleAt(sp_loc_launchDate, ep_in_payLoad) then
+				    raise error "Error scheduling procedure \'" + ep_in_payLoad + "\': " + CurrentErrorMessage code 'Schedule-at-procedure' ;
+				endif;
+			}
+			Comment: "Schedule a job in a couple of seconds.";
+			Parameter p_in_noSecs {
+				Unit: s;
+				Property: Input;
+			}
+			ElementParameter ep_in_payLoad {
+				Range: AllProcedures;
+				Property: Input;
+			}
+			StringParameter sp_loc_refDate;
+			StringParameter sp_loc_launchDate;
+			StringParameter sp_loc_now;
+			Parameter p_loc_tmpSec {
+				Range: integer;
+				Unit: s;
+			}
+			Parameter p_loc_ogv;
+			Parameter p_loc_low;
+			Parameter p_loc_scheduleAtUsesUTC;
+			Parameter p_loc_def;
+			Parameter p_loc_lupp;
+		}
 	}
 	Procedure MainInitialization {
 		Body: {
@@ -1339,77 +1330,5 @@ Model Main_TravelingSalesman {
 			return 1;
 		}
 		Comment: "We return 1 to make sure AIMMS does not ask to save a case when closing the project";
-	}
-	Procedure pr_scheduleOver {
-		Arguments: (p_noSecs,ep_payLoad);
-		Body: {
-			block ! Sanity checks 
-				if p_noSecs <= 0[s] then
-					raise error 
-						formatString("pr_scheduleOver(%n,%e): The number of seconds should be strictly positive.", 
-							p_noSecs, ep_payLoad);
-				endif ;
-				if not ep_payLoad then
-					raise error 
-						formatString("pr_scheduleOver(%n,%e): Empty payload specified.", 
-							p_noSecs, ep_payLoad);
-				endif ;
-			endblock ;
-			
-			block ! Is reference date base on UTC?
-				p_ogv := OptionGetValue(
-					OptionName :  "use_UTC_forCaseAndStartEndDate", 
-					Lower      :  p_low, 
-					Current    :  p_scheduleAtUsesUTC, 
-					Default    :  p_def, 
-					Upper      :  p_upp);
-				if not p_ogv then ! Option use_UTC_forCaseAndStartEndDate is introduced with AIMMS 4.75.
-					p_scheduleAtUsesUTC := 0 ; ! Assume option use_UTC_forCaseAndStartEndDate is off.
-				endif ;
-			endblock ;
-			
-			sp_refDate := "2023-01-01 00:00:00" ;
-			
-			if p_scheduleAtUsesUTC then
-				sp_now := CurrentToString("%c%y-%m-%d %H:%M:%S%TZ('UTC')");
-			else
-				sp_now := CurrentToString("%c%y-%m-%d %H:%M:%S");
-			endif ;
-			p_tmpSec := CurrentToMoment([s], sp_refDate) ;
-			display p_tmpSec ;
-			p_tmpSec += p_noSecs ;
-			if p_scheduleAtUsesUTC then
-				sp_launchDate := MomentToString( "%c%y-%m-%d %H:%M:%S%TZ('UTC')", [s], sp_refDate, p_tmpSec );
-			else
-				sp_launchDate := MomentToString( "%c%y-%m-%d %H:%M:%S", [s], sp_refDate, p_tmpSec );
-			endif ;
-			!display "--------pr_scheduleOver----------", sp_now, sp_launchDate ;
-			
-			! Nb ScheduleAt is precise up to a second.
-			if not ScheduleAt(sp_launchDate, ep_payLoad) then
-			        raise error "Error scheduling procedure \'" + ep_payload + "\': " + CurrentErrorMessage code 'Schedule-at-procedure' ;
-			endif;
-		}
-		Comment: "Schedule a job in a couple of seconds.";
-		StringParameter sp_refDate;
-		Parameter p_noSecs {
-			Unit: s;
-			Property: Input;
-		}
-		ElementParameter ep_payLoad {
-			Range: AllProcedures;
-			Property: Input;
-		}
-		StringParameter sp_launchDate;
-		StringParameter sp_now;
-		Parameter p_tmpSec {
-			Range: integer;
-			Unit: s;
-		}
-		Parameter p_ogv;
-		Parameter p_low;
-		Parameter p_scheduleAtUsesUTC;
-		Parameter p_def;
-		Parameter p_upp;
 	}
 }
