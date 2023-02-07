@@ -829,6 +829,30 @@
         ]
       }
     },
+    "secondarypageactions": {
+      "aimms": {
+        "contents": [
+          "sp_def_heuristicSecondaryActions"
+        ],
+        "slices": [
+          {
+            "identifier": "sp_def_heuristicSecondaryActions",
+            "slice": [
+              {
+                "index": "webui::indexPageExtension",
+                "type": "free",
+                "value": "webui::indexPageExtension"
+              },
+              {
+                "index": "webui::indexPageActionSpec",
+                "type": "free",
+                "value": "webui::indexPageActionSpec"
+              }
+            ]
+          }
+        ]
+      }
+    },
     "sidepanels": {
       "aimms": {
         "contents": [
@@ -1313,7 +1337,12 @@
       }
     },
     "title": {
-      "literal": "Improved Tour (Cyclic)"
+      "aimms": {
+        "contents": [
+          "sp_titleImprovedTourCyclic"
+        ],
+        "slices": []
+      }
     },
     "zoom": {
       "literal": 4

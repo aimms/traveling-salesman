@@ -29,14 +29,18 @@ Model Main_TravelingSalesman {
 			}
 			Quantity SI_Time_Duration {
 				BaseUnit: s;
-				Conversions: minute->s : #-># * 60;
-				Comment: {
-					"Expresses the value for the duration of periods.
-					
-					The unit s has been added automatically because it is a required unit for AimmsWebUI.
-					
-					The unit minute has been added automatically because it is a required unit for AimmsWebUI."
+				Conversions: {
+					century->s : #-># * 3153600000,
+					year->s : #-># * 31536000,
+					month->s : #-># * 2628000,
+					week->s : #-># * 604800,
+					day->s : #-># * 86400,
+					hour->s : #-># * 3600,
+					minute->s : #-># * 60,
+					second->s : #-># ,
+					tick->s : #-># / 100
 				}
+				Comment: "Expresses the value for the duration of periods.";
 			}
 		}
 		Section Inputs {
@@ -154,10 +158,16 @@ Model Main_TravelingSalesman {
 		}
 		Section Math_Model {
 			Section Heuristic {
+				Procedure pr_clearSolutions {
+					Body: {
+						empty p_init_tourconnect, p_sim_tourConnect, p_cyc_tourconnect ;
+					}
+				}
 				Procedure pr_runAll {
 					Body: {
-						pr_findInitialTour;
-						pr_improveTourCyclic;
+						pr_findInitialTour; ! p_init_tourconnect, p_sim_tourConnect, p_cyc_tourconnect
+						! pr_improveTourCyclic
+						pr_refreshingImproveTourCyclic;
 						pr_improveTourSimultaneous;
 					}
 				}
@@ -322,7 +332,24 @@ Model Main_TravelingSalesman {
 							        p_sim_prevCity(ep_loc_nextCity) := ep_node;
 							    endblock; 
 							
-							    newprocedure;
+							    !newprocedure;
+							
+								block ! Update network flow object.
+								empty p_sim_tourConnect;
+								p_sim_tourConnect(i_node1, p_sim_nextCity(i_node1)) := 1;
+								p_sim_tourDistance := sum(i_node1, p_def_haversineDistance(i_node1, p_sim_nextCity(i_node1)));
+								endblock;
+							
+								sp_time := CurrentToString("%c%y-%m-%d %H:%M:%S");
+								sp_timeNEW :=  
+								MomentToString(
+									"%c%y-%m-%d %H:%M:%S",   ! (input) a string expression
+									[s],         ! (input) a time unit
+									sp_time,  ! (input) a string expression
+									2[s]);  
+							
+								display sp_time, sp_timeNEW;
+							
 							
 							endwhile;
 						}
@@ -357,7 +384,7 @@ Model Main_TravelingSalesman {
 							
 							display sp_time, sp_timeNEW;
 							
-							ScheduleAt(sp_timeNEW, 'newprocedure');
+							!ScheduleAt(sp_timeNEW, 'newprocedure');
 						}
 					}
 				}
@@ -414,6 +441,8 @@ Model Main_TravelingSalesman {
 							
 							p_loc_uselessLoops := 0;
 							ep_node := First(s_nodes);
+							
+							pr_singleIterationImproveTourCyclic();
 							
 							while (p_cyc_swaps < p_def_iterationLimit 
 							        and p_loc_uselessLoops <= card(s_nodes)) do
@@ -481,6 +510,113 @@ Model Main_TravelingSalesman {
 						}
 						ElementParameter ep_loc_ODCity {
 							Range: s_cities;
+						}
+					}
+					Section Improve_Tour_Cyclic_with_page_refreshing {
+						Parameter p_uselessLoops;
+						Procedure pr_refreshingImproveTourCyclic {
+							Body: {
+								empty Improve_Tour_Cyclic;
+								
+								if not p_init_tourInitialized then 
+								    pr_findInitialTour; 
+								endif;
+								
+								if (not p_cyc_initialized) then
+								   p_cyc_nextCity(i_node1) := ep_init_nextCity(i_node1);
+								   p_cyc_prevCity(i_node1) := ep_init_prevCity(i_node1);
+								   p_cyc_initialized := 1;
+								   p_cyc_swaps := 0;
+								endif;
+								
+								p_uselessLoops := 0;
+								ep_node := First(s_nodes);
+								
+								pr_singleIterationImproveTourCyclic();
+							}
+							ElementParameter ep_loc_nextCity {
+								Range: s_cities;
+							}
+							ElementParameter ep_loc_OCity {
+								Range: s_cities;
+							}
+							ElementParameter ep_loc_DCity {
+								Range: s_cities;
+							}
+							ElementParameter ep_loc_ODCity {
+								Range: s_cities;
+							}
+						}
+						Procedure pr_singleIterationImproveTourCyclic {
+							Body: {
+								p_uselessLoops += 1;
+								
+								! Select a NewNext to be swapped with City
+								ep_loc_nextCity := argmax(i_node1 in s_neighbors(ep_node), p_cyc_distanceChange(ep_node,i_node1));
+								
+								if (p_cyc_distanceChange(ep_node, ep_loc_nextCity) > 0) then
+									p_cyc_swaps += 1;
+									p_uselessLoops := 0;
+								
+									block ! Swap cities in tour.
+										! This is the hairy part of the algorithm. The direction of the tour changes from
+										! City to NewNext as part of the 2-opt heuristic. To modify the next and previous
+										! city references we have to walk over the subtour, carefully making sure we don't
+										! destroy any information while reversing the direction.
+								
+										! Set up a link from the old destinations of City to the old destination of NewNext in the tour
+										ep_loc_OCity := p_cyc_NextCity(ep_node);
+										ep_loc_DCity := p_cyc_nextCity(ep_loc_nextCity);
+										p_cyc_nextCity(ep_loc_OCity) := ep_loc_DCity;
+										p_cyc_prevCity(ep_loc_DCity) := ep_loc_OCity;
+								
+										! Reverse the chain from the old destination of City to NextNew
+										ep_loc_OCity := ep_loc_nextCity;
+										ep_loc_DCity := p_cyc_prevCity(ep_loc_OCity);
+								
+										while ( ep_loc_DCity <> ep_node ) do
+											ep_loc_ODCity := ep_loc_DCity;
+											p_cyc_NextCity(ep_loc_OCity) := ep_loc_ODCity;
+											ep_loc_DCity := p_cyc_prevCity(ep_loc_ODCity);
+											p_cyc_prevCity(ep_loc_ODCity) := ep_loc_OCity;
+											ep_loc_OCity := ep_loc_ODCity;
+										endwhile;
+								
+										! Finally, setup the link from City to NextNew
+										p_cyc_NextCity(ep_node) := ep_loc_nextCity;
+										p_cyc_PrevCity(ep_loc_nextCity) := ep_node;
+									endblock;
+								
+									block ! Update network flow object.
+										empty p_cyc_tourConnect;
+										p_cyc_TourConnect(i_node1,p_cyc_NextCity(i_node1)) := 1;
+										p_cyc_TourDistance := sum(i_node1, p_def_haversineDistance(i_node1,p_cyc_nextCity(i_node1)));
+									endblock;
+								endif;
+								
+								ep_node := p_cyc_nextCity(ep_node);
+								
+								!display "--------pr_singleIterationImproveTourCyclic---------",
+								!	p_cyc_swaps, p_def_iterationLimit, p_uselessLoops ;
+								if (p_cyc_swaps < p_def_iterationLimit) and 
+								   (p_uselessLoops <= card(s_nodes)   )      then
+									pr_scheduleOver(
+										p_noSecs   :  1[s], 
+										ep_payLoad :  'pr_singleIterationImproveTourCyclic');
+								endif ;
+							}
+							ElementParameter ep_loc_nextCity {
+								Range: s_cities;
+							}
+							ElementParameter ep_loc_OCity {
+								Range: s_cities;
+							}
+							ElementParameter ep_loc_DCity {
+								Range: s_cities;
+							}
+							ElementParameter ep_loc_ODCity {
+								Range: s_cities;
+							}
 						}
 					}
 				}
@@ -929,9 +1065,38 @@ Model Main_TravelingSalesman {
 					IndexDomain: webui::indexPageActionSpec;
 					Definition: data { displaytext : "Run",  icon : "aimms-airplane",  procedure : "pr_runAll",  state : "active" };
 				}
+				StringParameter sp_def_heuristicSecondaryActions {
+					IndexDomain: (webui::indexPageExtension,webui::indexPageActionSpec);
+					Definition: {
+						data { 
+							( 1, displaytext ) : "clear solutions",  
+							( 1, icon        ) : "aimms-broom",  
+							( 1, procedure   ) : "pr_clearSolutions",  
+							( 1, state       ) : "active", 
+						
+							( 2, displaytext ) : "Initial solution",  
+							( 2, icon        ) : "aimms-bucket",  
+							( 2, procedure   ) : "pr_findInitialTour",  
+							( 2, state       ) : "active", 
+						
+							( 3, displaytext ) : "Improved simultaneous",  
+							( 3, icon        ) : "aimms-paint-format",  
+							( 3, procedure   ) : "pr_improveTourSimultaneous",  
+							( 3, state       ) : "active", 
+						
+							( 4, displaytext ) : "Improved cyclic",  
+							( 4, icon        ) : "aimms-brush",  
+							( 4, procedure   ) : "pr_refreshingImproveTourCyclic",  
+							( 4, state       ) : "active"
+						}
+					}
+				}
 				StringParameter sp_def_heuristicSidePanel {
 					IndexDomain: (webui::indexPageExtension,webui::indexSidePanelSpec);
 					Definition: data { ( 1, displayText ) : "Help",  ( 1, pageId ) : "network_help",  ( 1, icon ) : "aimms-info2",  ( 1, state ) : "active" };
+				}
+				StringParameter sp_titleImprovedTourCyclic {
+					InitialData: "Improved Tour (Cyclic)";
 				}
 			}
 			Section Exact_Page {
@@ -1174,5 +1339,77 @@ Model Main_TravelingSalesman {
 			return 1;
 		}
 		Comment: "We return 1 to make sure AIMMS does not ask to save a case when closing the project";
+	}
+	Procedure pr_scheduleOver {
+		Arguments: (p_noSecs,ep_payLoad);
+		Body: {
+			block ! Sanity checks 
+				if p_noSecs <= 0[s] then
+					raise error 
+						formatString("pr_scheduleOver(%n,%e): The number of seconds should be strictly positive.", 
+							p_noSecs, ep_payLoad);
+				endif ;
+				if not ep_payLoad then
+					raise error 
+						formatString("pr_scheduleOver(%n,%e): Empty payload specified.", 
+							p_noSecs, ep_payLoad);
+				endif ;
+			endblock ;
+			
+			block ! Is reference date base on UTC?
+				p_ogv := OptionGetValue(
+					OptionName :  "use_UTC_forCaseAndStartEndDate", 
+					Lower      :  p_low, 
+					Current    :  p_scheduleAtUsesUTC, 
+					Default    :  p_def, 
+					Upper      :  p_upp);
+				if not p_ogv then ! Option use_UTC_forCaseAndStartEndDate is introduced with AIMMS 4.75.
+					p_scheduleAtUsesUTC := 0 ; ! Assume option use_UTC_forCaseAndStartEndDate is off.
+				endif ;
+			endblock ;
+			
+			sp_refDate := "2023-01-01 00:00:00" ;
+			
+			if p_scheduleAtUsesUTC then
+				sp_now := CurrentToString("%c%y-%m-%d %H:%M:%S%TZ('UTC')");
+			else
+				sp_now := CurrentToString("%c%y-%m-%d %H:%M:%S");
+			endif ;
+			p_tmpSec := CurrentToMoment([s], sp_refDate) ;
+			display p_tmpSec ;
+			p_tmpSec += p_noSecs ;
+			if p_scheduleAtUsesUTC then
+				sp_launchDate := MomentToString( "%c%y-%m-%d %H:%M:%S%TZ('UTC')", [s], sp_refDate, p_tmpSec );
+			else
+				sp_launchDate := MomentToString( "%c%y-%m-%d %H:%M:%S", [s], sp_refDate, p_tmpSec );
+			endif ;
+			!display "--------pr_scheduleOver----------", sp_now, sp_launchDate ;
+			
+			! Nb ScheduleAt is precise up to a second.
+			if not ScheduleAt(sp_launchDate, ep_payLoad) then
+			        raise error "Error scheduling procedure \'" + ep_payload + "\': " + CurrentErrorMessage code 'Schedule-at-procedure' ;
+			endif;
+		}
+		Comment: "Schedule a job in a couple of seconds.";
+		StringParameter sp_refDate;
+		Parameter p_noSecs {
+			Unit: s;
+			Property: Input;
+		}
+		ElementParameter ep_payLoad {
+			Range: AllProcedures;
+			Property: Input;
+		}
+		StringParameter sp_launchDate;
+		StringParameter sp_now;
+		Parameter p_tmpSec {
+			Range: integer;
+			Unit: s;
+		}
+		Parameter p_ogv;
+		Parameter p_low;
+		Parameter p_scheduleAtUsesUTC;
+		Parameter p_def;
+		Parameter p_upp;
 	}
 }
