@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<AimmsJSONMapping>
+	<ObjectMapping>
+		<ArrayMapping name="data">
+			<ObjectMapping>
+				<ValueMapping name="name" binds-to="i_int_city" />
+				<ValueMapping name="latitude" maps-to="p_int_latitude(i_int_city)" />
+				<ValueMapping name="longitude" maps-to="p_int_longitude(i_int_city)" />
+			</ObjectMapping>
+		</ArrayMapping>
+	</ObjectMapping>
+</AimmsJSONMapping>
