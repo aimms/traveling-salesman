@@ -1,8 +1,8 @@
-== Info: Found bundle for host api.positionstack.com: 0x201f4965988 [serially]
-== Info: Re-using existing connection! (#1) with host api.positionstack.com
-== Info: Connected to api.positionstack.com (104.21.65.172) port 80 (#1)
-=> Send header, 150 bytes
-GET /v1/forward?access_key=54c8e0e21241f8f235ff0e7329aa989b&query=Itapetinga&limit=1&country=BR HTTP/1.1
+== Info: Found bundle for host api.positionstack.com: 0x1e31b13ade8 [serially]
+== Info: Re-using existing connection! (#0) with host api.positionstack.com
+== Info: Connected to api.positionstack.com (172.67.164.241) port 80 (#0)
+=> Send header, 146 bytes
+GET /v1/forward?access_key=54c8e0e21241f8f235ff0e7329aa989b&query=Berber&limit=1&country=SD HTTP/1.1
 Host: api.positionstack.com
 Accept: */*
 
@@ -10,7 +10,7 @@ Accept: */*
 <= Recv header, 17 bytes
 HTTP/1.1 200 OK
 <= Recv header, 37 bytes
-Date: Fri, 03 Feb 2023 19:29:34 GMT
+Date: Thu, 09 Feb 2023 17:41:56 GMT
 <= Recv header, 32 bytes
 Content-Type: application/json
 <= Recv header, 28 bytes
@@ -26,7 +26,7 @@ accept-encoding: gzip
 <= Recv header, 34 bytes
 cache-control: no-cache, private
 <= Recv header, 65 bytes
-x-apilayer-transaction-id: ff272fc5-1c52-43c3-9a44-6836c912c58a
+x-apilayer-transaction-id: e392d208-c4e0-4667-b42f-e620577900ad
 <= Recv header, 32 bytes
 access-control-allow-origin: *
 <= Recv header, 56 bytes
@@ -36,31 +36,29 @@ access-control-allow-headers: *
 <= Recv header, 22 bytes
 x-quota-limit: 25000
 <= Recv header, 26 bytes
-x-quota-remaining: 24720
+x-quota-remaining: 24557
 <= Recv header, 22 bytes
 x-increment-usage: 1
 <= Recv header, 23 bytes
-x-request-time: 0.087
+x-request-time: 0.125
 <= Recv header, 26 bytes
 CF-Cache-Status: DYNAMIC
-<= Recv header, 270 bytes
-Report-To: {"endpoints":[{"url":"https:\/\/a.nel.cloudflare.com\/report\/v3?s=nfrugzXvMl48aG92BLBP2OYZ9sInqiwjHpyau0uEog%2FtL7KfuRZij2bq4brT6oLatdH32ZsUXr8nlYN6WgfYVPF6zZCCWPoJa%2FTsx%2B8MSOBKwNbWQwzTOIvjfwi4qRRQSxLVq%2B%2BWmI8%3D"}],"group":"cf-nel","max_age":604800}
+<= Recv header, 278 bytes
+Report-To: {"endpoints":[{"url":"https:\/\/a.nel.cloudflare.com\/report\/v3?s=xwl6dl17MMoEjpIljyPmmZ%2Frvz0H4etbyg6b9qH9ZDcu78tt9bl0sPFvRLnBSNmqqD20as%2BirKUCTgNE%2BxeAfJwV00frn5KY%2FAsfHlEXoVR%2FGzcLQ%2BFy86GL70fGgDHG%2Ft%2FoNI%2Bz6JQ%3D"}],"group":"cf-nel","max_age":604800}
 <= Recv header, 67 bytes
 NEL: {"success_fraction":0,"report_to":"cf-nel","max_age":604800}
 <= Recv header, 20 bytes
 Server: cloudflare
 <= Recv header, 30 bytes
-CF-RAY: 793d937a383fa638-GRU
+CF-RAY: 796e66153d98010b-GRU
 <= Recv header, 54 bytes
 alt-svc: h3=":443"; ma=86400, h3-29=":443"; ma=86400
 <= Recv header, 2 bytes
 
-<= Recv data, 417 bytes
-19a
-{"data":[{"latitude":-23.592477,"longitude":-48.044392,"type":"locality","name":"Itapetininga","number":null,"postal_code":null,"street":null,"confidence":1,"region":"Sao Paulo","region_code":"SP","county":"Itapetininga","locality":"Itapetininga","administrative_area":"Itapetininga","neighbourhood":null,"country":"Brazil","country_code":"BRA","continent":"South America","label":"Itapetininga, SP, Brazil"}]}
-
-<= Recv data, 5 bytes
+<= Recv data, 377 bytes
+16d
+{"data":[{"latitude":18.02158,"longitude":33.98299,"type":"locality","name":"Berber","number":null,"postal_code":null,"street":null,"confidence":1,"region":"Nahr an Nil","region_code":"RN","county":"Berber","locality":"Berber","administrative_area":null,"neighbourhood":null,"country":"Sudan","country_code":"SDN","continent":"Africa","label":"Berber, RN, Sudan"}]}
 0
 
 
-== Info: Connection #1 to host api.positionstack.com left intact
+== Info: Connection #0 to host api.positionstack.com left intact

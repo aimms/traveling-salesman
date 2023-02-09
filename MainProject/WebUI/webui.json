@@ -96,6 +96,30 @@
         ]
       }
     },
+    "statusmessages": {
+      "aimms": {
+        "contents": [
+          "sp_statusBar"
+        ],
+        "slices": [
+          {
+            "identifier": "sp_statusBar",
+            "slice": [
+              {
+                "index": "webui::indexApplicationExtension",
+                "type": "free",
+                "value": "webui::indexApplicationExtension"
+              },
+              {
+                "index": "webui::indexStatusBarSpec",
+                "type": "free",
+                "value": "webui::indexStatusBarSpec"
+              }
+            ]
+          }
+        ]
+      }
+    },
     "theme.classic": {
       "literal": "NOT_ALLOWED"
     },
@@ -518,6 +542,56 @@
       ]
     }
   },
+  "pages/exact_help": {
+    "aimms.widget.type": {
+      "literal": "pagev2-grid-sidepanel"
+    },
+    "bindings": {
+      "literal": [
+        {
+          "widgetUri": "txt_helpNetwork_2",
+          "gridArea": "area-a",
+          "dndId": "Unassigned widgetstxt_helpNetwork_20"
+        }
+      ]
+    },
+    "widgets": {
+      "literal": [
+        {
+          "uri": "txt_helpNetwork_2",
+          "layoutInfo": {
+            "width": "2",
+            "height": "1"
+          }
+        }
+      ]
+    }
+  },
+  "pages/heuristic_help": {
+    "aimms.widget.type": {
+      "literal": "pagev2-grid-sidepanel"
+    },
+    "bindings": {
+      "literal": [
+        {
+          "widgetUri": "txt_helpNetwork_1",
+          "gridArea": "area-a",
+          "dndId": "Unassigned widgetstxt_helpNetwork_10"
+        }
+      ]
+    },
+    "widgets": {
+      "literal": [
+        {
+          "uri": "txt_helpNetwork_1",
+          "layoutInfo": {
+            "width": "2",
+            "height": "1"
+          }
+        }
+      ]
+    }
+  },
   "pages/home": {
     "aimms.widget.type": {
       "literal": "pagev2-grid"
@@ -707,11 +781,28 @@
     }
   },
   "pages/network_help": {
-    "widgets": {
-      "literal": []
-    },
     "aimms.widget.type": {
       "literal": "pagev2-grid-sidepanel"
+    },
+    "bindings": {
+      "literal": [
+        {
+          "widgetUri": "txt_helpNetwork",
+          "gridArea": "area-a",
+          "dndId": "Unassigned widgetstxt_helpNetwork"
+        }
+      ]
+    },
+    "widgets": {
+      "literal": [
+        {
+          "uri": "txt_helpNetwork",
+          "layoutInfo": {
+            "width": "2",
+            "height": "1"
+          }
+        }
+      ]
     }
   },
   "pages/story": {
@@ -767,6 +858,11 @@
     },
     "layoutId": {
       "literal": "custom_afa86eba-6e6a-4077-a063-bf443788a472"
+    },
+    "onload": {
+      "aimms": {
+        "run": "pr_findInitialTour"
+      }
     },
     "primarypageaction": {
       "aimms": {
@@ -1095,10 +1191,10 @@
       ]
     },
     "center.latitude": {
-      "literal": -4.565473550710278
+      "literal": 17.308687886770035
     },
     "center.longitude": {
-      "literal": -3.873929061151685
+      "literal": 44.98899917049127
     },
     "contextmenu": {
       "aimms": {
@@ -1297,10 +1393,10 @@
       }
     },
     "center.latitude": {
-      "literal": -15.453680224345837
+      "literal": 8.233237111274566
     },
     "center.longitude": {
-      "literal": -56.14870948379353
+      "literal": 20.039062500000005
     },
     "contextmenu": {
       "aimms": {
@@ -1358,7 +1454,7 @@
               {
                 "index": "i_city",
                 "type": "subset",
-                "value": "i_node1"
+                "value": "i_cyc_node1"
               }
             ]
           },
@@ -1368,7 +1464,7 @@
               {
                 "index": "i_city",
                 "type": "subset",
-                "value": "i_node1"
+                "value": "i_cyc_node1"
               }
             ]
           },
@@ -1378,7 +1474,7 @@
               {
                 "index": "i_city",
                 "type": "subset",
-                "value": "i_node1"
+                "value": "i_cyc_node1"
               }
             ]
           }
@@ -1387,13 +1483,17 @@
     },
     "nodes.0.index": {
       "literal": {
-        "identifier": "i_node1",
         "focus": [
           {
-            "index": "i_node1",
+            "index": "i_cyc_node",
+            "value": "ep_city"
+          },
+          {
+            "index": "i_cyc_node1",
             "value": "ep_city"
           }
-        ]
+        ],
+        "identifier": "i_cyc_node1"
       }
     },
     "nodes.0.latitude": {
@@ -1403,7 +1503,7 @@
           {
             "index": "i_city",
             "type": "subset",
-            "value": "i_node1"
+            "value": "i_cyc_node1"
           }
         ]
       }
@@ -1415,7 +1515,7 @@
           {
             "index": "i_city",
             "type": "subset",
-            "value": "i_node1"
+            "value": "i_cyc_node1"
           }
         ]
       }
@@ -1430,7 +1530,7 @@
           {
             "index": "i_city",
             "type": "subset",
-            "value": "i_node1"
+            "value": "i_cyc_node1"
           }
         ]
       }
@@ -1466,14 +1566,14 @@
             "identifier": "p_sim_tourConnect",
             "slice": [
               {
-                "index": "i_city1",
+                "index": "i_node1",
                 "type": "free",
-                "value": "i_city1"
+                "value": "i_node1"
               },
               {
-                "index": "i_city2",
+                "index": "i_node2",
                 "type": "free",
-                "value": "i_city2"
+                "value": "i_node2"
               }
             ]
           }
@@ -1491,23 +1591,23 @@
         "identifier": "p_sim_tourConnect",
         "slice": [
           {
-            "index": "i_city1",
+            "index": "i_node1",
             "type": "free",
-            "value": "i_city1"
+            "value": "i_node1"
           },
           {
-            "index": "i_city2",
+            "index": "i_node2",
             "type": "free",
-            "value": "i_city2"
+            "value": "i_node2"
           }
         ]
       }
     },
     "center.latitude": {
-      "literal": -0.8788717828324149
+      "literal": 8.928487062665504
     },
     "center.longitude": {
-      "literal": -62.952248891541618
+      "literal": -0.703125
     },
     "contextmenu": {
       "aimms": {
@@ -1565,7 +1665,7 @@
               {
                 "index": "i_city",
                 "type": "subset",
-                "value": "i_node1"
+                "value": "i_sim_node1"
               }
             ]
           },
@@ -1575,7 +1675,7 @@
               {
                 "index": "i_city",
                 "type": "subset",
-                "value": "i_node1"
+                "value": "i_sim_node1"
               }
             ]
           },
@@ -1585,7 +1685,7 @@
               {
                 "index": "i_city",
                 "type": "subset",
-                "value": "i_node1"
+                "value": "i_sim_node1"
               }
             ]
           }
@@ -1594,13 +1694,13 @@
     },
     "nodes.0.index": {
       "literal": {
-        "identifier": "i_node1",
         "focus": [
           {
-            "index": "i_node1",
+            "index": "i_sim_node1",
             "value": "ep_city"
           }
-        ]
+        ],
+        "identifier": "i_sim_node1"
       }
     },
     "nodes.0.latitude": {
@@ -1610,7 +1710,7 @@
           {
             "index": "i_city",
             "type": "subset",
-            "value": "i_node1"
+            "value": "i_sim_node1"
           }
         ]
       }
@@ -1622,7 +1722,7 @@
           {
             "index": "i_city",
             "type": "subset",
-            "value": "i_node1"
+            "value": "i_sim_node1"
           }
         ]
       }
@@ -1637,7 +1737,7 @@
           {
             "index": "i_city",
             "type": "subset",
-            "value": "i_node1"
+            "value": "i_sim_node1"
           }
         ]
       }
@@ -1706,10 +1806,10 @@
       }
     },
     "center.latitude": {
-      "literal": -16.003575733881314
+      "literal": -5.7908968128719568
     },
     "center.longitude": {
-      "literal": -52.20703125000001
+      "literal": 0.17578125
     },
     "contextmenu": {
       "aimms": {
@@ -1848,7 +1948,7 @@
       "literal": "MIP without subtours"
     },
     "zoom": {
-      "literal": 4
+      "literal": 2
     }
   },
   "widgets/map_improvedTourSimultaneous_2": {
@@ -1908,10 +2008,10 @@
       }
     },
     "center.latitude": {
-      "literal": -17.35063837604883
+      "literal": -0.17578097424708534
     },
     "center.longitude": {
-      "literal": -59.67773437500001
+      "literal": 16.347656250000005
     },
     "contextmenu": {
       "aimms": {
@@ -2050,7 +2150,7 @@
       "literal": "MIP may contain subtours"
     },
     "zoom": {
-      "literal": 4
+      "literal": 2
     }
   },
   "widgets/map_initialTour": {
@@ -2113,10 +2213,10 @@
       "literal": false
     },
     "center.latitude": {
-      "literal": -22.350075806124854
+      "literal": 20.138470312451156
     },
     "center.longitude": {
-      "literal": -59.33160012669747
+      "literal": 27.421875000000005
     },
     "contextmenu": {
       "aimms": {
@@ -2255,7 +2355,7 @@
       "literal": "Initial Tour"
     },
     "zoom": {
-      "literal": 3
+      "literal": 2
     }
   },
   "widgets/scl_addByCity": {
@@ -2405,6 +2505,39 @@
     },
     "title": {
       "literal": "Total time per solve type "
+    }
+  },
+  "widgets/txt_helpNetwork": {
+    "aimms.widget.type": {
+      "literal": "text"
+    },
+    "contents": {
+      "literal": "<div><b style=\"font-size: 18px;\">Adding your first network</b></div><div><b>By name</b></div><div>Add the city name you want to add, press run.&nbsp;</div><div><br></div><div><b>By country</b></div><div>Add the country name you want to fetch cities, add the quantity of cities, press run.&nbsp;</div><div><br></div><div><b>By limit</b></div><div>Add the quantity of cities you want to fetch, press run.&nbsp;</div><div><br></div><div><b><span style=\"background-color: inherit; font-size: 18px;\">Deleting nodes</span></b></div><div>You can either delete all, or click with the right button on any node and delete it.&nbsp;</div><div><b><span style=\"background-color: inherit; font-size: 18px;\">&nbsp;</span></b></div><div><br></div>"
+    },
+    "name": {
+      "literal": "txt_helpNetwork"
+    }
+  },
+  "widgets/txt_helpNetwork_1": {
+    "aimms.widget.type": {
+      "literal": "text"
+    },
+    "contents": {
+      "literal": "<div><span style=\"background-color: inherit; font-size: 18px;\"><b>Run differences</b></span></div><div><b style=\"background-color: inherit;\">Run all</b></div><div>This will run all 3 heuristics without iterations. This run will be important when comparing execution time.&nbsp;</div><div><br></div><div><b style=\"background-color: inherit;\">Initial solution</b></div><div>This will run the initial tour.</div><div><br></div><div><b style=\"background-color: inherit;\">Improved simultaneous</b></div><div>This will run the improved simultaneous tour with iteractions. It can take a while. You will not be able to stop the run without closing the system.&nbsp;</div><div><br></div><div><b style=\"background-color: inherit;\">Improved cyclic</b></div><div>This will run the improved cyclic tour with iteractions. It can take a while. You will not be able to stop the run without closing the system.&nbsp;</div><div><br></div><div><span style=\"background-color: inherit; font-size: 18px;\"><b>Understanting the colors</b></span></div><div><b style=\"background-color: inherit;\">Pink</b></div><div>If the nodes are pink, the run is completed.</div><div><br></div><div><b style=\"background-color: inherit;\">Orange</b></div><div>The system is still running the iteractions please wait.&nbsp;</div><div><br></div><div><br></div><div><br></div>"
+    },
+    "name": {
+      "literal": "txt_helpHeuristic"
+    }
+  },
+  "widgets/txt_helpNetwork_2": {
+    "aimms.widget.type": {
+      "literal": "text"
+    },
+    "contents": {
+      "literal": "<div><span style=\"background-color: inherit; font-size: 18px;\"><b>Models</b></span></div><div><b>MIP without subtours</b></div><div>This is a MIP model without considering subtours.&nbsp;</div><div><br></div><div><b>MIP may contain subtours</b></div><div>This is useful to understand the lowest bound and feasible solution. As the name say, this may contain subtours.</div><div><br></div>"
+    },
+    "name": {
+      "literal": "txt_helpExact"
     }
   },
   "widgets/txt_story": {

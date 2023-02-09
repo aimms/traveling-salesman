@@ -53,7 +53,6 @@ Model Main_TravelingSalesman {
 					Text: "The set of cities in the tour";
 					Index: i_city1, i_city2, i_city;
 					Parameter: ep_city;
-					webui::AnnotationsIdentifier: sp_def_nodeAnnotation;
 				}
 				Set s_citiesASCII {
 					Index: i_city_ascii;
@@ -93,6 +92,7 @@ Model Main_TravelingSalesman {
 						        p_latitude(i_city)
 						        and p_longitude(i_city)}
 					}
+					webui::AnnotationsIdentifier: sp_def_nodeAnnotation;
 				}
 				Set s_subtours {
 					SubsetOf: s_nodes;
@@ -177,6 +177,7 @@ Model Main_TravelingSalesman {
 					}
 					Parameter p_init_tourDistance {
 						Text: "Total distance of the initial tour";
+						webui::FlagsIdentifier: sp_readOnlyFlag;
 					}
 					Parameter p_init_tourConnect {
 						IndexDomain: (i_node1,i_node2);
@@ -198,6 +199,7 @@ Model Main_TravelingSalesman {
 					}
 					Parameter p_init_timeElapsed {
 						Unit: s;
+						webui::FlagsIdentifier: sp_readOnlyFlag;
 					}
 					Procedure pr_findInitialTour {
 						Body: {
@@ -245,6 +247,17 @@ Model Main_TravelingSalesman {
 						and visualize improved tours using an algorithm that selects the neighbor of a
 						city for swapping, considering all cities in the tour simultaneously."
 					}
+					Set s_sim_nodes {
+						SubsetOf: s_nodes;
+						Index: i_sim_node, i_sim_node1, i_sim_node2;
+						Parameter: ep_sim_node;
+						Definition: {
+							{i_city | 
+							        p_latitude(i_city)
+							        and p_longitude(i_city)}
+						}
+						webui::AnnotationsIdentifier: sp_def_simNodeAnnotation;
+					}
 					Parameter p_sim_distanceChange {
 						IndexDomain: (i_node1,i_node2);
 						Text: "Improvement in total tour distance by swapping city i with neighbor j in simultaneous algorithm";
@@ -261,18 +274,18 @@ Model Main_TravelingSalesman {
 					Parameter p_sim_tourDistance {
 						Text: "Total tour distance after current iteration in simultaneous algorithm";
 						InitialData: 0;
+						webui::FlagsIdentifier: sp_readOnlyFlag;
 					}
 					Parameter p_sim_tourConnect {
 						IndexDomain: (i_node1,i_node2);
 						Text: "City i connected to city j after current iteration in simultaneous algorithm";
+						webui::TooltipIdentifier: sp_def_arcTooltip(i_node1,i_node2);
 					}
 					ElementParameter p_sim_nextCity {
 						IndexDomain: i_city;
 						Text: "Next city of city c after current iteration in simultaneous algorithm";
 						Range: s_cities;
 					}
-					StringParameter sp_time;
-					StringParameter sp_timeNEW;
 					ElementParameter p_sim_prevCity {
 						IndexDomain: i_city;
 						Text: "Previous city of city c after current iteration in simultaneous algorithm";
@@ -284,6 +297,7 @@ Model Main_TravelingSalesman {
 					Parameter p_sim_uselessLoops;
 					Parameter p_sim_timeElapsed {
 						Unit: s;
+						webui::FlagsIdentifier: sp_readOnlyFlag;
 					}
 					Procedure pr_improveTourCyclic {
 						Body: {
@@ -377,20 +391,28 @@ Model Main_TravelingSalesman {
 					Procedure pr_refreshingImproveTourSimultaneous {
 						Arguments: (sp_in_userAnswer);
 						Body: {
-							if sp_in_userAnswer = "Yes" then
+							if sp_in_userAnswer = "OK" then
 							    empty Improve_Tour_Simultaneous;
 							
-							    stopwatch::pr_start;
+							    block !status bar change
+							        sp_statusBar('1', 'icon') := "aimms-circle2";
+							        sp_statusBar('1', 'color') := "var(--secondary2)";
+							        sp_statusBar('1', 'text') := "Running";
+							        sp_statusBar('1', 'tooltip') := "The system is running.";
+							        sp_statusBar('1', 'state') := "active";
+							    endblock;
+							
+							    sp_def_simNodeAnnotation(i_city) := "node-running";
 							
 							    if not p_init_tourInitialized then 
 							        pr_findInitialTour; 
 							    endif;
 							
 							    if (not p_sim_initialized) then
-							    p_sim_nextCity(i_node1) := ep_init_nextCity(i_node1);
-							    p_sim_prevCity(i_node1) := ep_init_prevCity(i_node1);
-							    p_sim_initialized := 1;
-							    p_sim_swaps := 0;
+							        p_sim_nextCity(i_node1) := ep_init_nextCity(i_node1);
+							        p_sim_prevCity(i_node1) := ep_init_prevCity(i_node1);
+							        p_sim_initialized := 1;
+							        p_sim_swaps := 0;
 							    endif;
 							
 							    p_cyc_uselessLoops := 0;
@@ -398,7 +420,6 @@ Model Main_TravelingSalesman {
 							
 							    pr_singleIterationImproveTourSimultaneous();
 							
-							    p_sim_timeElapsed := stopwatch::fnc_elapsed;
 							endif;
 						}
 						ElementParameter ep_loc_nextCity {
@@ -472,8 +493,17 @@ Model Main_TravelingSalesman {
 								pr_scheduleOver(
 									p_in_noSecs   :  1[s], 
 									ep_in_payLoad :  'pr_singleIterationImproveTourSimultaneous');
+							
 							else	        
-							    !dsdf :=1;
+							    sp_def_simNodeAnnotation(i_city) := "node-done";
+							
+							    block !status bar change
+							        sp_statusBar('1', 'icon') := "aimms-circle2";
+							        sp_statusBar('1', 'color') := "var(--secondary)";
+							        sp_statusBar('1', 'text') := "Ready";
+							        sp_statusBar('1', 'tooltip') := "The run is completed.";
+							        sp_statusBar('1', 'state') := "active";
+							    endblock;
 							endif ;
 						}
 						ElementParameter ep_loc_nextCity {
@@ -497,6 +527,17 @@ Model Main_TravelingSalesman {
 						next city in the (modified) tour for swapping which causes the largest distance
 						improvement."
 					}
+					Set s_cyc_nodes {
+						SubsetOf: s_nodes;
+						Index: i_cyc_node, i_cyc_node1, i_cyc_node2;
+						Parameter: ep_cyc_node;
+						Definition: {
+							{i_city | 
+							        p_latitude(i_city)
+							        and p_longitude(i_city)}
+						}
+						webui::AnnotationsIdentifier: sp_def_cycNodeAnnotation;
+					}
 					Macro p_cyc_distanceChange {
 						Text: "Improvement in total tour distance by swapping city i with neighbor j in cyclic algorithm";
 						Arguments: (i_node1,i_node2);
@@ -508,10 +549,12 @@ Model Main_TravelingSalesman {
 					Parameter p_cyc_tourDistance {
 						Text: "Total tour distance after current iteration in cyclic algorithm";
 						InitialData: 0;
+						webui::FlagsIdentifier: sp_readOnlyFlag;
 					}
 					Parameter p_cyc_tourConnect {
 						IndexDomain: (i_node1,i_node2);
 						Text: "City i connected to city j after current iteration in cyclic algorithm";
+						webui::TooltipIdentifier: sp_def_arcTooltip(i_node1,i_node2);
 					}
 					ElementParameter p_cyc_nextCity {
 						IndexDomain: i_city;
@@ -529,6 +572,7 @@ Model Main_TravelingSalesman {
 					Parameter p_cyc_uselessLoops;
 					Parameter p_cyc_timeElapsed {
 						Unit: s;
+						webui::FlagsIdentifier: sp_readOnlyFlag;
 					}
 					Procedure pr_improveTourSimultaneous {
 						Body: {
@@ -613,8 +657,19 @@ Model Main_TravelingSalesman {
 					Procedure pr_refreshingImproveTourCyclic {
 						Arguments: (sp_in_userAnswer);
 						Body: {
-							if sp_in_userAnswer = "Yes" then
+							if sp_in_userAnswer = "OK" then
 							    empty Improve_Tour_Cyclic;
+							
+							    block !status bar change
+							        sp_statusBar('1', 'icon') := "aimms-circle2";
+							        sp_statusBar('1', 'color') := "var(--secondary2)";
+							        sp_statusBar('1', 'text') := "Running";
+							        sp_statusBar('1', 'tooltip') := "The system is running.";
+							        sp_statusBar('1', 'state') := "active";
+							    endblock;
+							
+							    sp_def_cycNodeAnnotation(i_city) := "node-running";
+							
 							
 							    if not p_init_tourInitialized then 
 							        pr_findInitialTour; 
@@ -651,7 +706,6 @@ Model Main_TravelingSalesman {
 					}
 					Procedure pr_singleIterationImproveTourCyclic {
 						Body: {
-							
 							p_cyc_uselessLoops += 1;
 							
 							! Select a ep_loc_nextCity to be swapped with City
@@ -705,7 +759,17 @@ Model Main_TravelingSalesman {
 								pr_scheduleOver(
 									p_in_noSecs   :  1[s], 
 									ep_in_payLoad :  'pr_singleIterationImproveTourCyclic');
-							endif ;
+							else 
+							    sp_def_cycNodeAnnotation(i_city) := "node-done";
+							
+							    block !status bar change
+							        sp_statusBar('1', 'icon') := "aimms-circle2";
+							        sp_statusBar('1', 'color') := "var(--secondary)";
+							        sp_statusBar('1', 'text') := "Ready";
+							        sp_statusBar('1', 'tooltip') := "The run is completed.";
+							        sp_statusBar('1', 'state') := "active";
+							    endblock;
+							endif;
 						}
 						ElementParameter ep_loc_nextCity {
 							Range: s_cities;
@@ -773,12 +837,15 @@ Model Main_TravelingSalesman {
 					Property: NoSave;
 					InitialData: 1;
 				}
-				Parameter p_exactObjective;
+				Parameter p_exactObjective {
+					webui::FlagsIdentifier: sp_readOnlyFlag;
+				}
 				ElementParameter ep_modelType {
 					Range: AllMathematicalProgrammingTypes;
 				}
 				Parameter p_exactTimeElapsed {
 					Unit: s;
+					webui::FlagsIdentifier: sp_readOnlyFlag;
 				}
 				Procedure pr_callbackLazy {
 					Arguments: ep_in_thisSession;
@@ -931,9 +998,12 @@ Model Main_TravelingSalesman {
 					Parameter p_relaxedTourSolution {
 						IndexDomain: (i_node1,i_node2);
 					}
-					Parameter p_lowerBound;
+					Parameter p_lowerBound {
+						webui::FlagsIdentifier: sp_readOnlyFlag;
+					}
 					Parameter p_relaxedTimeElapsed {
 						Unit: s;
+						webui::FlagsIdentifier: sp_readOnlyFlag;
 					}
 					Procedure pr_solveRelaxedModel {
 						Body: {
@@ -957,6 +1027,14 @@ Model Main_TravelingSalesman {
 	Section UI_Declarations {
 		StringParameter sp_logo {
 			InitialData: "aimms_logo.png";
+		}
+		StringParameter sp_statusBar {
+			IndexDomain: (webui::indexApplicationExtension,webui::indexStatusBarSpec);
+			Comment: {
+				"data 
+				{  ( 1, icon      ) : \"aimms-circle2\",  ( 1, color     ) : \"orange\",  ( 1, text      ) : \"active\",
+				  ( 1, tooltip   ) : \"active\",  ( 1, state     ) : \"active\" }"
+			}
 		}
 		Section Workflow {
 			StringParameter sp_myWorkflows {
@@ -1024,7 +1102,7 @@ Model Main_TravelingSalesman {
 				}
 				StringParameter sp_def_nodeAnnotation {
 					IndexDomain: i_city;
-					Definition: "node";
+					Definition: "node-done";
 				}
 				StringParameter sp_def_nodeItemActions {
 					IndexDomain: (webui::indexWidgetItemActionSpec,webui::indexPageExtension,webui::indexWidgetActionSpec);
@@ -1204,7 +1282,15 @@ Model Main_TravelingSalesman {
 				}
 				StringParameter sp_def_heuristicSidePanel {
 					IndexDomain: (webui::indexPageExtension,webui::indexSidePanelSpec);
-					Definition: data { ( 1, displayText ) : "Help",  ( 1, pageId ) : "network_help",  ( 1, icon ) : "aimms-info2",  ( 1, state ) : "active" };
+					Definition: data { ( 1, displayText ) : "Help",  ( 1, pageId ) : "heuristic_help",  ( 1, icon ) : "aimms-info2",  ( 1, state ) : "active" };
+				}
+				StringParameter sp_def_simNodeAnnotation {
+					IndexDomain: i_city;
+					InitialData: "node-done";
+				}
+				StringParameter sp_def_cycNodeAnnotation {
+					IndexDomain: i_city;
+					InitialData: "node-done";
 				}
 				StringParameter sp_titleImprovedTourCyclic {
 					InitialData: "Improved Tour (Cyclic)";
@@ -1241,7 +1327,7 @@ Model Main_TravelingSalesman {
 				}
 				StringParameter sp_def_exactSidePanel {
 					IndexDomain: (webui::indexPageExtension,webui::indexSidePanelSpec);
-					Definition: data { ( 1, displayText ) : "Help",  ( 1, pageId ) : "network_help",  ( 1, icon ) : "aimms-info2",  ( 1, state ) : "active" };
+					Definition: data { ( 1, displayText ) : "Help",  ( 1, pageId ) : "exact_help",  ( 1, icon ) : "aimms-info2",  ( 1, state ) : "active" };
 				}
 			}
 		}
@@ -1417,6 +1503,9 @@ Model Main_TravelingSalesman {
 						if ep_city then
 						    p_latitude(ep_city) := p_int_latitude(ep_int_city);
 						    p_longitude(ep_city) := p_int_longitude(ep_int_city);
+						    sp_def_cycNodeAnnotation(ep_city) := "node-done";
+						    sp_def_simNodeAnnotation(ep_city) := "node-done";
+						
 						else
 						    p_def_unableToFetch += 1;
 						endif;
@@ -1530,6 +1619,14 @@ Model Main_TravelingSalesman {
 			p_init_tourInitialized := 0;
 			p_sim_initialized  := 0;
 			p_cyc_initialized  := 0;
+			
+			block !status bar change
+			    sp_statusBar('1', 'icon') := "aimms-circle2";
+			    sp_statusBar('1', 'color') := "var(--secondary)";
+			    sp_statusBar('1', 'text') := "Ready";
+			    sp_statusBar('1', 'tooltip') := "The run is completed.";
+			    sp_statusBar('1', 'state') := "active";
+			endblock;
 		}
 	}
 	Procedure PostMainInitialization {
