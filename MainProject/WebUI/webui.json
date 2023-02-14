@@ -967,6 +967,14 @@
     "aimms.widget.type": {
       "literal": "button"
     },
+    "custom.tooltip": {
+      "aimms": {
+        "contents": [
+          "p_def_addThisCountryTooltipButton"
+        ],
+        "slices": []
+      }
+    },
     "name": {
       "literal": "btn_addByCountry"
     },
@@ -984,6 +992,14 @@
     "aimms.widget.type": {
       "literal": "button"
     },
+    "custom.tooltip": {
+      "aimms": {
+        "contents": [
+          "sp_def_addByLimitTooltipButton"
+        ],
+        "slices": []
+      }
+    },
     "name": {
       "literal": "btn_addByLimity"
     },
@@ -1000,6 +1016,14 @@
     },
     "aimms.widget.type": {
       "literal": "button"
+    },
+    "custom.tooltip": {
+      "aimms": {
+        "contents": [
+          "sp_def_addThisCityTooltipButton"
+        ],
+        "slices": []
+      }
     },
     "name": {
       "literal": "btn_addThisCity"
@@ -1191,10 +1215,10 @@
       ]
     },
     "center.latitude": {
-      "literal": 17.308687886770035
+      "literal": -22.59372606392931
     },
     "center.longitude": {
-      "literal": 44.98899917049127
+      "literal": -70.84876516313442
     },
     "contextmenu": {
       "aimms": {
@@ -1333,7 +1357,7 @@
       }
     },
     "zoom": {
-      "literal": 2
+      "literal": 3
     }
   },
   "widgets/map_improvedTourCyclic": {
@@ -1945,7 +1969,7 @@
       }
     },
     "title": {
-      "literal": "MIP without subtours"
+      "literal": "Exact solution"
     },
     "zoom": {
       "literal": 2
@@ -2147,7 +2171,7 @@
       }
     },
     "title": {
-      "literal": "MIP may contain subtours"
+      "literal": "MIP permitting subtours"
     },
     "zoom": {
       "literal": 2
@@ -2512,7 +2536,7 @@
       "literal": "text"
     },
     "contents": {
-      "literal": "<div><b style=\"font-size: 18px;\">Adding your first network</b></div><div><b>By name</b></div><div>Add the city name you want to add, press run.&nbsp;</div><div><br></div><div><b>By country</b></div><div>Add the country name you want to fetch cities, add the quantity of cities, press run.&nbsp;</div><div><br></div><div><b>By limit</b></div><div>Add the quantity of cities you want to fetch, press run.&nbsp;</div><div><br></div><div><b><span style=\"background-color: inherit; font-size: 18px;\">Deleting nodes</span></b></div><div>You can either delete all, or click with the right button on any node and delete it.&nbsp;</div><div><b><span style=\"background-color: inherit; font-size: 18px;\">&nbsp;</span></b></div><div><br></div>"
+      "literal": "<div><b style=\"font-size: 18px;\">Adding your first network</b></div><div>All cities will be added via an Rest API called <b>PositionStack</b>. So, when you press 'run', it is indeed fetching an query on that api.&nbsp;</div><div><br></div><div><b>By name</b></div><div>Add the city name you want to add, press run.&nbsp;</div><div><br></div><div><b>By country</b></div><div>Add the country name you want to fetch cities, add the quantity of cities, press run.&nbsp;</div><div><br></div><div><b>By limit</b></div><div>Add the quantity of cities you want to fetch, press run.&nbsp;</div><div><br></div><div><b style=\"background-color: inherit; font-size: 18px;\">Deleting nodes</b></div><div>You can either delete all, or click with the right button on any node and delete it.&nbsp;</div><div><br></div><div><b style=\"font-size: 18px;\">In a rush?</b></div><div>No time to use the api call and still want to compare the solves? In the Data Manager you will find a few ready to analyse scenarios!</div>"
     },
     "name": {
       "literal": "txt_helpNetwork"
@@ -2545,7 +2569,7 @@
       "literal": "text"
     },
     "contents": {
-      "literal": "<div><span style=\"font-size: 32px;\"><b>Story&nbsp;</b></span></div><div><br></div><div><span style=\"font-size: 18px;\">This example illustrates some of AIMMS control flow statements by means of the traveling salesman 2-opt heuristic. </span></div><div><span style=\"font-size: 18px;\">In the model tree, you will find some declarations to define the problem. In addition, you will find:</span></div><div><br></div><ul><li><span style=\"font-size: 18px;\">A procedure and some declarations to compute and visualize an initial tour constructed by starting at some city and successively selecting the next city as the closest city not yet part of the tour.</span></li><li><span style=\"font-size: 18px;\">A procedure and some declarations to compute and visualize an improved tour constructed by repetitively swapping those two arcs in the tour by means of the 2-opt heuristic that give the largest overall distance improvement, until no further improvement is possible or the iteration limit is reached.</span></li><li><span style=\"font-size: 18px;\">A procedure and some declarations to compute and visualize an improved tour constructed by repetitively swapping the next arc in the (modified) tour with that neighbor arc which gives the largest distance improvement, until the iteration limit is reached or a full cycle over the tour gives no further improvement.</span></li></ul><div><br></div><div><span style=\"font-size: 18px;\">When you run the procedures, the information in the progress window is updated by the functions in the GMP Progress Window library.</span></div>"
+      "literal": "<div><span style=\"font-size: 32px;\"><b>Story&nbsp;</b></span></div><div><br></div><div><span style=\"color: black; font-size: 18px;\">The Traveling Salesman Problem (TSP) is the problem of finding the shortest route visiting all cities precisely once. Given are the distances between the cities.</span></div><div><span style=\"color: black; font-size: 18px;\">&nbsp;</span></div><div><span style=\"color: black; font-size: 18px;\">TSP problems are widely studied in the scientific literature because:</span></div><ul><li><span style=\"color: black; font-size: 18px;\"> they are notoriously difficult to solve to optimality (NP-Hard),</span></li><li><span style=\"color: black; font-size: 18px;\">  there is a wide range of applications, and</span></li><li><span style=\"color: black; font-size: 18px;\">  there are various approaches of solving the problem.</span></li></ul><div><span style=\"color: black; font-size: 18px;\">&nbsp;</span></div><div><span style=\"color: black; font-size: 18px;\"> This example is structured as follows:</span></div><ul><li><span style=\"color: black; font-size: 18px;\">The page \"</span><b style=\"color: black; font-size: 18px;\">Network</b><span style=\"color: black; font-size: 18px;\">\" permits you define your own network.</span></li></ul><div><span style=\"color: black;\">You can use the data manager (icon data manager) to save and load instances. Two cases come with this example.</span></div><div><span style=\"color: black;\">Distances are estimated using the Haversine formula.</span></div><div><br></div><ul><li><span style=\"color: black; font-size: 18px;\">The page \"</span><b style=\"color: black; font-size: 18px;\">Heuristic</b><span style=\"color: black; font-size: 18px;\">\" illustrates three different heuristics to solve a TSP.</span></li></ul><div><br></div><ul><li><span style=\"color: black; font-size: 18px;\">The page \"</span><b style=\"color: black; font-size: 18px;\">Exact</b><span style=\"color: black; font-size: 18px;\">\" shows how a MIP can be used to solve a TSP.</span></li></ul><div><br></div><ul><li><span style=\"color: black; font-size: 18px;\">The page \"</span><b style=\"color: black; font-size: 18px;\">Comparison</b><span style=\"color: black; font-size: 18px;\">\" compare total distance and execution time for each solve.</span></li></ul><div><span style=\"color: black; font-size: 18px;\">&nbsp;</span></div><div><span style=\"color: black; font-size: 18px;\">Each of the above pages comes with a </span><u style=\"color: black; font-size: 18px;\">HELP</u><span style=\"color: black; font-size: 18px;\"> side-panel, explaining how to operate that page.</span></div>"
     },
     "name": {
       "literal": "txt_story"

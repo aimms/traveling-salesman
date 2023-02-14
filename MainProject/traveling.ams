@@ -1116,6 +1116,15 @@ Model Main_TravelingSalesman {
 					IndexDomain: (webui::indexPageExtension,webui::indexSidePanelSpec);
 					Definition: data { ( 1, displayText ) : "Help",  ( 1, pageId ) : "network_help",  ( 1, icon ) : "aimms-info2",  ( 1, state ) : "active" };
 				}
+				StringParameter sp_def_addThisCityTooltipButton {
+					Definition: "Fetch " + sp_addThisCity + "'s latitude and longitude on PositionStack api.";
+				}
+				StringParameter p_def_addThisCountryTooltipButton {
+					Definition: "Fetch " + p_maxCities + " random cities' latitude and longitude from " + sp_addByCountry + " on PositionStack api.";
+				}
+				StringParameter sp_def_addByLimitTooltipButton {
+					Definition: "Fetch " + p_maxCities + " random cities' latitude and longitude on PositionStack api.";
+				}
 				Procedure pr_addThisCity {
 					Body: {
 						ep_city := StringToElement(s_cities, sp_addThisCity, 0);

@@ -1,8 +1,8 @@
-== Info: Found bundle for host api.positionstack.com: 0x1e31b13ade8 [serially]
-== Info: Re-using existing connection! (#0) with host api.positionstack.com
-== Info: Connected to api.positionstack.com (172.67.164.241) port 80 (#0)
-=> Send header, 146 bytes
-GET /v1/forward?access_key=54c8e0e21241f8f235ff0e7329aa989b&query=Berber&limit=1&country=SD HTTP/1.1
+== Info: Found bundle for host api.positionstack.com: 0x16559e2a438 [serially]
+== Info: Re-using existing connection! (#4) with host api.positionstack.com
+== Info: Connected to api.positionstack.com (104.21.65.172) port 80 (#4)
+=> Send header, 157 bytes
+GET /v1/forward?access_key=54c8e0e21241f8f235ff0e7329aa989b&query=Tierra%20Amarilla&limit=1&country=CL HTTP/1.1
 Host: api.positionstack.com
 Accept: */*
 
@@ -10,7 +10,7 @@ Accept: */*
 <= Recv header, 17 bytes
 HTTP/1.1 200 OK
 <= Recv header, 37 bytes
-Date: Thu, 09 Feb 2023 17:41:56 GMT
+Date: Tue, 14 Feb 2023 21:33:14 GMT
 <= Recv header, 32 bytes
 Content-Type: application/json
 <= Recv header, 28 bytes
@@ -26,7 +26,7 @@ accept-encoding: gzip
 <= Recv header, 34 bytes
 cache-control: no-cache, private
 <= Recv header, 65 bytes
-x-apilayer-transaction-id: e392d208-c4e0-4667-b42f-e620577900ad
+x-apilayer-transaction-id: 05d60136-1070-4f31-8a5f-0c3f8e8bb8aa
 <= Recv header, 32 bytes
 access-control-allow-origin: *
 <= Recv header, 56 bytes
@@ -36,29 +36,29 @@ access-control-allow-headers: *
 <= Recv header, 22 bytes
 x-quota-limit: 25000
 <= Recv header, 26 bytes
-x-quota-remaining: 24557
+x-quota-remaining: 24230
 <= Recv header, 22 bytes
 x-increment-usage: 1
 <= Recv header, 23 bytes
-x-request-time: 0.125
+x-request-time: 0.122
 <= Recv header, 26 bytes
 CF-Cache-Status: DYNAMIC
-<= Recv header, 278 bytes
-Report-To: {"endpoints":[{"url":"https:\/\/a.nel.cloudflare.com\/report\/v3?s=xwl6dl17MMoEjpIljyPmmZ%2Frvz0H4etbyg6b9qH9ZDcu78tt9bl0sPFvRLnBSNmqqD20as%2BirKUCTgNE%2BxeAfJwV00frn5KY%2FAsfHlEXoVR%2FGzcLQ%2BFy86GL70fGgDHG%2Ft%2FoNI%2Bz6JQ%3D"}],"group":"cf-nel","max_age":604800}
+<= Recv header, 266 bytes
+Report-To: {"endpoints":[{"url":"https:\/\/a.nel.cloudflare.com\/report\/v3?s=sPK6dlTGa0fdV3%2BIa0qSDPaDkXptG9PntcSeF84%2BxJPUNy887WJOaxfxI9yrB5uPB%2FfduuvPYcHy7EsEV2CxCljEIhV8Uy2rnaJyNiugcoHrzOcUd9JgVYvkgRsWoM9r83tBya9yoQQ%3D"}],"group":"cf-nel","max_age":604800}
 <= Recv header, 67 bytes
 NEL: {"success_fraction":0,"report_to":"cf-nel","max_age":604800}
 <= Recv header, 20 bytes
 Server: cloudflare
 <= Recv header, 30 bytes
-CF-RAY: 796e66153d98010b-GRU
+CF-RAY: 7998ebc58fc81aef-GRU
 <= Recv header, 54 bytes
 alt-svc: h3=":443"; ma=86400, h3-29=":443"; ma=86400
 <= Recv header, 2 bytes
 
-<= Recv data, 377 bytes
-16d
-{"data":[{"latitude":18.02158,"longitude":33.98299,"type":"locality","name":"Berber","number":null,"postal_code":null,"street":null,"confidence":1,"region":"Nahr an Nil","region_code":"RN","county":"Berber","locality":"Berber","administrative_area":null,"neighbourhood":null,"country":"Sudan","country_code":"SDN","continent":"Africa","label":"Berber, RN, Sudan"}]}
+<= Recv data, 420 bytes
+198
+{"data":[{"latitude":-27.480042,"longitude":-70.279984,"type":"locality","name":"Tierra Amarilla","number":null,"postal_code":null,"street":null,"confidence":1,"region":"De Atacama","region_code":"AT","county":"Copiap\u00f3","locality":"Tierra Amarilla","administrative_area":null,"neighbourhood":null,"country":"Chile","country_code":"CHL","continent":"South America","label":"Tierra Amarilla, AT, Chile"}]}
 0
 
 
-== Info: Connection #0 to host api.positionstack.com left intact
+== Info: Connection #4 to host api.positionstack.com left intact
