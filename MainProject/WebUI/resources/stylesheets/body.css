@@ -15,3 +15,10 @@
 .ui-widget, .ui-widget button, .ui-widget input, .ui-widget select, .ui-widget textarea {
     font-family: var(--font_headers),Montserrat,Roboto,Arial,Helvetica,sans-serif; 
 }
+
+/*Changing button size*/
+.aimms-widget[data-widget\.uri="btn_addThisCity"]  .ui-button,
+.aimms-widget[data-widget\.uri="btn_addByCountry"]  .ui-button,
+.aimms-widget[data-widget\.uri="btn_addByLimity"]  .ui-button  {
+  width: 40px;
+}
