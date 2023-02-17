@@ -1,8 +1,8 @@
-== Info: Found bundle for host api.positionstack.com: 0x20e6e89c328 [serially]
+== Info: Found bundle for host api.positionstack.com: 0x27ae2481208 [serially]
 == Info: Re-using existing connection! (#1) with host api.positionstack.com
 == Info: Connected to api.positionstack.com (104.21.65.172) port 80 (#1)
-=> Send header, 148 bytes
-GET /v1/forward?access_key=54c8e0e21241f8f235ff0e7329aa989b&query=Urubamba&limit=1&country=PE HTTP/1.1
+=> Send header, 145 bytes
+GET /v1/forward?access_key=54c8e0e21241f8f235ff0e7329aa989b&query=Karoi&limit=1&country=ZW HTTP/1.1
 Host: api.positionstack.com
 Accept: */*
 
@@ -10,7 +10,7 @@ Accept: */*
 <= Recv header, 17 bytes
 HTTP/1.1 200 OK
 <= Recv header, 37 bytes
-Date: Wed, 15 Feb 2023 21:13:42 GMT
+Date: Fri, 17 Feb 2023 21:20:58 GMT
 <= Recv header, 32 bytes
 Content-Type: application/json
 <= Recv header, 28 bytes
@@ -26,7 +26,7 @@ accept-encoding: gzip
 <= Recv header, 34 bytes
 cache-control: no-cache, private
 <= Recv header, 65 bytes
-x-apilayer-transaction-id: 4922445d-3fa0-432d-a842-448b9089ae2d
+x-apilayer-transaction-id: 3c83cf15-5f52-41b2-9e59-f3ae3c75f699
 <= Recv header, 32 bytes
 access-control-allow-origin: *
 <= Recv header, 56 bytes
@@ -36,28 +36,28 @@ access-control-allow-headers: *
 <= Recv header, 22 bytes
 x-quota-limit: 25000
 <= Recv header, 26 bytes
-x-quota-remaining: 24016
+x-quota-remaining: 23304
 <= Recv header, 22 bytes
 x-increment-usage: 1
 <= Recv header, 23 bytes
-x-request-time: 0.076
+x-request-time: 0.090
 <= Recv header, 26 bytes
 CF-Cache-Status: DYNAMIC
-<= Recv header, 268 bytes
-Report-To: {"endpoints":[{"url":"https:\/\/a.nel.cloudflare.com\/report\/v3?s=RXSmuTto5Y10ffRUgVz8PFLIQDwJS8cJNQqiSZYm63Sv8JV65FN4vC0I%2F60rQ0AAwtCNNjqLaTObmK2ETB8PHbP2HK9YuMRlf4UBnNrmhAY%2F8KEYEZgPl41MT1JXIVmodo%2Bl%2BDGtZCc%3D"}],"group":"cf-nel","max_age":604800}
+<= Recv header, 264 bytes
+Report-To: {"endpoints":[{"url":"https:\/\/a.nel.cloudflare.com\/report\/v3?s=MvwcSbrGors9kpgjPxUcorNQflMoWPzxojBCmBZOCtDII7aztmw25AVPsD8FGFPrXh2NrtQKtSPzJf9j4UNRfQWbL%2FmvL2Np%2FWWrfv91KKfYeZVnCIwOoa37dFA31GBjxRwIgTIqjOs%3D"}],"group":"cf-nel","max_age":604800}
 <= Recv header, 67 bytes
 NEL: {"success_fraction":0,"report_to":"cf-nel","max_age":604800}
 <= Recv header, 20 bytes
 Server: cloudflare
 <= Recv header, 30 bytes
-CF-RAY: 79a10c869faca6af-GRU
+CF-RAY: 79b191ee98d200d8-GRU
 <= Recv header, 54 bytes
 alt-svc: h3=":443"; ma=86400, h3-29=":443"; ma=86400
 <= Recv header, 2 bytes
 
-<= Recv data, 381 bytes
-176
-{"data":[{"latitude":-13.30472,"longitude":-72.11583,"type":"locality","name":"Urubamba","number":null,"postal_code":null,"street":null,"confidence":1,"region":"Cusco","region_code":"CS","county":"Urubamba","locality":"Urubamba","administrative_area":null,"neighbourhood":null,"country":"Peru","country_code":"PER","continent":"South America","label":"Urubamba, CS, Peru"}]}
+<= Recv data, 377 bytes
+172
+{"data":[{"latitude":-16.80993,"longitude":29.69247,"type":"locality","name":"Karoi","number":null,"postal_code":null,"street":null,"confidence":1,"region":"Mashonaland West","region_code":"MW","county":null,"locality":"Karoi","administrative_area":null,"neighbourhood":null,"country":"Zimbabwe","country_code":"ZWE","continent":"Africa","label":"Karoi, MW, Zimbabwe"}]}
 
 <= Recv data, 5 bytes
 0

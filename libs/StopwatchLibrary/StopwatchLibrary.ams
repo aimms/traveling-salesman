@@ -54,8 +54,8 @@ LibraryModule StopwatchLibrary {
 						Timeslot      :  sp_stopMoment);
 				else
 					p_elapsedTime := CurrentToMoment( [tick],  sp_StartTime );
-				endif ;
-				fnc_elapsed := p_elapsedTime ;
+				endif;
+				fnc_elapsed := p_elapsedTime;
 			}
 			Comment: {
 				"Return the wallclock time, in seconds, since the last call to pr_start.

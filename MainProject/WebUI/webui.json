@@ -18,12 +18,21 @@
         ]
       }
     },
+    "data.manager.hidden": {
+      "literal": false
+    },
+    "defaults.upload.download.controls.show": {
+      "literal": false
+    },
     "ignoredst": {
       "aimms": {
         "contents": [
           "webui::IgnoreDST"
         ]
       }
+    },
+    "menu.hidden": {
+      "literal": true
     },
     "pages": {
       "literal": {
@@ -1215,10 +1224,10 @@
       ]
     },
     "center.latitude": {
-      "literal": -22.59372606392931
+      "literal": 27.839076094777817
     },
     "center.longitude": {
-      "literal": -70.84876516313442
+      "literal": 17.78128771775085
     },
     "contextmenu": {
       "aimms": {
@@ -1357,7 +1366,7 @@
       }
     },
     "zoom": {
-      "literal": 3
+      "literal": 2
     }
   },
   "widgets/map_improvedTourCyclic": {
@@ -1628,10 +1637,10 @@
       }
     },
     "center.latitude": {
-      "literal": 8.928487062665504
+      "literal": 1.0546279422758869
     },
     "center.longitude": {
-      "literal": -0.703125
+      "literal": -49.21875000000001
     },
     "contextmenu": {
       "aimms": {
@@ -1830,10 +1839,10 @@
       }
     },
     "center.latitude": {
-      "literal": -5.7908968128719568
+      "literal": 24.84656534821976
     },
     "center.longitude": {
-      "literal": 0.17578125
+      "literal": -15.996093750000002
     },
     "contextmenu": {
       "aimms": {
@@ -2032,10 +2041,10 @@
       }
     },
     "center.latitude": {
-      "literal": -0.17578097424708534
+      "literal": 18.646245142670609
     },
     "center.longitude": {
-      "literal": 16.347656250000005
+      "literal": -9.667968750000002
     },
     "contextmenu": {
       "aimms": {
@@ -2237,10 +2246,10 @@
       "literal": false
     },
     "center.latitude": {
-      "literal": 20.138470312451156
+      "literal": -2.811371193331128
     },
     "center.longitude": {
-      "literal": 27.421875000000005
+      "literal": -58.00781250000001
     },
     "contextmenu": {
       "aimms": {

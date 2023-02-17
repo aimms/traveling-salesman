@@ -129,13 +129,14 @@ Model Main_TravelingSalesman {
 					IndexDomain: (i_node1,i_node2) | i_node1 <> i_node2;
 					Text: "Distance from city i to city j";
 					Definition: {
-						((6371.0 ) * arccos[cos(radians(90 - P_latitude(i_node1)))*
-						           cos(radians(90 - P_latitude(i_node2))) 
-						         + 
-						        sin(radians(90 - P_latitude(i_node1)))* 
-						           sin(radians(90 - P_latitude(i_node2)))*
-						           cos(radians(p_longitude(i_node1)-p_longitude(i_node2)))
-						      ] )
+						((6371.0 ) 
+						*   arccos(
+						            cos(radians(90 - P_latitude(i_node1)))
+						            * cos(radians(90 - P_latitude(i_node2))) 
+						            + 
+						            sin(radians(90 - P_latitude(i_node1)))
+						            * sin(radians(90 - P_latitude(i_node2)))
+						            * cos(radians(p_longitude(i_node1) - p_longitude(i_node2)))))
 					}
 					Comment: {
 						"! Formula also present on http://www.movable-type.co.uk/scripts/latlong.html section Spherical Law of Cosines.
@@ -391,7 +392,7 @@ Model Main_TravelingSalesman {
 					Procedure pr_refreshingImproveTourSimultaneous {
 						Arguments: (sp_in_userAnswer);
 						Body: {
-							if sp_in_userAnswer = "OK" then
+							if sp_in_userAnswer = "Yes" then
 							    empty Improve_Tour_Simultaneous;
 							
 							    block !status bar change
@@ -657,7 +658,7 @@ Model Main_TravelingSalesman {
 					Procedure pr_refreshingImproveTourCyclic {
 						Arguments: (sp_in_userAnswer);
 						Body: {
-							if sp_in_userAnswer = "OK" then
+							if sp_in_userAnswer = "Yes" then
 							    empty Improve_Tour_Cyclic;
 							
 							    block !status bar change
@@ -1075,8 +1076,12 @@ Model Main_TravelingSalesman {
 						"The network has " + card(s_nodes) + " nodes.";
 					}
 				}
-				StringParameter sp_addThisCity;
-				StringParameter sp_addByCountry;
+				StringParameter sp_addThisCity {
+					InitialData: "";
+				}
+				StringParameter sp_addByCountry {
+					InitialData: "";
+				}
 				Parameter p_def_unableToFetch {
 					InitialData: 0;
 					webui::FlagsIdentifier: sp_readOnlyFlag;
@@ -1249,6 +1254,7 @@ Model Main_TravelingSalesman {
 				Procedure pr_cleanAllNodes {
 					Body: {
 						empty API_Inputs;
+						pr_clearSolutions;
 					}
 				}
 				Procedure pr_deleteNode {
