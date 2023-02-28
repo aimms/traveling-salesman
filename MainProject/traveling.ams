@@ -1426,7 +1426,8 @@ Model Main_TravelingSalesman {
 		}
 		Section LatLong_API {
 			StringParameter sp_def_apiKey {
-				Definition: "54c8e0e21241f8f235ff0e7329aa989b";
+				Definition: "";
+				Comment: "add api key here";
 			}
 			Procedure pr_callAPIQuery {
 				Arguments: (sp_in_city,ep_in_cityCountry);
@@ -1584,12 +1585,6 @@ Model Main_TravelingSalesman {
 				
 				sp_loc_refDate := "2023-01-01 00:00:00" ;
 				
-				if p_loc_scheduleAtUsesUTC then
-					sp_loc_now := CurrentToString("%c%y-%m-%d %H:%M:%S%TZ('UTC')");
-				else
-					sp_loc_now := CurrentToString("%c%y-%m-%d %H:%M:%S");
-				endif ;
-				
 				p_loc_tmpSec := CurrentToMoment([s], sp_loc_refDate) ;
 				p_loc_tmpSec += p_in_noSecs ;
 				
@@ -1615,7 +1610,6 @@ Model Main_TravelingSalesman {
 			}
 			StringParameter sp_loc_refDate;
 			StringParameter sp_loc_launchDate;
-			StringParameter sp_loc_now;
 			Parameter p_loc_tmpSec {
 				Range: integer;
 				Unit: s;

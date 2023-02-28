@@ -650,32 +650,32 @@
         {
           "widgetUri": "btn_addThisCity",
           "gridArea": "area-e",
-          "dndId": "area-bbtn_addThisCity5"
+          "dndId": "area-ebtn_addThisCity0"
         },
         {
           "widgetUri": "btn_addByCountry",
           "gridArea": "area-f",
-          "dndId": "area-fbtn_addByCountry0"
+          "dndId": "area-fbtn_addByCountry1"
         },
         {
           "widgetUri": "btn_addByLimity",
           "gridArea": "area-g",
-          "dndId": "area-gbtn_addByLimity1"
+          "dndId": "area-gbtn_addByLimity2"
         },
         {
           "widgetUri": "scl_newNetworkInfo",
           "gridArea": "Unassigned widgets",
-          "dndId": "Unassigned widgetsscl_newNetworkInfo2"
+          "dndId": "Unassigned widgetsscl_newNetworkInfo3"
         },
         {
           "widgetUri": "btn_cleanAllNodes",
           "gridArea": "area-b",
-          "dndId": "area-bbtn_cleanAllNodes3"
+          "dndId": "area-bbtn_cleanAllNodes4"
         },
         {
           "widgetUri": "scl_addByCity",
           "gridArea": "area-b",
-          "dndId": "area-bscl_addByCity4"
+          "dndId": "area-bscl_addByCity5"
         },
         {
           "widgetUri": "scl_addByCountry",
@@ -1637,10 +1637,10 @@
       }
     },
     "center.latitude": {
-      "literal": 1.0546279422758869
+      "literal": 4.214943141390651
     },
     "center.longitude": {
-      "literal": -49.21875000000001
+      "literal": -80.06835937500002
     },
     "contextmenu": {
       "aimms": {
@@ -1779,7 +1779,7 @@
       "literal": "Improved Tour (Simultaneous)"
     },
     "zoom": {
-      "literal": 2
+      "literal": 4
     }
   },
   "widgets/map_improvedTourSimultaneous_1": {
