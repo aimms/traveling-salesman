@@ -1651,7 +1651,7 @@ Model Main_TravelingSalesman {
 	}
 	Procedure MainTermination {
 		Body: {
-			return 1;
+			return 1 ;
 		}
 		Comment: "We return 1 to make sure AIMMS does not ask to save a case when closing the project";
 	}
