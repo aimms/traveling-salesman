@@ -10,12 +10,10 @@
 
 The Traveling Salesman Problem (TSP) is the problem of finding the best route given a set of locations and distances between those locations.
 
-It is widely researched for `several reasons <https://en.wikipedia.org/wiki/Travelling_salesman_problem>`_ including:
+It is widely researched for [several reasons](https://en.wikipedia.org/wiki/Travelling_salesman_problem) including:
 
-#.  They are notoriously hard to solve to proven optimality. 
-
-#.  There is a wide range of practical applications.
-
-#.  There are various ways of solving TSP problems.
+- They are notoriously hard to solve to proven optimality. 
+- There is a wide range of practical applications.
+- There are various ways of solving TSP problems.
 
 The purpose of this example application is to illustrate some ways of solving a TSP. 
