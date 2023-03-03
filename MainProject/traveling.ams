@@ -1132,6 +1132,11 @@ Model Main_TravelingSalesman {
 				}
 				Procedure pr_addThisCity {
 					Body: {
+						if sp_def_apikey = "" then
+						    raise error "No api selected";   
+						    return;
+						endif;   
+						
 						ep_city := StringToElement(s_cities, sp_addThisCity, 0);
 						sp_loc_cityASCII := first(i_city_ascii | bp_city_x_cityASCII(ep_city, i_city_ascii));
 						ep_loc_cityCountry := first(i_country | bp_city_x_country(ep_city, i_country));
@@ -1149,6 +1154,11 @@ Model Main_TravelingSalesman {
 				}
 				Procedure pr_addByCountry {
 					Body: {
+						if sp_def_apikey = "" then
+						    raise error "No api selected";   
+						    return;
+						endif;   
+						
 						empty ep_country;
 						
 						ep_country := StringToElement(s_countries, sp_addByCountry, 0);
@@ -1218,6 +1228,11 @@ Model Main_TravelingSalesman {
 				}
 				Procedure pr_addByLimit {
 					Body: {
+						if sp_def_apikey = "" then
+						    raise error "No api selected";   
+						    return;
+						endif;   
+						
 						empty ep_country, ep_city;
 						
 						p_loc_counter:= 0;

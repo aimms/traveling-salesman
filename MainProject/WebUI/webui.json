@@ -1224,10 +1224,10 @@
       ]
     },
     "center.latitude": {
-      "literal": 27.839076094777817
+      "literal": -16.741427547003597
     },
     "center.longitude": {
-      "literal": 17.78128771775085
+      "literal": -52.91002480626503
     },
     "contextmenu": {
       "aimms": {
@@ -1366,7 +1366,7 @@
       }
     },
     "zoom": {
-      "literal": 2
+      "literal": 5
     }
   },
   "widgets/map_improvedTourCyclic": {
@@ -1426,10 +1426,10 @@
       }
     },
     "center.latitude": {
-      "literal": 8.233237111274566
+      "literal": -21.69826549685252
     },
     "center.longitude": {
-      "literal": 20.039062500000005
+      "literal": -57.91992187500001
     },
     "contextmenu": {
       "aimms": {
@@ -1577,7 +1577,7 @@
       }
     },
     "zoom": {
-      "literal": 2
+      "literal": 4
     }
   },
   "widgets/map_improvedTourSimultaneous": {
@@ -1637,10 +1637,10 @@
       }
     },
     "center.latitude": {
-      "literal": 4.214943141390651
+      "literal": -21.861498734372569
     },
     "center.longitude": {
-      "literal": -80.06835937500002
+      "literal": -57.65625000000001
     },
     "contextmenu": {
       "aimms": {
@@ -1839,10 +1839,10 @@
       }
     },
     "center.latitude": {
-      "literal": 24.84656534821976
+      "literal": -24.926294766395594
     },
     "center.longitude": {
-      "literal": -15.996093750000002
+      "literal": -54.97558593750001
     },
     "contextmenu": {
       "aimms": {
@@ -1981,7 +1981,7 @@
       "literal": "Exact solution"
     },
     "zoom": {
-      "literal": 2
+      "literal": 4
     }
   },
   "widgets/map_improvedTourSimultaneous_2": {
@@ -2041,10 +2041,10 @@
       }
     },
     "center.latitude": {
-      "literal": 18.646245142670609
+      "literal": -24.686952411999145
     },
     "center.longitude": {
-      "literal": -9.667968750000002
+      "literal": -58.31542968750001
     },
     "contextmenu": {
       "aimms": {
@@ -2183,7 +2183,7 @@
       "literal": "MIP permitting subtours"
     },
     "zoom": {
-      "literal": 2
+      "literal": 4
     }
   },
   "widgets/map_initialTour": {
@@ -2246,10 +2246,10 @@
       "literal": false
     },
     "center.latitude": {
-      "literal": -2.811371193331128
+      "literal": -21.37124437061831
     },
     "center.longitude": {
-      "literal": -58.00781250000001
+      "literal": -57.12890625000001
     },
     "contextmenu": {
       "aimms": {
@@ -2388,7 +2388,7 @@
       "literal": "Initial Tour"
     },
     "zoom": {
-      "literal": 2
+      "literal": 4
     }
   },
   "widgets/scl_addByCity": {
