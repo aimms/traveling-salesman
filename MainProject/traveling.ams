@@ -1655,8 +1655,28 @@ Model Main_TravelingSalesman {
 	}
 	Procedure PostMainInitialization {
 		Body: {
-			pr_readWorldCities;
+			p_loc_numberOfDrivers := SQLNumberOfDrivers('ODBC');
+			
+			while LoopCount <= p_loc_numberOfDrivers do
+			    sp_loc_driverName := SQLDriverName('ODBC', LoopCount);
+			
+			    if sp_loc_driverName = "SQLite3 ODBC Driver" then
+			        pr_readWorldCities;
+			        break;
+			    else
+			        s_loc_actions := {'Ok'};
+			
+			        webui::RequestPerformWebUIDialog(
+			            title   :  "Driver is Missing", 
+			            message :  "Your experience may be affected due to the absence of SQLite3 ODBC Driver. After installed, please, reopen this project.",
+			            actions :  s_loc_actions, 
+			            onDone  :  '');
+			    endif;
+			endwhile;
 		}
+		Set s_loc_actions;
+		StringParameter sp_loc_driverName;
+		Parameter p_loc_numberOfDrivers;
 	}
 	Procedure MainExecution;
 	Procedure PreMainTermination {
