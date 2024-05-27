@@ -1048,7 +1048,7 @@ Model Main_TravelingSalesman {
 					{ ( 1, 1, displayText       ) : "Welcome"             ,  ( 1, 1, icon              ) : "aimms-happy"         ,
 					  ( 1, 1, pageId            ) : "home"                ,  ( 1, 1, tooltip           ) : "Welcome"             ,
 					  ( 1, 1, workflowPageState ) : "active"              ,  ( 1, 1, pageDataState     ) : "Incomplete"          ,
-					  ( 1, 1, redirectPageId    ) : "home"                ,  ( 1, 2, displayText       ) : "Story"               ,
+					  ( 1, 1, redirectPageId    ) : ""                    ,  ( 1, 2, displayText       ) : "Story"               ,
 					  ( 1, 2, icon              ) : "aimms-lamp5"         ,  ( 1, 2, pageId            ) : "story"               ,
 					  ( 1, 2, tooltip           ) : "Problem description" ,  ( 1, 2, workflowPageState ) : "active"              ,
 					  ( 1, 2, pageDataState     ) : "Incomplete"          ,  ( 1, 2, redirectPageId    ) : "home"                ,
@@ -1653,30 +1653,35 @@ Model Main_TravelingSalesman {
 			endblock;
 		}
 	}
-	Procedure PostMainInitialization {
+	Procedure PostMainInitialization;
+	Procedure pr_pageopenWelcome {
 		Body: {
 			p_loc_numberOfDrivers := SQLNumberOfDrivers('ODBC');
 			
+			bp_loc_sqliteDriverFound := 0 ;
 			while LoopCount <= p_loc_numberOfDrivers do
-			    sp_loc_driverName := SQLDriverName('ODBC', LoopCount);
-			
-			    if sp_loc_driverName = "SQLite3 ODBC Driver" then
-			        pr_readWorldCities;
-			        break;
-			    else
-			        s_loc_actions := {'Ok'};
-			
+				sp_loc_driverName := SQLDriverName('ODBC', LoopCount);
+				if sp_loc_driverName = "SQLite3 ODBC Driver" then
+					bp_loc_sqliteDriverFound := 1 ;
+					break ;
+				endif ; 
+			endwhile ;
+			if bp_loc_sqliteDriverFound then
+				pr_readWorldCities();
+			else
 			        webui::RequestPerformWebUIDialog(
 			            title   :  "Driver is Missing", 
 			            message :  "Your experience may be affected due to the absence of SQLite3 ODBC Driver. After installed, please, reopen this project.",
 			            actions :  s_loc_actions, 
 			            onDone  :  '');
-			    endif;
-			endwhile;
+			endif ;
 		}
 		Set s_loc_actions;
 		StringParameter sp_loc_driverName;
 		Parameter p_loc_numberOfDrivers;
+		Parameter bp_loc_sqliteDriverFound {
+			Range: binary;
+		}
 	}
 	Procedure MainExecution;
 	Procedure PreMainTermination {

@@ -622,6 +622,11 @@
     "layoutId": {
       "literal": "Layout10"
     },
+    "onload": {
+      "aimms": {
+        "run": "pr_pageopenWelcome"
+      }
+    },
     "widgets": {
       "literal": [
         {
