@@ -1,8 +1,0 @@
-.widgetdiv .awf-dock-button .chrome-button.active, .widgetdiv .awf-dock-button .chrome-button.open {
-    background-color: var(--primaryDark);
-    color: #fff;
-}
-
-.widget-menu-container .widget-menu-items-wrapper .widget-menu-item:hover {
-    background: var(--primaryDark);
-}

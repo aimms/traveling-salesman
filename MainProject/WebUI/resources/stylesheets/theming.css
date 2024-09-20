@@ -8,6 +8,8 @@
 
   --bg_app-logo: 15px 50% / 50px 50px no-repeat url(/app-resources/resources/images/traveling.png);
   --spacing_app-logo_width: 65px;
+  --color_bg_app-canvas: url(/app-resources/resources/images/RightBackground.png) rgb(249, 249, 249) no-repeat left/contain; /*background color*/
+  --color_border_app-header-divider: var(--primaryDark); /*line color after header*/
 
   --color_border-divider_themed: var(--primary);
   --color_text_edit-select-link: var(--primaryDark);
@@ -29,4 +31,9 @@
 
   --color_bg_widget-header: var(--primaryDark);
   --border_widget-header: 3px solid var(--primary);
+  --color_text_widget-header: white;
+  
+  --color_bg_workflow_current: var(--primary); /*bg color when step is selected*/
+  --color_workflow_active: var(--primary); /*font and icon color when step is active*/
+
 }

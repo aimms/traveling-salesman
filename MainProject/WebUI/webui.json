@@ -4,6 +4,27 @@
     "aimms.widget.type": {
       "literal": "application"
     },
+    "browser.language": {
+      "aimms": {
+        "contents": [
+          "webui::ClientBrowserLanguage"
+        ]
+      }
+    },
+    "browser.name": {
+      "aimms": {
+        "contents": [
+          "webui::ClientBrowserName"
+        ]
+      }
+    },
+    "browser.timezone": {
+      "aimms": {
+        "contents": [
+          "webui::BrowserTimeZone"
+        ]
+      }
+    },
     "browsername": {
       "aimms": {
         "contents": [
@@ -205,7 +226,7 @@
       "literal": {
         "componentName": "Grid",
         "props": {
-          "gridTemplateColumns": "3fr 0.8fr 0.12fr",
+          "gridTemplateColumns": "3fr 0.9fr 0.6fr",
           "gridTemplateRows": "1fr 0.2fr 1fr 0.2fr 1fr 0.2fr",
           "gridTemplateAreas": "\"area-a area-b area-b\" \"area-a area-x area-e\" \"area-a area-c area-c\" \"area-a area-y area-f\" \"area-a area-d area-d\"  \"area-a area-z area-g\""
         },
@@ -1060,7 +1081,7 @@
       "literal": "btn_cleanAllNodes"
     },
     "title": {
-      "literal": "delete all nodes"
+      "literal": "Delete All Nodes"
     }
   },
   "widgets/cmb_comparison": {
@@ -1130,6 +1151,9 @@
     },
     "name": {
       "literal": "cmb_timeComparison"
+    },
+    "views": {
+      "literal": {}
     }
   },
   "widgets/cmb_comparison_1": {
@@ -1202,6 +1226,9 @@
     },
     "transparency.index": {
       "literal": "<IDENTIFIER-SET>"
+    },
+    "views": {
+      "literal": {}
     }
   },
   "widgets/img_homeLogo": {
@@ -1229,7 +1256,7 @@
       ]
     },
     "center.latitude": {
-      "literal": -16.741427547003597
+      "literal": -16.741427547003596
     },
     "center.longitude": {
       "literal": -52.91002480626503
@@ -1369,6 +1396,9 @@
         ],
         "slices": []
       }
+    },
+    "views": {
+      "literal": {}
     },
     "zoom": {
       "literal": 5
@@ -1581,6 +1611,9 @@
         "slices": []
       }
     },
+    "views": {
+      "literal": {}
+    },
     "zoom": {
       "literal": 4
     }
@@ -1642,7 +1675,7 @@
       }
     },
     "center.latitude": {
-      "literal": -21.861498734372569
+      "literal": -21.861498734372567
     },
     "center.longitude": {
       "literal": -57.65625000000001
@@ -1783,6 +1816,9 @@
     "title": {
       "literal": "Improved Tour (Simultaneous)"
     },
+    "views": {
+      "literal": {}
+    },
     "zoom": {
       "literal": 4
     }
@@ -1844,7 +1880,7 @@
       }
     },
     "center.latitude": {
-      "literal": -24.926294766395594
+      "literal": -24.926294766395593
     },
     "center.longitude": {
       "literal": -54.97558593750001
@@ -1985,6 +2021,9 @@
     "title": {
       "literal": "Exact solution"
     },
+    "views": {
+      "literal": {}
+    },
     "zoom": {
       "literal": 4
     }
@@ -2046,7 +2085,7 @@
       }
     },
     "center.latitude": {
-      "literal": -24.686952411999145
+      "literal": -24.686952411999144
     },
     "center.longitude": {
       "literal": -58.31542968750001
@@ -2186,6 +2225,9 @@
     },
     "title": {
       "literal": "MIP permitting subtours"
+    },
+    "views": {
+      "literal": {}
     },
     "zoom": {
       "literal": 4
@@ -2392,6 +2434,9 @@
     "title": {
       "literal": "Initial Tour"
     },
+    "views": {
+      "literal": {}
+    },
     "zoom": {
       "literal": 4
     }
@@ -2412,6 +2457,9 @@
     },
     "title": {
       "literal": "Add by City"
+    },
+    "views": {
+      "literal": {}
     }
   },
   "widgets/scl_addByCountry": {
@@ -2434,6 +2482,9 @@
     },
     "title": {
       "literal": "Add by Country"
+    },
+    "views": {
+      "literal": {}
     }
   },
   "widgets/scl_addByLimit": {
@@ -2455,6 +2506,9 @@
     },
     "title": {
       "literal": "Add by Limit"
+    },
+    "views": {
+      "literal": {}
     }
   },
   "widgets/scl_initialTour": {
@@ -2497,6 +2551,9 @@
     },
     "title": {
       "literal": "Total Distance per Solve Type"
+    },
+    "views": {
+      "literal": {}
     }
   },
   "widgets/scl_newNetworkInfo": {
@@ -2543,6 +2600,9 @@
     },
     "title": {
       "literal": "Total time per solve type "
+    },
+    "views": {
+      "literal": {}
     }
   },
   "widgets/txt_helpNetwork": {
