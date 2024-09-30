@@ -6,7 +6,7 @@
   --secondary: #C80A50;
   --secondary2: #DC9600;
 
-  --bg_app-logo: 15px 50% / 50px 50px no-repeat url(/app-resources/resources/images/traveling.png);
+  --bg_app-logo: 20px 50% / 40px 40px no-repeat url(/app-resources/resources/images/traveling.png);
   --spacing_app-logo_width: 65px;
   --color_bg_app-canvas: url(/app-resources/resources/images/RightBackground.png) rgb(249, 249, 249) no-repeat left/contain; /*background color*/
   --color_border_app-header-divider: var(--primaryDark); /*line color after header*/
