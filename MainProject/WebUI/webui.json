@@ -694,29 +694,34 @@
           "dndId": "Unassigned widgetsscl_newNetworkInfo3"
         },
         {
-          "widgetUri": "btn_cleanAllNodes",
-          "gridArea": "area-b",
-          "dndId": "area-bbtn_cleanAllNodes4"
-        },
-        {
-          "widgetUri": "scl_addByCity",
-          "gridArea": "area-b",
-          "dndId": "area-bscl_addByCity5"
-        },
-        {
           "widgetUri": "scl_addByCountry",
           "gridArea": "area-c",
-          "dndId": "area-cscl_addByCountry6"
+          "dndId": "area-cscl_addByCountry4"
         },
         {
           "widgetUri": "scl_addByLimit",
           "gridArea": "area-d",
-          "dndId": "area-dscl_addByLimit7"
+          "dndId": "area-dscl_addByLimit5"
         },
         {
           "widgetUri": "map_allNodes",
           "gridArea": "area-a",
-          "dndId": "area-amap_allNodes8"
+          "dndId": "area-amap_allNodes6"
+        },
+        {
+          "widgetUri": "scl_apiKey",
+          "gridArea": "area-b",
+          "dndId": "area-bscl_apiKey9"
+        },
+        {
+          "widgetUri": "btn_cleanAllNodes",
+          "gridArea": "area-b",
+          "dndId": "area-bbtn_cleanAllNodes7"
+        },
+        {
+          "widgetUri": "scl_addByCity",
+          "gridArea": "area-b",
+          "dndId": "area-bscl_addByCity8"
         }
       ]
     },
@@ -807,6 +812,13 @@
         },
         {
           "uri": "map_allNodes",
+          "layoutInfo": {
+            "width": "2",
+            "height": "1"
+          }
+        },
+        {
+          "uri": "scl_apiKey",
           "layoutInfo": {
             "width": "2",
             "height": "1"
@@ -1256,10 +1268,10 @@
       ]
     },
     "center.latitude": {
-      "literal": -16.741427547003596
+      "literal": -11.199880526887672
     },
     "center.longitude": {
-      "literal": -52.91002480626503
+      "literal": -67.64891136038456
     },
     "contextmenu": {
       "aimms": {
@@ -2506,6 +2518,30 @@
     },
     "title": {
       "literal": "Add by Limit"
+    },
+    "views": {
+      "literal": {}
+    }
+  },
+  "widgets/scl_apiKey": {
+    "aimms.widget.type": {
+      "literal": "scalar"
+    },
+    "compact": {
+      "literal": 1
+    },
+    "contents": {
+      "aimms": {
+        "contents": [
+          "sp_apiKey"
+        ]
+      }
+    },
+    "name": {
+      "literal": "scl_apiKey"
+    },
+    "title": {
+      "literal": "API Key"
     },
     "views": {
       "literal": {}

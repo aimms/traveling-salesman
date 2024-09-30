@@ -976,6 +976,15 @@ Model Main_TravelingSalesman {
 					Body: {
 						empty Exact;
 						
+						if pro::GetPROEndPoint() or not ProjectDeveloperMode() then
+						    if pro::DelegateToServer( 
+						        waitForCompletion  :  1,
+						        completionCallback :  'pro::session::LoadResultsCallBack' )
+						    then 
+						        return 1;
+						    endif;
+						endif;
+						
 						stopwatch::pr_start;
 						ep_modelType := 'MIP';
 						ep_GMP := GMP::Instance::Generate(mp_TSP);
@@ -1132,8 +1141,8 @@ Model Main_TravelingSalesman {
 				}
 				Procedure pr_addThisCity {
 					Body: {
-						if sp_def_apikey = "" then
-						    raise error "No api selected";   
+						if sp_apiKey = "" then
+						    webui::ShowMessage('error',"No api selected.");   
 						    return;
 						endif;   
 						
@@ -1144,7 +1153,7 @@ Model Main_TravelingSalesman {
 						if ep_loc_cityCountry then
 						    pr_callAPIQuery(sp_loc_cityASCII, ep_loc_cityCountry);
 						else
-						    raise error "No city with this name";   
+						    webui::ShowMessage('error',"No city with this name.");   
 						endif;
 					}
 					ElementParameter ep_loc_cityCountry {
@@ -1154,8 +1163,8 @@ Model Main_TravelingSalesman {
 				}
 				Procedure pr_addByCountry {
 					Body: {
-						if sp_def_apikey = "" then
-						    raise error "No api selected";   
+						if sp_apiKey = "" then
+						    webui::ShowMessage('error',"No api selected.");    
 						    return;
 						endif;   
 						
@@ -1192,7 +1201,7 @@ Model Main_TravelingSalesman {
 						
 						        if ep_country and sp_loc_cityASCII then
 						
-						            sp_loc_message := 100 * (p_loc_counter/$ p_maxCities) + " % - Fetching: " + sp_loc_cityASCII + " - " + ep_country;
+						            sp_loc_message := round(100 * (p_loc_counter/$ p_maxCities)) + " % - Fetching: " + sp_loc_cityASCII + " - " + ep_country;
 						            webui::SetProgressMessage(sp_loc_message);
 						
 						            pr_callAPIQuery(sp_loc_cityASCII, ep_country);
@@ -1204,7 +1213,7 @@ Model Main_TravelingSalesman {
 						        endif;            
 						    endwhile; 
 						else 
-						    raise error "No country with this name";   
+						    webui::ShowMessage('error',"No country with this name.");   
 						endif;
 					}
 					Set s_loc_newIds {
@@ -1228,13 +1237,12 @@ Model Main_TravelingSalesman {
 				}
 				Procedure pr_addByLimit {
 					Body: {
-						if sp_def_apikey = "" then
-						    raise error "No api selected";   
+						if sp_apiKey = "" then
+						    webui::ShowMessage('error',"No api selected.");   
 						    return;
 						endif;   
 						
 						empty ep_country, ep_city;
-						
 						p_loc_counter:= 0;
 						
 						while p_loc_counter < p_maxCities do
@@ -1247,7 +1255,7 @@ Model Main_TravelingSalesman {
 						    sp_loc_cityASCII := first(i_city_ascii | bp_city_x_cityASCII(ep_city, i_city_ascii));
 						
 						    if ep_country and sp_loc_cityASCII then
-						        sp_loc_message := 100 * (p_loc_counter/$ p_maxCities) + " % - Fetching: " + sp_loc_cityASCII + " - " + ep_country;
+						        sp_loc_message := round(100 * (p_loc_counter/$ p_maxCities)) + " % - Fetching: " + sp_loc_cityASCII + " - " + ep_country;
 						        webui::SetProgressMessage(sp_loc_message);
 						
 						        pr_callAPIQuery(sp_loc_cityASCII, ep_country);
@@ -1288,12 +1296,12 @@ Model Main_TravelingSalesman {
 					IndexDomain: (webui::indexPageExtension,webui::indexPageActionSpec);
 					Definition: {
 						data { 
-							( 1, displaytext ) : "clear solutions",  
+							( 1, displaytext ) : "Clear Solutions",  
 							( 1, icon        ) : "aimms-broom",  
 							( 1, procedure   ) : "pr_clearSolutions",  
 							( 1, state       ) : "active", 
 						
-							( 2, displaytext ) : "Initial solution",  
+							( 2, displaytext ) : "Initial Solution",  
 							( 2, icon        ) : "aimms-bucket",  
 							( 2, procedure   ) : "pr_findInitialTour",  
 							( 2, state       ) : "active", 
@@ -1393,11 +1401,11 @@ Model Main_TravelingSalesman {
 					endif;
 				}
 			}
-			StringParameter sp_def_datasource {
+			StringParameter sp_def_dataSource {
 				Definition: {
 					SQLCreateConnectionString (
 					       DatabaseInterface              :  'odbc',
-					       DriverName                     :  "SQLite3 ODBC Driver", !Your local drive
+					       DriverName                     :  sp_def_driverName, !Your local drive
 					       ServerName                     :  "", 
 					       DatabaseName                   :  "WorldCities.db", !The path of your database
 					       UserId                         :  "", 
@@ -1405,8 +1413,17 @@ Model Main_TravelingSalesman {
 					       AdditionalConnectionParameters :  "");
 				}
 			}
+			StringParameter sp_def_driverName {
+				Definition: {
+					if pro::GetPROEndPoint() or not ProjectDeveloperMode() then
+					    "SQLite3"
+					else 
+					    "SQLite3 ODBC Driver"    
+					endif;
+				}
+			}
 			DatabaseTable db_worldCities {
-				DataSource: sp_def_datasource;
+				DataSource: sp_def_dataSource;
 				TableName: "worldCities";
 				Mapping: {
 					"ID"   -->i_int_id,
@@ -1440,10 +1457,7 @@ Model Main_TravelingSalesman {
 			}
 		}
 		Section LatLong_API {
-			StringParameter sp_def_apiKey {
-				Definition: "";
-				Comment: "add api key here";
-			}
+			StringParameter sp_apiKey;
 			Procedure pr_callAPIQuery {
 				Arguments: (sp_in_city,ep_in_cityCountry);
 				Body: {
@@ -1459,7 +1473,7 @@ Model Main_TravelingSalesman {
 					sp_in_city := FindReplaceStrings(sp_in_city, " ", "%20");
 					
 					sp_loc_urlCall 
-					:=  "http://api.positionstack.com/v1/forward?access_key=" + sp_def_apiKey 
+					:=  "http://api.positionstack.com/v1/forward?access_key=" + sp_apiKey 
 					    + "&query=" + sp_in_city 
 					    + "&limit=1"
 					    + "&country=" + sp_countryAcronym(ep_in_cityCountry);
@@ -1656,31 +1670,11 @@ Model Main_TravelingSalesman {
 	Procedure PostMainInitialization;
 	Procedure pr_pageopenWelcome {
 		Body: {
-			p_loc_numberOfDrivers := SQLNumberOfDrivers('ODBC');
-			
-			bp_loc_sqliteDriverFound := 0 ;
-			while LoopCount <= p_loc_numberOfDrivers do
-				sp_loc_driverName := SQLDriverName('ODBC', LoopCount);
-				if sp_loc_driverName = "SQLite3 ODBC Driver" then
-					bp_loc_sqliteDriverFound := 1 ;
-					break ;
-				endif ; 
-			endwhile ;
-			if bp_loc_sqliteDriverFound then
+			if TestDataSource(sp_def_dataSource) then
 				pr_readWorldCities();
 			else
-			        webui::RequestPerformWebUIDialog(
-			            title   :  "Driver is Missing", 
-			            message :  "Your experience may be affected due to the absence of SQLite3 ODBC Driver. After installed, please, reopen this project.",
-			            actions :  s_loc_actions, 
-			            onDone  :  '');
+			    webui::ShowMessage('warning', "Lack of connection with Database.");
 			endif ;
-		}
-		Set s_loc_actions;
-		StringParameter sp_loc_driverName;
-		Parameter p_loc_numberOfDrivers;
-		Parameter bp_loc_sqliteDriverFound {
-			Range: binary;
 		}
 	}
 	Procedure MainExecution;
