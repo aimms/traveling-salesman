@@ -1268,10 +1268,10 @@
       ]
     },
     "center.latitude": {
-      "literal": -11.199880526887672
+      "literal": -11.199956869621811
     },
     "center.longitude": {
-      "literal": -67.64891136038456
+      "literal": -67.65380859375001
     },
     "contextmenu": {
       "aimms": {
@@ -1301,6 +1301,18 @@
           }
         ]
       }
+    },
+    "mapbounds.nw.latitude": {
+      "literal": 3.1624555302
+    },
+    "mapbounds.nw.longitude": {
+      "literal": -80.0244140625
+    },
+    "mapbounds.se.latitude": {
+      "literal": -24.8864364908
+    },
+    "mapbounds.se.longitude": {
+      "literal": -55.283203125
     },
     "name": {
       "literal": "map_allNodes"
@@ -1473,10 +1485,10 @@
       }
     },
     "center.latitude": {
-      "literal": -21.69826549685252
+      "literal": -21.739091217718578
     },
     "center.longitude": {
-      "literal": -57.91992187500001
+      "literal": -57.8759765625
     },
     "contextmenu": {
       "aimms": {
@@ -1511,6 +1523,18 @@
       "literal": [
         "heatmaps.0"
       ]
+    },
+    "mapbounds.nw.latitude": {
+      "literal": 6.5773031181
+    },
+    "mapbounds.nw.longitude": {
+      "literal": -70.224609375
+    },
+    "mapbounds.se.latitude": {
+      "literal": -45.4601306379
+    },
+    "mapbounds.se.longitude": {
+      "literal": -45.52734375
     },
     "name": {
       "literal": "map_improvedTourCyclic"
@@ -1687,10 +1711,10 @@
       }
     },
     "center.latitude": {
-      "literal": -21.861498734372567
+      "literal": -21.90227796666864
     },
     "center.longitude": {
-      "literal": -57.65625000000001
+      "literal": -57.61230468750001
     },
     "contextmenu": {
       "aimms": {
@@ -1725,6 +1749,18 @@
       "literal": [
         "heatmaps.0"
       ]
+    },
+    "mapbounds.nw.latitude": {
+      "literal": 6.402648406
+    },
+    "mapbounds.nw.longitude": {
+      "literal": -69.9609375
+    },
+    "mapbounds.se.latitude": {
+      "literal": -45.583289756
+    },
+    "mapbounds.se.longitude": {
+      "literal": -45.263671875
     },
     "name": {
       "literal": "map_improvedTourSimultaneous"
@@ -1892,10 +1928,10 @@
       }
     },
     "center.latitude": {
-      "literal": -24.926294766395593
+      "literal": -24.96614015991296
     },
     "center.longitude": {
-      "literal": -54.97558593750001
+      "literal": -54.93164062500001
     },
     "contextmenu": {
       "aimms": {
@@ -1930,6 +1966,18 @@
       "literal": [
         "heatmaps.0"
       ]
+    },
+    "mapbounds.nw.latitude": {
+      "literal": 3.0746950724
+    },
+    "mapbounds.nw.longitude": {
+      "literal": -73.828125
+    },
+    "mapbounds.se.latitude": {
+      "literal": -47.8721439689
+    },
+    "mapbounds.se.longitude": {
+      "literal": -36.03515625
     },
     "name": {
       "literal": "map_exactTour"
@@ -2097,10 +2145,10 @@
       }
     },
     "center.latitude": {
-      "literal": -24.686952411999144
+      "literal": -24.726874870506972
     },
     "center.longitude": {
-      "literal": -58.31542968750001
+      "literal": -58.27148437500001
     },
     "contextmenu": {
       "aimms": {
@@ -2135,6 +2183,18 @@
       "literal": [
         "heatmaps.0"
       ]
+    },
+    "mapbounds.nw.latitude": {
+      "literal": 3.3379539614
+    },
+    "mapbounds.nw.longitude": {
+      "literal": -77.16796875
+    },
+    "mapbounds.se.latitude": {
+      "literal": -47.6949743419
+    },
+    "mapbounds.se.longitude": {
+      "literal": -39.375
     },
     "name": {
       "literal": "map_lowerBoundTour"
@@ -2305,10 +2365,10 @@
       "literal": false
     },
     "center.latitude": {
-      "literal": -21.37124437061831
+      "literal": -21.4121622297254
     },
     "center.longitude": {
-      "literal": -57.12890625000001
+      "literal": -57.08496093750001
     },
     "contextmenu": {
       "aimms": {
@@ -2343,6 +2403,18 @@
       "literal": [
         "heatmaps.0"
       ]
+    },
+    "mapbounds.nw.latitude": {
+      "literal": 6.9264268471
+    },
+    "mapbounds.nw.longitude": {
+      "literal": -69.43359375
+    },
+    "mapbounds.se.latitude": {
+      "literal": -45.213003556
+    },
+    "mapbounds.se.longitude": {
+      "literal": -44.736328125
     },
     "name": {
       "literal": "map_initialTour"

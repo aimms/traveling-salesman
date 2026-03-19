@@ -1,9 +1,9 @@
 # Traveling Salesman 
 
 [![Downloads](https://img.shields.io/github/downloads/aimms/traveling-salesman/total?style=for-the-badge&logo=github&labelColor=000081&color=1847c9)](https://github.com/aimms/traveling-salesman/releases)
-![AIMMS Version](https://img.shields.io/badge/AIMMS-25.9-white?style=for-the-badge&labelColor=009B00&color=00D400)
-![WebUI Version](https://img.shields.io/badge/WebUI-25.9.2.8-white?style=for-the-badge&labelColor=009B00&color=00D400)
-![DEX Version](https://img.shields.io/badge/DEX-26.1.2.1-white?style=for-the-badge&labelColor=009B00&color=00D400)
+![AIMMS Version](https://img.shields.io/badge/AIMMS-26.1-white?style=for-the-badge&labelColor=009B00&color=00D400)
+![WebUI Version](https://img.shields.io/badge/WebUI-26.3.1.1-white?style=for-the-badge&labelColor=009B00&color=00D400)
+![DEX Version](https://img.shields.io/badge/DEX-26.1.8.1-white?style=for-the-badge&labelColor=009B00&color=00D400)
 
 
 This repository contains a comprehensive AIMMS example for the **Traveling Salesman Problem (TSP)**. It illustrates multiple approaches to solving one of the most famous optimization challenges: finding the shortest possible route that visits a set of cities and returns to the origin.
