@@ -22,6 +22,7 @@ Model Main_TravelingSalesman {
 		  Algorithm, network object, traveling salesman problem, GMP, Progress Window."
 	}
 	Section Data_Model {
+		Comment: "Contains all data model declarations including quantities, inputs, mathematical model, and heuristic/exact solution methods.";
 		Section Quantities_and_Units {
 			Comment: {
 				"This section contains all the units and quantities that are added automatically by AIMMS.
@@ -44,46 +45,60 @@ Model Main_TravelingSalesman {
 			}
 		}
 		Section Inputs {
+			Comment: "Contains all input data declarations: database inputs and API inputs for the traveling salesman problem.";
 			DeclarationSection DB_Inputs {
+				Comment: "Database input identifiers for cities, countries, provinces, and their relationships.";
 				Set s_ids {
+					Comment: "Set of city IDs used to uniquely identify cities in the database.";
 					Index: i_id;
 					Parameter: ep_id;
 				}
 				Set s_cities {
+					Comment: "Set of all cities available in the world cities database.";
 					Text: "The set of cities in the tour";
 					Index: i_city1, i_city2, i_city;
 					Parameter: ep_city;
 				}
 				Set s_citiesASCII {
+					Comment: "Set of ASCII-encoded city names used for API queries.";
 					Index: i_city_ascii;
 					Parameter: ep_cityASCII;
 				}
 				Set s_countries {
+					Comment: "Set of countries associated with the available cities.";
 					Index: i_country;
 					Parameter: ep_country;
 				}
 				Set s_provinces {
+					Comment: "Set of provinces or states associated with the available cities.";
 					Index: i_province;
 					Parameter: ep_province;
 				}
 				StringParameter sp_countryAcronym {
+					Comment: "ISO country acronym for each country, used in API queries.";
 					IndexDomain: i_country;
 				}
 				Parameter bp_city_x_country {
+					Comment: "Binary parameter linking each city to its country.";
 					IndexDomain: (i_city,i_country);
 				}
 				Parameter bp_city_x_id {
+					Comment: "Binary parameter linking each city to its database ID.";
 					IndexDomain: (i_city,i_id);
 				}
 				Parameter bp_city_x_cityASCII {
+					Comment: "Binary parameter linking each city to its ASCII name.";
 					IndexDomain: (i_city,i_city_ascii);
 				}
 				Parameter bp_city_x_province {
+					Comment: "Binary parameter linking each city to its province.";
 					IndexDomain: (i_city,i_province);
 				}
 			}
 			DeclarationSection API_Inputs {
+				Comment: "API-driven input identifiers including node sets, distance calculations, and configuration parameters.";
 				Set s_nodes {
+					Comment: "Active subset of cities that have both latitude and longitude coordinates defined.";
 					SubsetOf: s_cities;
 					Index: i_node1, i_node2;
 					Parameter: ep_node;
@@ -95,12 +110,15 @@ Model Main_TravelingSalesman {
 					webui::AnnotationsIdentifier: sp_def_nodeAnnotation;
 				}
 				Set s_subtours {
+					Comment: "Subset of nodes used to detect and eliminate subtours in the exact MIP solution.";
 					SubsetOf: s_nodes;
 				}
 				Parameter p_def_cardinalityOfNodes {
+					Comment: "Defined parameter holding the number of active nodes in the current tour.";
 					Definition: card(s_nodes);
 				}
 				Set s_neighbors {
+					Comment: "For each node, the set of its nearest neighbors ordered by haversine distance.";
 					IndexDomain: i_node1;
 					SubsetOf: s_cities;
 					Text: "The set of neighbors of city i";
@@ -108,6 +126,7 @@ Model Main_TravelingSalesman {
 					Definition: NBest(i_node2 | (i_node1 <> i_node2), -p_def_haversineDistance(i_node1,i_node2), p_def_maxNeighbors);
 				}
 				Parameter p_maxCities {
+					Comment: "Maximum number of cities to include when fetching random cities from the API.";
 					Text: "Maximum number of cities in the tour";
 					Range: {
 						{-inf..inf}
@@ -116,11 +135,13 @@ Model Main_TravelingSalesman {
 					InitialData: 100;
 				}
 				Parameter p_latitude {
+					Comment: "Latitude coordinate of each city, fetched via the PositionStack API.";
 					IndexDomain: i_city;
 					Text: "X-Coordinate of city c";
 					InitialData: 0;
 				}
 				Parameter p_longitude {
+					Comment: "Longitude coordinate of each city, fetched via the PositionStack API.";
 					IndexDomain: i_city;
 					Text: "Y-Coordinate of city c";
 					InitialData: 0;
@@ -144,12 +165,14 @@ Model Main_TravelingSalesman {
 					}
 				}
 				Parameter p_def_iterationLimit {
+					Comment: "Maximum number of swap iterations allowed in the heuristic improvement algorithms.";
 					Text: "Maximum number of iterations to improve tour";
 					Definition: {
 						floor(card(s_nodes) / 3);
 					}
 				}
 				Parameter p_def_maxNeighbors {
+					Comment: "Maximum number of nearest neighbors considered per city in the heuristic algorithms.";
 					Text: "Maximum number of neighbors considered for each city";
 					Definition: {
 						floor(Sqrt(p_maxCities));
@@ -158,16 +181,24 @@ Model Main_TravelingSalesman {
 			}
 		}
 		Section Math_Model {
+			Comment: "Contains all mathematical model declarations including heuristic and exact solution algorithms.";
 			Section Heuristic {
+				Comment: "Contains procedures and declarations for all heuristic tour computation methods.";
 				Procedure pr_clearSolutions {
+					Comment: "Empties all tour connection parameters to reset the heuristic solutions.";
 					Body: {
+						! Clear all heuristic tour connection parameters to reset the solutions.
 						empty p_init_tourconnect, p_sim_tourConnect, p_cyc_tourconnect ;
 					}
 				}
 				Procedure pr_runAll {
+					Comment: "Runs all three tour computation procedures: initial tour, cyclic improvement, and simultaneous improvement.";
 					Body: {
+						! Step 1: Build an initial greedy tour starting from the first city.
 						pr_findInitialTour; 
+						! Step 2: Apply the cyclic 2-opt improvement heuristic.
 						pr_improveTourCyclic;
+						! Step 3: Apply the simultaneous 2-opt improvement heuristic.
 						pr_improveTourSimultaneous;
 					}
 				}
@@ -177,28 +208,34 @@ Model Main_TravelingSalesman {
 						compute and visualize the initial tour."
 					}
 					Parameter p_init_tourDistance {
+						Comment: "Total distance of the initial greedy tour in kilometers.";
 						Text: "Total distance of the initial tour";
 						webui::FlagsIdentifier: sp_readOnlyFlag;
 					}
 					Parameter p_init_tourConnect {
+						Comment: "Binary parameter indicating connected city pairs in the initial tour.";
 						IndexDomain: (i_node1,i_node2);
 						Text: "City i connected to city j in initial tour";
 						webui::TooltipIdentifier: sp_def_arcTooltip(i_node1,i_node2);
 					}
 					ElementParameter ep_init_nextCity {
+						Comment: "Element parameter storing the next city for each city in the initial tour.";
 						IndexDomain: i_city;
 						Text: "Next city of city c in initial tour";
 						Range: s_cities;
 					}
 					ElementParameter ep_init_prevCity {
+						Comment: "Element parameter storing the previous city for each city in the initial tour.";
 						IndexDomain: i_city;
 						Text: "Previous city of city c in initial tour";
 						Range: s_cities;
 					}
 					Parameter p_init_tourInitialized {
+						Comment: "Flag set to 1 once the initial tour has been computed.";
 						Text: "Flag to indicate that an initial tour has been computed for a newly created tour";
 					}
 					Parameter p_init_timeElapsed {
+						Comment: "Elapsed time in seconds for computing the initial tour.";
 						Unit: s;
 						webui::FlagsIdentifier: sp_readOnlyFlag;
 					}
@@ -209,11 +246,11 @@ Model Main_TravelingSalesman {
 							stopwatch::pr_start;
 							s_loc_remainingCities := s_nodes;
 							
-							! We start adding the first city to the tour
+							! We start adding the first city to the tour.
 							ep_node := First(s_nodes);
 							s_loc_remainingCities -= ep_node;
 							
-							! For every other city, the next city in the tour is the one closest to it not yet chosen
+							! For every other city, the next city in the tour is the one closest to it not yet chosen.
 							while (Card(s_loc_remainingCities) <> 0) do
 							    ep_init_nextCity(ep_node) 
 							    :=  argmin(i_node1 in s_loc_remainingCities, p_def_haversineDistance(ep_node,i_node1));
@@ -222,7 +259,7 @@ Model Main_TravelingSalesman {
 							    s_loc_remainingCities -= ep_node;
 							endwhile;
 							
-							! Finally, close the tour
+							! Finally, close the tour.
 							ep_init_nextCity(ep_node) := First(s_nodes);
 							
 							ep_init_prevCity(ep_init_nextCity(i_node1)) := i_node1;
@@ -238,6 +275,7 @@ Model Main_TravelingSalesman {
 							and successively adding the closest remaining city."
 						}
 						Set s_loc_remainingCities {
+							Comment: "Temporary set tracking cities not yet added to the tour during construction.";
 							SubsetOf: s_cities;
 						}
 					}
@@ -249,6 +287,7 @@ Model Main_TravelingSalesman {
 						city for swapping, considering all cities in the tour simultaneously."
 					}
 					Set s_sim_nodes {
+						Comment: "Active node set used in the simultaneous improvement algorithm, mirroring s_nodes.";
 						SubsetOf: s_nodes;
 						Index: i_sim_node, i_sim_node1, i_sim_node2;
 						Parameter: ep_sim_node;
@@ -260,47 +299,59 @@ Model Main_TravelingSalesman {
 						webui::AnnotationsIdentifier: sp_def_simNodeAnnotation;
 					}
 					Parameter p_sim_distanceChange {
+						Comment: "Improvement in total tour distance achieved by swapping arc (i,j) in the simultaneous algorithm.";
 						IndexDomain: (i_node1,i_node2);
 						Text: "Improvement in total tour distance by swapping city i with neighbor j in simultaneous algorithm";
 						Default: -inf;
 						Definition: p_def_haversineDistance(i_node1,p_sim_nextCity(i_node1)) + p_def_haversineDistance(i_node2,p_sim_nextCity(i_node2)) - (p_def_haversineDistance(i_node1,i_node2) + p_def_haversineDistance(p_sim_nextCity(i_node1),p_sim_nextCity(i_node2)));
 					}
 					Parameter p_sim_maxChange {
+						Comment: "Maximum possible distance improvement across all candidate swaps in the simultaneous algorithm.";
 						Text: "Maximum possible distance improvement in simultaneous algorithm";
 						Definition: Max((i_node1,i_node2 in s_neighbors(i_node1)), p_sim_distanceChange(i_node1,i_node2));
 					}
 					Parameter p_sim_swaps {
+						Comment: "Counter for the number of arc swaps performed by the simultaneous improvement algorithm.";
 						Text: "Number of performed swaps in simultaneous algorithm";
 					}
 					Parameter p_sim_tourDistance {
+						Comment: "Total tour distance after the latest iteration of the simultaneous algorithm.";
 						Text: "Total tour distance after current iteration in simultaneous algorithm";
 						InitialData: 0;
 						webui::FlagsIdentifier: sp_readOnlyFlag;
 					}
 					Parameter p_sim_tourConnect {
+						Comment: "Binary parameter indicating connected city pairs in the simultaneous algorithm's current tour.";
 						IndexDomain: (i_node1,i_node2);
 						Text: "City i connected to city j after current iteration in simultaneous algorithm";
 						webui::TooltipIdentifier: sp_def_arcTooltip(i_node1,i_node2);
 					}
 					ElementParameter p_sim_nextCity {
+						Comment: "Element parameter storing the next city in the simultaneous algorithm's current tour.";
 						IndexDomain: i_city;
 						Text: "Next city of city c after current iteration in simultaneous algorithm";
 						Range: s_cities;
 					}
 					ElementParameter p_sim_prevCity {
+						Comment: "Element parameter storing the previous city in the simultaneous algorithm's current tour.";
 						IndexDomain: i_city;
 						Text: "Previous city of city c after current iteration in simultaneous algorithm";
 						Range: s_cities;
 					}
 					Parameter p_sim_initialized {
+						Comment: "Flag set to 1 once the simultaneous improvement algorithm has been initialized from the initial tour.";
 						Text: "Flag to indicate that simultaneous algorithm has been initialized";
 					}
-					Parameter p_sim_uselessLoops;
+					Parameter p_sim_uselessLoops {
+						Comment: "Counter for consecutive iterations without improvement in the simultaneous algorithm.";
+					}
 					Parameter p_sim_timeElapsed {
+						Comment: "Elapsed time in seconds for the simultaneous improvement algorithm.";
 						Unit: s;
 						webui::FlagsIdentifier: sp_readOnlyFlag;
 					}
 					Procedure pr_improveTourCyclic {
+						Comment: "Initializes and runs the cyclic 2-opt improvement algorithm starting from the initial tour.";
 						Body: {
 							empty Improve_Tour_Cyclic;
 							
@@ -324,7 +375,7 @@ Model Main_TravelingSalesman {
 							
 							    p_loc_uselessLoops += 1;
 							
-							    ! Select a NewNext to be swapped with City
+							    ! Select a NewNext to be swapped with City.
 							    ep_loc_nextCity := argmax(i_node1 in s_neighbors(ep_node), p_cyc_distanceChange(ep_node,i_node1));
 							
 							    if (p_cyc_distanceChange(ep_node, ep_loc_nextCity) > 0) then
@@ -374,28 +425,34 @@ Model Main_TravelingSalesman {
 							p_sim_timeElapsed := stopwatch::fnc_elapsed;
 						}
 						Parameter p_loc_uselessLoops {
+							Comment: "Counter for consecutive iterations without tour improvement in the cyclic algorithm.";
 							Text: "Counter for counting number of iterations without tour improvement";
 						}
 						ElementParameter ep_loc_nextCity {
+							Comment: "Temporary element parameter for the candidate neighbor city during a swap.";
 							Range: s_cities;
 						}
 						ElementParameter ep_loc_OCity {
+							Comment: "Temporary element parameter for the origin city during subtour reversal.";
 							Range: s_cities;
 						}
 						ElementParameter ep_loc_DCity {
+							Comment: "Temporary element parameter for the destination city during subtour reversal.";
 							Range: s_cities;
 						}
 						ElementParameter ep_loc_ODCity {
+							Comment: "Temporary element parameter for intermediate city during subtour chain reversal.";
 							Range: s_cities;
 						}
 					}
 					Procedure pr_refreshingImproveTourSimultaneous {
+						Comment: "Dialog callback that resets and re-runs the iterative simultaneous improvement algorithm if the user confirms.";
 						Arguments: (sp_in_userAnswer);
 						Body: {
 							if sp_in_userAnswer = "Yes" then
 							    empty Improve_Tour_Simultaneous;
 							
-							    block !status bar change
+							    block ! Update the status bar to reflect the current algorithm state.
 							        sp_statusBar('1', 'icon') := "aimms-circle2";
 							        sp_statusBar('1', 'color') := "var(--secondary2)";
 							        sp_statusBar('1', 'text') := "Running";
@@ -424,26 +481,32 @@ Model Main_TravelingSalesman {
 							endif;
 						}
 						ElementParameter ep_loc_nextCity {
+							Comment: "Temporary element parameter for the candidate neighbor city during a swap.";
 							Range: s_cities;
 						}
 						ElementParameter ep_loc_OCity {
+							Comment: "Temporary element parameter for the origin city during subtour reversal.";
 							Range: s_cities;
 						}
 						ElementParameter ep_loc_DCity {
+							Comment: "Temporary element parameter for the destination city during subtour reversal.";
 							Range: s_cities;
 						}
 						ElementParameter ep_loc_ODCity {
+							Comment: "Temporary element parameter for intermediate city during subtour chain reversal.";
 							Range: s_cities;
 						}
 						StringParameter sp_in_userAnswer {
+							Comment: "User's Yes/No response from the confirmation dialog.";
 							Property: Input;
 						}
 					}
 					Procedure pr_singleIterationImproveTourSimultaneous {
+						Comment: "Performs a single iteration of the simultaneous 2-opt improvement and reschedules itself until the stopping criterion is met.";
 						Body: {
 							p_sim_uselessLoops += 1;
 							
-							! Select a ep_loc_nextCity to be swapped with City
+							! Select a ep_loc_nextCity to be swapped with City.
 							ep_loc_nextCity := argmax(i_node1 in s_neighbors(ep_node), p_sim_distanceChange(ep_node,i_node1));
 							
 							if (p_sim_distanceChange(ep_node, ep_loc_nextCity) > 0) then
@@ -498,7 +561,7 @@ Model Main_TravelingSalesman {
 							else	        
 							    sp_def_simNodeAnnotation(i_city) := "node-done";
 							
-							    block !status bar change
+							    block ! Update the status bar to reflect the current algorithm state.
 							        sp_statusBar('1', 'icon') := "aimms-circle2";
 							        sp_statusBar('1', 'color') := "var(--secondary)";
 							        sp_statusBar('1', 'text') := "Ready";
@@ -508,15 +571,19 @@ Model Main_TravelingSalesman {
 							endif ;
 						}
 						ElementParameter ep_loc_nextCity {
+							Comment: "Temporary element parameter for the candidate neighbor city during a swap.";
 							Range: s_cities;
 						}
 						ElementParameter ep_loc_OCity {
+							Comment: "Temporary element parameter for the origin city during subtour reversal.";
 							Range: s_cities;
 						}
 						ElementParameter ep_loc_DCity {
+							Comment: "Temporary element parameter for the destination city during subtour reversal.";
 							Range: s_cities;
 						}
 						ElementParameter ep_loc_ODCity {
+							Comment: "Temporary element parameter for intermediate city during subtour chain reversal.";
 							Range: s_cities;
 						}
 					}
@@ -529,6 +596,7 @@ Model Main_TravelingSalesman {
 						improvement."
 					}
 					Set s_cyc_nodes {
+						Comment: "Active node set used in the cyclic improvement algorithm, mirroring s_nodes.";
 						SubsetOf: s_nodes;
 						Index: i_cyc_node, i_cyc_node1, i_cyc_node2;
 						Parameter: ep_cyc_node;
@@ -540,42 +608,53 @@ Model Main_TravelingSalesman {
 						webui::AnnotationsIdentifier: sp_def_cycNodeAnnotation;
 					}
 					Macro p_cyc_distanceChange {
+						Comment: "Macro computing the distance improvement from swapping arc (i,j) in the cyclic algorithm.";
 						Text: "Improvement in total tour distance by swapping city i with neighbor j in cyclic algorithm";
 						Arguments: (i_node1,i_node2);
 						Definition: p_def_haversineDistance(i_node1,p_cyc_nextCity(i_node1)) + p_def_haversineDistance(i_node2,p_cyc_nextCity(i_node2)) - (p_def_haversineDistance(i_node1,i_node2) + p_def_haversineDistance(p_cyc_nextCity(i_node1),p_cyc_nextCity(i_node2)));
 					}
 					Parameter p_cyc_swaps {
+						Comment: "Counter for the number of arc swaps performed by the cyclic improvement algorithm.";
 						Text: "Number of performed swaps in cyclic algorithm";
 					}
 					Parameter p_cyc_tourDistance {
+						Comment: "Total tour distance after the latest iteration of the cyclic algorithm.";
 						Text: "Total tour distance after current iteration in cyclic algorithm";
 						InitialData: 0;
 						webui::FlagsIdentifier: sp_readOnlyFlag;
 					}
 					Parameter p_cyc_tourConnect {
+						Comment: "Binary parameter indicating connected city pairs in the cyclic algorithm's current tour.";
 						IndexDomain: (i_node1,i_node2);
 						Text: "City i connected to city j after current iteration in cyclic algorithm";
 						webui::TooltipIdentifier: sp_def_arcTooltip(i_node1,i_node2);
 					}
 					ElementParameter p_cyc_nextCity {
+						Comment: "Element parameter storing the next city in the cyclic algorithm's current tour.";
 						IndexDomain: i_city;
 						Text: "Next city of city c after current iteration in cyclic algorithm";
 						Range: s_cities;
 					}
 					ElementParameter p_cyc_prevCity {
+						Comment: "Element parameter storing the previous city in the cyclic algorithm's current tour.";
 						IndexDomain: i_city;
 						Text: "Previous city of city c after current iteration in cyclic algorithm";
 						Range: s_cities;
 					}
 					Parameter p_cyc_initialized {
+						Comment: "Flag set to 1 once the cyclic improvement algorithm has been initialized from the initial tour.";
 						Text: "Flag to indicate that cyclic algorithm has been initialized";
 					}
-					Parameter p_cyc_uselessLoops;
+					Parameter p_cyc_uselessLoops {
+						Comment: "Counter for consecutive iterations without improvement in the cyclic algorithm.";
+					}
 					Parameter p_cyc_timeElapsed {
+						Comment: "Elapsed time in seconds for the cyclic improvement algorithm.";
 						Unit: s;
 						webui::FlagsIdentifier: sp_readOnlyFlag;
 					}
 					Procedure pr_improveTourSimultaneous {
+						Comment: "Initializes and runs the simultaneous 2-opt improvement algorithm starting from the initial tour.";
 						Body: {
 							empty Improve_Tour_Simultaneous;
 							
@@ -643,25 +722,30 @@ Model Main_TravelingSalesman {
 							p_cyc_timeElapsed := stopwatch::fnc_elapsed;
 						}
 						ElementParameter ep_loc_nextCity {
+							Comment: "Temporary element parameter for the candidate neighbor city during a swap.";
 							Range: s_cities;
 						}
 						ElementParameter ep_loc_OCity {
+							Comment: "Temporary element parameter for the origin city during subtour reversal.";
 							Range: s_cities;
 						}
 						ElementParameter ep_loc_DCity {
+							Comment: "Temporary element parameter for the destination city during subtour reversal.";
 							Range: s_cities;
 						}
 						ElementParameter ep_loc_ODCity {
+							Comment: "Temporary element parameter for intermediate city during subtour chain reversal.";
 							Range: s_cities;
 						}
 					}
 					Procedure pr_refreshingImproveTourCyclic {
+						Comment: "Dialog callback that resets and re-runs the iterative cyclic improvement algorithm if the user confirms.";
 						Arguments: (sp_in_userAnswer);
 						Body: {
 							if sp_in_userAnswer = "Yes" then
 							    empty Improve_Tour_Cyclic;
 							
-							    block !status bar change
+							    block ! Update the status bar to reflect the current algorithm state.
 							        sp_statusBar('1', 'icon') := "aimms-circle2";
 							        sp_statusBar('1', 'color') := "var(--secondary2)";
 							        sp_statusBar('1', 'text') := "Running";
@@ -690,26 +774,32 @@ Model Main_TravelingSalesman {
 							endif;
 						}
 						ElementParameter ep_loc_nextCity {
+							Comment: "Temporary element parameter for the candidate neighbor city during a swap.";
 							Range: s_cities;
 						}
 						ElementParameter ep_loc_OCity {
+							Comment: "Temporary element parameter for the origin city during subtour reversal.";
 							Range: s_cities;
 						}
 						ElementParameter ep_loc_DCity {
+							Comment: "Temporary element parameter for the destination city during subtour reversal.";
 							Range: s_cities;
 						}
 						ElementParameter ep_loc_ODCity {
+							Comment: "Temporary element parameter for intermediate city during subtour chain reversal.";
 							Range: s_cities;
 						}
 						StringParameter sp_in_userAnswer {
+							Comment: "User's Yes/No response from the confirmation dialog.";
 							Property: Input;
 						}
 					}
 					Procedure pr_singleIterationImproveTourCyclic {
+						Comment: "Performs a single iteration of the cyclic 2-opt improvement and reschedules itself until the stopping criterion is met.";
 						Body: {
 							p_cyc_uselessLoops += 1;
 							
-							! Select a ep_loc_nextCity to be swapped with City
+							! Select a ep_loc_nextCity to be swapped with City.
 							ep_loc_nextCity := argmax(i_node1 in s_neighbors(ep_node), p_cyc_distanceChange(ep_node,i_node1));
 							
 							if (p_cyc_distanceChange(ep_node, ep_loc_nextCity) > 0) then
@@ -763,7 +853,7 @@ Model Main_TravelingSalesman {
 							else 
 							    sp_def_cycNodeAnnotation(i_city) := "node-done";
 							
-							    block !status bar change
+							    block ! Update the status bar to reflect the current algorithm state.
 							        sp_statusBar('1', 'icon') := "aimms-circle2";
 							        sp_statusBar('1', 'color') := "var(--secondary)";
 							        sp_statusBar('1', 'text') := "Ready";
@@ -773,26 +863,33 @@ Model Main_TravelingSalesman {
 							endif;
 						}
 						ElementParameter ep_loc_nextCity {
+							Comment: "Temporary element parameter for the candidate neighbor city during a swap.";
 							Range: s_cities;
 						}
 						ElementParameter ep_loc_OCity {
+							Comment: "Temporary element parameter for the origin city during subtour reversal.";
 							Range: s_cities;
 						}
 						ElementParameter ep_loc_DCity {
+							Comment: "Temporary element parameter for the destination city during subtour reversal.";
 							Range: s_cities;
 						}
 						ElementParameter ep_loc_ODCity {
+							Comment: "Temporary element parameter for intermediate city during subtour chain reversal.";
 							Range: s_cities;
 						}
 					}
 				}
 			}
 			Section Exact {
+				Comment: "Contains declarations and procedures for solving the TSP exactly using a MIP formulation with lazy subtour elimination constraints.";
 				Set s_TSPConstraints {
+					Comment: "Subset of all constraints used in the TSP MIP model, excluding the lazy subtour elimination constraint.";
 					SubsetOf: AllConstraints;
 					Definition: AllConstraints - data { 'c_subtourElimination' };
 				}
 				MathematicalProgram mp_TSP {
+					Comment: "MIP mathematical program for the exact TSP solution using binary arc variables.";
 					Objective: v_objective;
 					Direction: minimize;
 					Constraints: s_TSPConstraints;
@@ -800,14 +897,17 @@ Model Main_TravelingSalesman {
 					Type: ep_modelType;
 				}
 				Variable v_objective {
+					Comment: "Objective variable representing the total tour distance to minimize.";
 					Range: free;
 					Definition: sum( (i_node1,i_node2), p_def_haversineDistance(i_node1,i_node2) * v_networkTour(i_node1,i_node2) );
 				}
 				Variable v_networkTour {
+					Comment: "Binary variable indicating whether arc (i,j) is part of the optimal tour.";
 					IndexDomain: (i_node1,i_node2) | i_node1 > i_node2;
 					Range: binary;
 				}
 				Constraint c_subtourElimination {
+					Comment: "Lazy constraint enforcing that each identified subtour must have at least two outgoing arcs, used to eliminate subtours dynamically.";
 					Definition: {
 						sum((i_node1,i_node2) | 
 						        i_node1 in s_subtours 
@@ -818,6 +918,7 @@ Model Main_TravelingSalesman {
 					}
 				}
 				Constraint c_degreeCheck {
+					Comment: "Constraint ensuring each node has exactly two arcs in the tour (degree-2 condition).";
 					IndexDomain: i_node2;
 					Definition: {
 						sum(i_node1, 
@@ -827,43 +928,52 @@ Model Main_TravelingSalesman {
 					}
 				}
 				ElementParameter ep_GMP {
+					Comment: "Element parameter referencing the generated mathematical program instance.";
 					Range: AllGeneratedMathematicalPrograms;
 				}
 				Parameter p_calc_solutionTour {
+					Comment: "Binary parameter storing the arc connections of the best incumbent solution found by the solver.";
 					IndexDomain: (i_node1,i_node2);
 				}
 				Parameter bp_showSolutionWithSubtours {
+					Comment: "Flag to control whether incumbent solutions containing subtours are displayed on the map.";
 					Text: "Show incumbents with subtours";
 					Range: binary;
 					Property: NoSave;
 					InitialData: 1;
 				}
 				Parameter p_exactObjective {
+					Comment: "Objective value (total tour distance) of the exact MIP solution.";
 					webui::FlagsIdentifier: sp_readOnlyFlag;
 				}
 				ElementParameter ep_modelType {
+					Comment: "Element parameter holding the mathematical programming type used for solving (e.g., MIP).";
 					Range: AllMathematicalProgrammingTypes;
 				}
 				Parameter p_exactTimeElapsed {
+					Comment: "Elapsed time in seconds for the exact MIP solve.";
 					Unit: s;
 					webui::FlagsIdentifier: sp_readOnlyFlag;
 				}
 				Procedure pr_callbackLazy {
 					Arguments: ep_in_thisSession;
 					Body: {
-						! Retrieve solution from solver session and send it to the AIMMS variables.
+						! Retrieve the current incumbent solution from the solver session into AIMMS variables.
 						GMP::Solution::RetrieveFromSolverSession(ep_in_thisSession, 1);
 						GMP::Solution::SendToModelSelection(ep_GMP, 1, AllVariables, Suffices);
 						
+						! Check for subtours and generate lazy cuts if any are found.
 						pr_determineSubtours(ep_in_thisSession);
 						
 						return 1;
 					}
 					ElementParameter ep_in_thisSession {
+						Comment: "The solver session passed to the lazy constraint callback.";
 						Range: AllSolverSessions;
 						Property: Input;
 					}
 					Set Suffices {
+						Comment: "Set of solution suffices (Level) to retrieve from the solver session.";
 						SubsetOf: AllSuffixNames;
 						InitialData: data { 'Level' };
 					}
@@ -936,32 +1046,41 @@ Model Main_TravelingSalesman {
 						TSP problem, as it contains only one tour."
 					}
 					Set s_loc_remainingCities {
+						Comment: "Temporary set of cities not yet assigned to a subtour during subtour detection.";
 						SubsetOf: s_nodes;
 					}
 					ElementParameter ep_in_thisSession {
+						Comment: "The solver session from which to retrieve the current incumbent solution.";
 						Range: AllSolverSessions;
 						Property: Input;
 					}
 					ElementParameter ep_loc_city {
+						Comment: "Temporary element parameter for traversing the current subtour.";
 						Range: s_nodes;
 					}
 					ElementParameter ep_loc_firstCity {
+						Comment: "First city of the current subtour being traced.";
 						Range: s_nodes;
 					}
 					ElementParameter ep_loc_initNextCity {
+						Comment: "Element parameter mapping each city to its next city in the currently traced subtour.";
 						IndexDomain: i_city;
 						Range: s_nodes;
 					}
 					Parameter p_loc_foundSubtour {
+						Comment: "Flag set to 1 if at least one subtour (not a full tour) was detected.";
 						Range: binary;
 					}
 				}
 				Procedure pr_emptyExactSolution {
 					Body: {
+						! Clear the MIP network tour variables and any stored solution tour.
 						empty v_networkTour, p_calc_solutionTour;
 						
+						! Monitor all identifiers so the data change monitor covers the full model.
 						MonitoredIdentifiers := AllIdentifiers;
 						
+						! Reset the data change monitor to prevent an unsaved-case dialog on instance selection.
 						DataChangeMonitorReset(DataManagementMonitorID, MonitoredIdentifiers);
 					}
 					Comment: {
@@ -969,13 +1088,16 @@ Model Main_TravelingSalesman {
 						button is pressed."
 					}
 					Set MonitoredIdentifiers {
+						Comment: "Set of identifiers monitored for data changes, used to reset the data change monitor.";
 						SubsetOf: AllIdentifiers;
 					}
 				}
 				Procedure pr_solveModel {
+					Comment: "Generates and solves the exact TSP MIP model using lazy subtour elimination; delegates to AIMMS PRO server when available.";
 					Body: {
 						empty Exact;
 						
+						! Delegate to the AIMMS PRO server when running in a published environment.
 						if pro::GetPROEndPoint() or not ProjectDeveloperMode() then
 						    if pro::DelegateToServer( 
 						        waitForCompletion  :  1,
@@ -985,13 +1107,16 @@ Model Main_TravelingSalesman {
 						    endif;
 						endif;
 						
+						! Generate the GMP instance for the TSP MIP model.
 						stopwatch::pr_start;
 						ep_modelType := 'MIP';
 						ep_GMP := GMP::Instance::Generate(mp_TSP);
 						
+						! Register the lazy constraint callback to dynamically add subtour elimination cuts.
 						GMP::Instance::SetCallbackAddLazyConstraint(ep_GMP, 'pr_callbackLazy');
 						GMP::Instance::Solve(ep_GMP);
 						
+						! After solving, perform a final subtour check on the best incumbent solution.
 						if GMP::Solution::Count(ep_GMP) >= 1 then
 							pr_determineSubtours('');
 						endif;
@@ -999,32 +1124,43 @@ Model Main_TravelingSalesman {
 						p_exactObjective := v_objective;
 						p_exactTimeElapsed := stopwatch::fnc_elapsed;
 						
+						! Clean up the GMP instance to free solver resources.
 						GMP::Instance::Delete(ep_GMP);
 						
+						! Compute the LP relaxation lower bound after the exact solve.
 						pr_solveRelaxedModel;
 					}
 				}
 				Section Lower_Bound {
+					Comment: "Contains declarations and procedure for computing the LP relaxation lower bound of the TSP.";
 					Parameter p_relaxedTourSolution {
+						Comment: "Arc connections from the LP relaxation solution, used to display the lower bound tour.";
 						IndexDomain: (i_node1,i_node2);
 					}
 					Parameter p_lowerBound {
+						Comment: "Optimal objective value of the LP relaxation, providing a lower bound on the exact TSP solution.";
 						webui::FlagsIdentifier: sp_readOnlyFlag;
 					}
 					Parameter p_relaxedTimeElapsed {
+						Comment: "Elapsed time in seconds for solving the LP relaxation.";
 						Unit: s;
 						webui::FlagsIdentifier: sp_readOnlyFlag;
 					}
 					Procedure pr_solveRelaxedModel {
+						Comment: "Solves the LP relaxation of the TSP MIP to compute a lower bound on the optimal tour distance.";
 						Body: {
+							! Clear any previous lower bound results.
 							empty Lower_Bound;
 							
+							! Generate the GMP instance and solve it as a MIP relaxation.
 							stopwatch::pr_start;
 							ep_modelType := 'MIP';
 							ep_GMP := GMP::Instance::Generate(mp_TSP);
 							
+							! Solve without the lazy subtour elimination callback to obtain the LP relaxation.
 							GMP::Instance::Solve(ep_GMP);
 							
+							! Store the relaxed solution and the resulting lower bound.
 							p_relaxedTourSolution(i_node1, i_node2) := v_networkTour(i_node1,i_node2);
 							p_lowerBound := v_objective;
 							p_relaxedTimeElapsed := stopwatch::fnc_elapsed;
@@ -1035,7 +1171,9 @@ Model Main_TravelingSalesman {
 		}
 	}
 	Section UI_Declarations {
+		Comment: "Contains all UI-related declarations including status bar, workflow steps, and page-specific parameters.";
 		StringParameter sp_logo {
+			Comment: "File name of the AIMMS logo displayed in the WebUI header.";
 			InitialData: "aimms_logo.png";
 		}
 		StringParameter sp_statusBar {
@@ -1047,10 +1185,13 @@ Model Main_TravelingSalesman {
 			}
 		}
 		Section Workflow {
+			Comment: "Contains workflow and step definitions for the WebUI navigation panel.";
 			StringParameter sp_myWorkflows {
+				Comment: "String parameter defining the workflow metadata (title, icon) for the WebUI workflow panel.";
 				IndexDomain: (webui::indexWorkflowOrder,webui::indexWorkflowSpec);
 			}
 			StringParameter sp_myWorkflowSteps {
+				Comment: "String parameter defining each step in the WebUI workflow, including page IDs, icons, tooltips, and states.";
 				IndexDomain: (webui::indexWorkflowOrder,webui::indexNoOfPages,webui::indexWorkflowPageSpec);
 				Definition: {
 					data 
@@ -1079,23 +1220,30 @@ Model Main_TravelingSalesman {
 			}
 		}
 		Section Pages {
+			Comment: "Contains all page-specific UI declarations and procedures.";
 			Section Network_Page {
+				Comment: "Contains declarations and procedures for the network page where cities are added and visualized.";
 				StringParameter sp_mapTitle {
+					Comment: "Dynamic title for the network map widget, showing the current number of nodes.";
 					Definition: {
 						"The network has " + card(s_nodes) + " nodes.";
 					}
 				}
 				StringParameter sp_addThisCity {
+					Comment: "City name entered by the user to fetch coordinates for a single city.";
 					InitialData: "";
 				}
 				StringParameter sp_addByCountry {
+					Comment: "Country name entered by the user to fetch random cities from that country.";
 					InitialData: "";
 				}
 				Parameter p_def_unableToFetch {
+					Comment: "Counter for cities whose coordinates could not be fetched from the API.";
 					InitialData: 0;
 					webui::FlagsIdentifier: sp_readOnlyFlag;
 				}
 				StringParameter sp_def_nodeTooltip {
+					Comment: "HTML tooltip string for each node in the network map, showing city name, latitude, and longitude.";
 					IndexDomain: i_city | exists(i_node1 | i_node1 = i_city) or exists(i_node2 | i_node2 = i_city);
 					Definition: {
 						"<p style=\"text-align: left;\"><em>" + i_city + "</em></p>" +
@@ -1104,21 +1252,25 @@ Model Main_TravelingSalesman {
 					}
 				}
 				Parameter p_def_nodeSize {
+					Comment: "Size parameter for nodes in the network map widget.";
 					IndexDomain: i_city;
 					Definition: 2;
 					webui::TooltipIdentifier: sp_def_nodeTooltip(i_city);
 				}
 				StringParameter sp_def_arcTooltip {
+					Comment: "HTML tooltip string for each arc in the network map, showing origin and destination cities.";
 					IndexDomain: (i_node1,i_node2) | i_node1 <> i_node2;
 					Definition: {
 						"<p style=\"text-align: left;\">From <em>" + i_node1 + "</em> to <em>" + i_node2 + "</em>.</p>"
 					}
 				}
 				StringParameter sp_def_nodeAnnotation {
+					Comment: "CSS annotation class applied to all nodes in the default (non-algorithm-specific) network view.";
 					IndexDomain: i_city;
 					Definition: "node-done";
 				}
 				StringParameter sp_def_nodeItemActions {
+					Comment: "Item action definitions for nodes in the network map, providing a delete button.";
 					IndexDomain: (webui::indexWidgetItemActionSpec,webui::indexPageExtension,webui::indexWidgetActionSpec);
 					Definition: {
 						data 
@@ -1127,29 +1279,37 @@ Model Main_TravelingSalesman {
 					}
 				}
 				StringParameter sp_def_networkSidePanel {
+					Comment: "Side panel configuration for the network page, linking to the help page.";
 					IndexDomain: (webui::indexPageExtension,webui::indexSidePanelSpec);
 					Definition: data { ( 1, displayText ) : "Help",  ( 1, pageId ) : "network_help",  ( 1, icon ) : "aimms-info2",  ( 1, state ) : "active" };
 				}
 				StringParameter sp_def_addThisCityTooltipButton {
+					Comment: "Tooltip text for the button that fetches coordinates for a specific city.";
 					Definition: "Fetch " + sp_addThisCity + "'s latitude and longitude on PositionStack api.";
 				}
 				StringParameter p_def_addThisCountryTooltipButton {
+					Comment: "Tooltip text for the button that fetches random cities from a specific country.";
 					Definition: "Fetch " + p_maxCities + " random cities' latitude and longitude from " + sp_addByCountry + " on PositionStack api.";
 				}
 				StringParameter sp_def_addByLimitTooltipButton {
+					Comment: "Tooltip text for the button that fetches a random set of cities up to the configured limit.";
 					Definition: "Fetch " + p_maxCities + " random cities' latitude and longitude on PositionStack api.";
 				}
 				Procedure pr_addThisCity {
+					Comment: "Fetches the latitude and longitude of the city entered in sp_addThisCity via the PositionStack API.";
 					Body: {
+						! Abort if no API key has been configured.
 						if sp_apiKey = "" then
 						    webui::ShowMessage('error',"No api selected.");   
 						    return;
 						endif;   
 						
+						! Look up the city element and retrieve its ASCII name and country.
 						ep_city := StringToElement(s_cities, sp_addThisCity, 0);
 						sp_loc_cityASCII := first(i_city_ascii | bp_city_x_cityASCII(ep_city, i_city_ascii));
 						ep_loc_cityCountry := first(i_country | bp_city_x_country(ep_city, i_country));
 						
+						! Call the API query if the city was found; otherwise show an error message.
 						if ep_loc_cityCountry then
 						    pr_callAPIQuery(sp_loc_cityASCII, ep_loc_cityCountry);
 						else
@@ -1157,12 +1317,17 @@ Model Main_TravelingSalesman {
 						endif;
 					}
 					ElementParameter ep_loc_cityCountry {
+						Comment: "The country of the city being looked up, used to refine the API query.";
 						Range: s_countries;
 					}
-					StringParameter sp_loc_cityASCII;
+					StringParameter sp_loc_cityASCII {
+						Comment: "ASCII version of the city name used in the API request URL.";
+					}
 				}
 				Procedure pr_addByCountry {
+					Comment: "Fetches coordinates for up to p_maxCities random cities from the country entered in sp_addByCountry.";
 					Body: {
+						! Abort if no API key has been configured.
 						if sp_apiKey = "" then
 						    webui::ShowMessage('error',"No api selected.");    
 						    return;
@@ -1170,16 +1335,19 @@ Model Main_TravelingSalesman {
 						
 						empty ep_country;
 						
+						! Look up the selected country and initialize the fetch counter.
 						ep_country := StringToElement(s_countries, sp_addByCountry, 0);
 						p_loc_counter := 0;
 						
 						if sp_addByCountry and ep_country then
 						    block 
+						    ! Count the total number of cities available in the selected country.
 						    p_loc_cardinalityOfCitiesFromCountry  
 						    :=  sum(i_id | exists(i_city | 
 						                    bp_city_x_id(i_city, i_id) 
 						                    and bp_city_x_country(i_city, ep_country)), 1);
 						
+						    ! Build a sequential ID mapping to enable uniform random city selection.
 						    s_loc_newIds := {1 .. p_loc_cardinalityOfCitiesFromCountry};
 						    ep_loc_newId := first(i_loc_newid);
 						
@@ -1192,6 +1360,7 @@ Model Main_TravelingSalesman {
 						    endfor;    
 						    endblock;
 						
+						    ! Randomly select and fetch cities until the configured maximum is reached.
 						    while p_loc_counter < p_maxCities do
 						        p_loc_randomNewId := ceil(uniform(val(first(i_loc_newid)), val(last(i_loc_newid))));
 						        ep_loc_newId := StringToElement(s_loc_newIds, p_loc_randomNewId, 0);
@@ -1201,6 +1370,7 @@ Model Main_TravelingSalesman {
 						
 						        if ep_country and sp_loc_cityASCII then
 						
+						            ! Report progress to the WebUI progress indicator.
 						            sp_loc_message := round(100 * (p_loc_counter/$ p_maxCities)) + " % - Fetching: " + sp_loc_cityASCII + " - " + ep_country;
 						            webui::SetProgressMessage(sp_loc_message);
 						
@@ -1208,6 +1378,7 @@ Model Main_TravelingSalesman {
 						            p_loc_counter += 1;
 						        endif;
 						
+						        ! Safety limit to prevent infinite loops on sparse data.
 						        if  p_loc_counter > 2000 then
 						            return 1;
 						        endif;            
@@ -1217,34 +1388,50 @@ Model Main_TravelingSalesman {
 						endif;
 					}
 					Set s_loc_newIds {
+						Comment: "Temporary set of sequential IDs for shuffling cities within the selected country.";
 						Index: i_loc_newid;
 						Parameter: ep_loc_newId;
 					}
-					StringParameter sp_loc_cityASCII;
-					StringParameter sp_loc_message;
+					StringParameter sp_loc_cityASCII {
+						Comment: "ASCII name of the city currently being fetched.";
+					}
+					StringParameter sp_loc_message {
+						Comment: "Progress message string displayed in the WebUI progress indicator.";
+					}
 					ElementParameter ep_loc_cityCountry {
+						Comment: "Element parameter for the selected country during batch fetching.";
 						Range: s_countries;
 					}
-					Parameter p_loc_randomNewId;
-					Parameter p_loc_counter;
+					Parameter p_loc_randomNewId {
+						Comment: "Randomly selected index used to pick a city from the country's city list.";
+					}
+					Parameter p_loc_counter {
+						Comment: "Counter tracking the number of cities successfully fetched so far.";
+					}
 					Parameter p_loc_cardinalityOfCitiesFromCountry {
+						Comment: "Total number of cities available in the selected country.";
 						InitialData: 1;
 					}
 					Parameter bp_loc_oldId_x_newId {
+						Comment: "Binary mapping from original city IDs to sequential new IDs for random selection.";
 						IndexDomain: (i_id,i_loc_newid);
 						Range: binary;
 					}
 				}
 				Procedure pr_addByLimit {
+					Comment: "Fetches coordinates for up to p_maxCities randomly selected cities from the world cities database.";
 					Body: {
+						! Abort if no API key has been configured.
 						if sp_apiKey = "" then
 						    webui::ShowMessage('error',"No api selected.");   
 						    return;
 						endif;   
 						
+						! Initialize counters and clear previous city and country selections.
 						empty ep_country, ep_city;
 						p_loc_counter:= 0;
 						
+						! Randomly select cities from the database until the configured maximum is reached.
 						while p_loc_counter < p_maxCities do
 						    p_loc_randomId := ceil(uniform(val(first(i_id)), val(last(i_id))));
 						    ep_id := StringToElement(s_ids, p_loc_randomId, 0);
@@ -1255,6 +1442,7 @@ Model Main_TravelingSalesman {
 						    sp_loc_cityASCII := first(i_city_ascii | bp_city_x_cityASCII(ep_city, i_city_ascii));
 						
 						    if ep_country and sp_loc_cityASCII then
+						        ! Report progress to the WebUI progress indicator.
 						        sp_loc_message := round(100 * (p_loc_counter/$ p_maxCities)) + " % - Fetching: " + sp_loc_cityASCII + " - " + ep_country;
 						        webui::SetProgressMessage(sp_loc_message);
 						
@@ -1262,37 +1450,53 @@ Model Main_TravelingSalesman {
 						        p_loc_counter += 1;
 						    endif;
 						
+						    ! Safety limit to prevent infinite loops if valid cities are sparse.
 						    if  p_loc_counter > 2000 then
 						        return 1;
 						    endif;   
 						endwhile;
 					}
 					Parameter p_loc_counter {
+						Comment: "Counter tracking the number of cities successfully fetched so far.";
 						InitialData: 0;
 					}
-					Parameter p_loc_randomId;
-					StringParameter sp_loc_cityASCII;
-					StringParameter sp_loc_message;
+					Parameter p_loc_randomId {
+						Comment: "Randomly selected database ID for picking a city.";
+					}
+					StringParameter sp_loc_cityASCII {
+						Comment: "ASCII name of the city currently being fetched.";
+					}
+					StringParameter sp_loc_message {
+						Comment: "Progress message displayed in the WebUI progress indicator.";
+					}
 				}
 				Procedure pr_cleanAllNodes {
+					Comment: "Clears all API input data and resets all tour solutions.";
 					Body: {
+						! Clear all API-fetched node data (coordinates, sets).
 						empty API_Inputs;
+						! Reset all heuristic tour connection parameters.
 						pr_clearSolutions;
 					}
 				}
 				Procedure pr_deleteNode {
+					Comment: "Removes the selected node from the active network by emptying its latitude and longitude.";
 					Body: {
+						! Remove the selected city from the active network by clearing its coordinates.
 						empty p_latitude(ep_city);
 						empty p_longitude(ep_city);
 					}
 				}
 			}
 			Section Heuristic_Page {
+				Comment: "Contains declarations and procedures for the heuristic solutions page.";
 				StringParameter sp_def_heuristicPrimaryActions {
+					Comment: "Primary action button definition for the heuristic page (Run all algorithms).";
 					IndexDomain: webui::indexPageActionSpec;
 					Definition: data { displaytext : "Run",  icon : "aimms-airplane",  procedure : "pr_runAll",  state : "active" };
 				}
 				StringParameter sp_def_heuristicSecondaryActions {
+					Comment: "Secondary action buttons for the heuristic page (Clear, Initial, Simultaneous, Cyclic).";
 					IndexDomain: (webui::indexPageExtension,webui::indexPageActionSpec);
 					Definition: {
 						data { 
@@ -1319,69 +1523,94 @@ Model Main_TravelingSalesman {
 					}
 				}
 				StringParameter sp_def_heuristicSidePanel {
+					Comment: "Side panel configuration for the heuristic page, linking to the help page.";
 					IndexDomain: (webui::indexPageExtension,webui::indexSidePanelSpec);
 					Definition: data { ( 1, displayText ) : "Help",  ( 1, pageId ) : "heuristic_help",  ( 1, icon ) : "aimms-info2",  ( 1, state ) : "active" };
 				}
 				StringParameter sp_def_simNodeAnnotation {
+					Comment: "CSS annotation class for nodes on the simultaneous improvement algorithm map.";
 					IndexDomain: i_city;
 					InitialData: "node-done";
 				}
 				StringParameter sp_def_cycNodeAnnotation {
+					Comment: "CSS annotation class for nodes on the cyclic improvement algorithm map.";
 					IndexDomain: i_city;
 					InitialData: "node-done";
 				}
 				StringParameter sp_titleImprovedTourCyclic {
+					Comment: "Title string for the cyclic improved tour network widget.";
 					InitialData: "Improved Tour (Cyclic)";
 				}
 				Procedure pr_checkIterativeCyclic {
+					Comment: "Shows a confirmation dialog before starting the iterative cyclic improvement algorithm.";
 					Body: {
+						! Define the available dialog response options.
 						s_loc_actions := {'No!', 'Yes'};
 						
+						! Show a confirmation dialog warning that the algorithm may take some time to complete.
 						webui::RequestPerformWebUIDialog(
 							title   :  "Good to know", 
 							message :  "This procedure can take a while but you will see the map changing connections. \nDo you want to proceed?", 
 							actions :  s_loc_actions, 
 							onDone  :  'pr_refreshingImproveTourCyclic');
 					}
-					Set s_loc_actions;
+					Set s_loc_actions {
+						Comment: "Set of dialog button options presented to the user.";
+					}
 				}
 				Procedure pr_checkIterativeSimultaneous {
+					Comment: "Shows a confirmation dialog before starting the iterative simultaneous improvement algorithm.";
 					Body: {
+						! Define the available dialog response options.
 						s_loc_actions := {'No!', 'Yes'};
 						
+						! Show a confirmation dialog warning that the algorithm may take some time to complete.
 						webui::RequestPerformWebUIDialog(
 							title   :  "Good to know", 
 							message :  "This procedure can take a while but you will see the map changing connections. \nDo you want to proceed?", 
 							actions :  s_loc_actions, 
 							onDone  :  'pr_refreshingImproveTourSimultaneous');
 					}
-					Set s_loc_actions;
+					Set s_loc_actions {
+						Comment: "Set of dialog button options presented to the user.";
+					}
 				}
 			}
 			Section Exact_Page {
+				Comment: "Contains declarations for the exact solution page.";
 				StringParameter sp_def_exactPrimaryActions {
+					Comment: "Primary action button definition for the exact solution page (Run MIP solver).";
 					IndexDomain: webui::indexPageActionSpec;
 					Definition: data { displaytext : "Run",  icon : "aimms-airplane",  procedure : "pr_solveModel",  state : "active" };
 				}
 				StringParameter sp_def_exactSidePanel {
+					Comment: "Side panel configuration for the exact solution page, linking to the help page.";
 					IndexDomain: (webui::indexPageExtension,webui::indexSidePanelSpec);
 					Definition: data { ( 1, displayText ) : "Help",  ( 1, pageId ) : "exact_help",  ( 1, icon ) : "aimms-info2",  ( 1, state ) : "active" };
 				}
 			}
 		}
 		Section FlagsIdentifier {
+			Comment: "Contains flag identifiers used to control read-only state of WebUI widgets.";
 			StringParameter sp_readOnlyFlag {
+				Comment: "String constant 'readonly' used as a WebUI flags identifier to make widgets non-editable.";
 				Definition: "readonly";
 			}
 		}
 	}
 	Section Integration {
+		Comment: "Contains all integration sections for database and API connectivity.";
 		Section World_Cities_DB {
+			Comment: "Contains declarations and procedures for reading world cities data from a SQLite database.";
 			Procedure pr_readWorldCities {
+				Comment: "Reads world city data from the SQLite database and populates all city, country, province, and ID sets.";
 				Body: {
+					! Clear any previously loaded world city data.
 					empty World_Cities_DB;
+					! Read all rows from the SQLite worldCities database table.
 					read from table db_worldCities;
 					
+					! Populate AIMMS sets and cross-reference parameters from the database rows.
 					if exists(i_int_id | sp_int_city(i_int_id)) then
 					
 					    for i_int_id | sp_int_city(i_int_id) do
@@ -1393,6 +1622,7 @@ Model Main_TravelingSalesman {
 					
 					        sp_countryAcronym(ep_country) := sp_int_countryAcronym(i_int_id);
 					
+					        ! Link each city to its country, ASCII name, province, and database ID.
 					        bp_city_x_country(ep_city,ep_country) := 1;
 					        bp_city_x_cityASCII(ep_city, ep_cityASCII) := 1;
 					        bp_city_x_province(ep_city, ep_province) := 1;
@@ -1402,6 +1632,7 @@ Model Main_TravelingSalesman {
 				}
 			}
 			StringParameter sp_def_dataSource {
+				Comment: "ODBC connection string for the WorldCities SQLite database.";
 				Definition: {
 					SQLCreateConnectionString (
 					       DatabaseInterface              :  'odbc',
@@ -1414,6 +1645,7 @@ Model Main_TravelingSalesman {
 				}
 			}
 			StringParameter sp_def_driverName {
+				Comment: "ODBC driver name, switching between 'SQLite3' for PRO/non-developer mode and 'SQLite3 ODBC Driver' for local development.";
 				Definition: {
 					if pro::GetPROEndPoint() or not ProjectDeveloperMode() then
 					    "SQLite3"
@@ -1423,6 +1655,7 @@ Model Main_TravelingSalesman {
 				}
 			}
 			DatabaseTable db_worldCities {
+				Comment: "Database table declaration mapping the worldCities SQLite table to AIMMS identifiers.";
 				DataSource: sp_def_dataSource;
 				TableName: "worldCities";
 				Mapping: {
@@ -1435,39 +1668,49 @@ Model Main_TravelingSalesman {
 				}
 			}
 			Set s_int_id {
+				Comment: "Set of integer IDs from 1 to 7400 representing the rows in the world cities database.";
 				Index: i_int_id;
 				Definition: {
 					{1..7400}
 				}
 			}
 			StringParameter sp_int_city {
+				Comment: "City name for each database row, read from the worldCities table.";
 				IndexDomain: i_int_id;
 			}
 			StringParameter sp_int_cityASCII {
+				Comment: "ASCII city name for each database row, used in API queries.";
 				IndexDomain: i_int_id;
 			}
 			StringParameter sp_int_country {
+				Comment: "Country name for each database row.";
 				IndexDomain: i_int_id;
 			}
 			StringParameter sp_int_province {
+				Comment: "Province or state name for each database row.";
 				IndexDomain: i_int_id;
 			}
 			StringParameter sp_int_countryAcronym {
+				Comment: "ISO country code for each database row.";
 				IndexDomain: i_int_id;
 			}
 		}
 		Section LatLong_API {
-			StringParameter sp_apiKey;
+			Comment: "Contains declarations and procedures for fetching latitude/longitude via the PositionStack API.";
+			StringParameter sp_apiKey {
+				Comment: "API key for the PositionStack geocoding service, required for all API calls.";
+			}
 			Procedure pr_callAPIQuery {
+				Comment: "Constructs and executes a PositionStack API request to fetch latitude/longitude for a given city and country.";
 				Arguments: (sp_in_city,ep_in_cityCountry);
 				Body: {
-					!Deleting old info
+					! Delete any output files from a previous API call.
 					if DirectoryExists("out") then
 					    DirectoryDelete("out");
 					endif;
 					DirectoryCreate("out");
 					
-					block ! fetch query 
+					block ! Build and execute the PositionStack API request for the given city and country.
 					sp_loc_requestId := "fetch" + sp_in_city;
 					
 					sp_in_city := FindReplaceStrings(sp_in_city, " ", "%20");
@@ -1489,46 +1732,63 @@ Model Main_TravelingSalesman {
 					dex::client::WaitForResponses(2000);    
 					endblock;
 					
+					! Wait for the HTTP response to arrive before reading the output file.
 					delay(5);
 					
+					! Parse the JSON response file and update the model with the retrieved coordinates.
 					pr_readJSONOutput;
 				}
 				StringParameter sp_in_city {
+					Comment: "City name (ASCII) to search for; spaces are replaced with %20 for URL encoding.";
 					Property: Input;
 				}
 				ElementParameter ep_in_cityCountry {
+					Comment: "Country of the city being queried, used to retrieve the ISO country code.";
 					Range: s_countries;
 					Property: Input;
 				}
-				StringParameter sp_loc_urlCall;
-				StringParameter sp_loc_requestId;
+				StringParameter sp_loc_urlCall {
+					Comment: "Full URL string for the PositionStack API request.";
+				}
+				StringParameter sp_loc_requestId {
+					Comment: "Unique request identifier used with the DEX HTTP client.";
+				}
 			}
 			Section Read_JSON_by_DEX {
+				Comment: "Contains DEX-based declarations and the procedure to parse JSON API responses.";
 				DeclarationSection LatLong {
+					Comment: "DEX dataset declarations for mapping JSON latitude/longitude response fields.";
 					dex::Dataset: LatLongDataset;
 					dex::TableName: LatLong;
 					Set s_int_cities {
+						Comment: "Set of city names returned by the DEX JSON mapping from the API response.";
 						Parameter: ep_int_city;
 					}
 					Index i_int_city {
+						Comment: "Index over s_int_cities, mapped to the 'name' column in the API JSON response.";
 						Range: s_int_cities;
 						dex::ColumnName: name;
 					}
 					Parameter p_int_latitude {
+						Comment: "Latitude value for each city in the API JSON response.";
 						IndexDomain: i_int_city;
 						dex::ColumnName: latitude;
 					}
 					Parameter p_int_longitude {
+						Comment: "Longitude value for each city in the API JSON response.";
 						IndexDomain: i_int_city;
 						dex::ColumnName: longitude;
 					}
 				}
 				Procedure pr_readJSONOutput {
+					Comment: "Reads and maps the PositionStack JSON API response file using DEX, then updates latitude and longitude for the fetched city.";
 					Body: {
+						! Register the DEX mapping that describes the JSON response structure.
 						dex::AddMapping(
 							mappingName :  "LatLongMapping", 
 							mappingFile :  "Mappings/Generated/LatLongDataset.xml");
 						
+						! Read the JSON output file into the DEX dataset identifiers.
 						dex::ReadFromFile(
 							dataFile         :  "out/Output.json", 
 							mappingName      :  "LatLongMapping", 
@@ -1536,11 +1796,12 @@ Model Main_TravelingSalesman {
 							emptySets        :  1, 
 							resetCounters    :  1);
 						
-						! Mapping to main data model
+						! Map the DEX result to the main data model.
 						empty ep_city;
 						ep_int_city := first(i_int_city);
 						sp_loc_city := ep_int_city;
 						
+						! Normalize accented characters in the returned city name to match the database.
 						pr_checkReplaceCharacters(sp_loc_city);
 						
 						ep_city := StringToElement(s_cities, sp_loc_city, 1);
@@ -1552,18 +1813,23 @@ Model Main_TravelingSalesman {
 						    sp_def_simNodeAnnotation(ep_city) := "node-done";
 						
 						else
+						    ! City name returned by API was not recognized; increment the failure counter.
 						    p_def_unableToFetch += 1;
 						endif;
 					}
-					StringParameter sp_loc_city;
+					StringParameter sp_loc_city {
+						Comment: "City name extracted from the DEX mapping result, used to match against s_cities.";
+					}
 				}
 			}
 		}
 	}
 	Section Toolkit {
+		Comment: "Contains utility procedures used throughout the model.";
 		Procedure pr_checkReplaceCharacters {
 			Arguments: (sp_inout_string);
 			Body: {
+				! Replace accented and special characters with their plain ASCII equivalents.
 				sp_inout_string := FindReplaceStrings(sp_inout_string, "ã", "a");
 				sp_inout_string := FindReplaceStrings(sp_inout_string, "é", "e");
 				sp_inout_string := FindReplaceStrings(sp_inout_string, "á", "a");
@@ -1579,13 +1845,14 @@ Model Main_TravelingSalesman {
 			}
 			Comment: "í";
 			StringParameter sp_inout_string {
+				Comment: "Input/output string parameter where special characters are replaced with ASCII equivalents.";
 				Property: InOut;
 			}
 		}
 		Procedure pr_scheduleOver {
 			Arguments: (p_in_noSecs,ep_in_payLoad);
 			Body: {
-				block ! Sanity checks 
+				block ! Sanity checks: verify that the delay is positive and the payload is non-empty.
 					if p_in_noSecs <= 0[s] then
 						raise error 
 							formatString("pr_scheduleOver(%n,%e): The number of seconds should be strictly positive.", 
@@ -1598,7 +1865,7 @@ Model Main_TravelingSalesman {
 					endif ;
 				endblock ;
 				
-				block ! Is reference date base on UTC?
+				block ! Is the reference date based on UTC?
 					p_loc_ogv 
 					:=  OptionGetValue(
 				            OptionName :  "use_UTC_forCaseAndStartEndDate", 
@@ -1623,34 +1890,52 @@ Model Main_TravelingSalesman {
 					sp_loc_launchDate := MomentToString( "%c%y-%m-%d %H:%M:%S", [s], sp_loc_refDate, p_loc_tmpSec );
 				endif ;
 				
-				! Nb ScheduleAt is precise up to a second.
+				! Note: ScheduleAt is precise up to a second.
 				if not ScheduleAt(sp_loc_launchDate, ep_in_payLoad) then
 				    raise error "Error scheduling procedure \'" + ep_in_payLoad + "\': " + CurrentErrorMessage code 'Schedule-at-procedure' ;
 				endif;
 			}
 			Comment: "Schedule a job in a couple of seconds.";
 			Parameter p_in_noSecs {
+				Comment: "Number of seconds to wait before scheduling the payload procedure.";
 				Unit: s;
 				Property: Input;
 			}
 			ElementParameter ep_in_payLoad {
+				Comment: "Procedure to be scheduled for execution after the specified delay.";
 				Range: AllProcedures;
 				Property: Input;
 			}
-			StringParameter sp_loc_refDate;
-			StringParameter sp_loc_launchDate;
+			StringParameter sp_loc_refDate {
+				Comment: "Reference date string used as the base for moment calculations.";
+			}
+			StringParameter sp_loc_launchDate {
+				Comment: "Computed launch date-time string passed to ScheduleAt.";
+			}
 			Parameter p_loc_tmpSec {
+				Comment: "Temporary parameter holding the computed scheduled time in seconds.";
 				Range: integer;
 				Unit: s;
 			}
-			Parameter p_loc_ogv;
-			Parameter p_loc_low;
-			Parameter p_loc_scheduleAtUsesUTC;
-			Parameter p_loc_def;
-			Parameter p_loc_lupp;
+			Parameter p_loc_ogv {
+				Comment: "Return value of OptionGetValue for the UTC option check.";
+			}
+			Parameter p_loc_low {
+				Comment: "Lower bound returned by OptionGetValue.";
+			}
+			Parameter p_loc_scheduleAtUsesUTC {
+				Comment: "Flag indicating whether the ScheduleAt function uses UTC time.";
+			}
+			Parameter p_loc_def {
+				Comment: "Default value returned by OptionGetValue.";
+			}
+			Parameter p_loc_lupp {
+				Comment: "Upper bound returned by OptionGetValue.";
+			}
 		}
 	}
 	Procedure MainInitialization {
+		Comment: "Initializes the model by clearing all tour data and setting the status bar to 'Ready'.";
 		Body: {
 			empty p_init_tourConnect,p_sim_tourConnect,p_cyc_tourConnect;
 			
@@ -1658,7 +1943,7 @@ Model Main_TravelingSalesman {
 			p_sim_initialized  := 0;
 			p_cyc_initialized  := 0;
 			
-			block !status bar change
+			block ! Set the status bar to the Ready state on initialization.
 			    sp_statusBar('1', 'icon') := "aimms-circle2";
 			    sp_statusBar('1', 'color') := "var(--secondary)";
 			    sp_statusBar('1', 'text') := "Ready";
@@ -1667,18 +1952,27 @@ Model Main_TravelingSalesman {
 			endblock;
 		}
 	}
-	Procedure PostMainInitialization;
+	Procedure PostMainInitialization {
+		Comment: "Post-initialization hook; currently unused but available for future initialization logic.";
+	}
 	Procedure pr_pageopenWelcome {
+		Comment: "Page open procedure for the welcome page; reads world cities from the database if available.";
 		Body: {
+			! Test the database connection before attempting to load city data.
 			if TestDataSource(sp_def_dataSource) then
+				! Database is reachable; populate the world cities sets and parameters.
 				pr_readWorldCities();
 			else
+				! Database connection failed; warn the user so they can check the data source.
 			    webui::ShowMessage('warning', "Lack of connection with Database.");
 			endif ;
 		}
 	}
-	Procedure MainExecution;
+	Procedure MainExecution {
+		Comment: "Main execution procedure; currently unused as solving is triggered via UI actions.";
+	}
 	Procedure PreMainTermination {
+		Comment: "Pre-termination hook that returns 1 to allow clean shutdown without prompting to save.";
 		Body: {
 			return 1;
 		}

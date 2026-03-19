@@ -25,6 +25,7 @@ LibraryModule StopwatchLibrary {
 		   the value of Use_UTC_forcaseandstartenddate at runtime."
 	}
 	Section Public_section {
+		Comment: "Public interface of the StopwatchLibrary, exposing the start procedure and elapsed time function.";
 		Procedure pr_start {
 			Body: {
 				! Use the CurrentToString AIMMS function to store the current time
@@ -61,7 +62,9 @@ LibraryModule StopwatchLibrary {
 				"Return the wallclock time, in seconds, since the last call to pr_start.
 				Note that pr_start is also called in PostLibraryInitialization."
 			}
-			StringParameter sp_stopMoment;
+			StringParameter sp_stopMoment {
+				Comment: "Timestamp string captured at the moment elapsed time is requested, used as the stop reference for UTC mode.";
+			}
 			Parameter p_elapsedTime {
 				Unit: s;
 				Comment: {
@@ -72,11 +75,15 @@ LibraryModule StopwatchLibrary {
 		}
 	}
 	Section Private_section {
+		Comment: "Private declarations of the StopwatchLibrary, including state variables and library lifecycle procedures.";
 		StringParameter sp_startTime {
 			Comment: "Time the stopwatch was started";
 		}
-		Parameter p_option_Use_UTC_forcaseandstartenddate_active;
+		Parameter p_option_Use_UTC_forcaseandstartenddate_active {
+			Comment: "Flag indicating whether the AIMMS option 'Use UTC for case and start/end date' is active; set during library initialization.";
+		}
 		Section Library_initialization_and_termination {
+			Comment: "Library lifecycle procedures for initialization and termination of the StopwatchLibrary.";
 			Procedure LibraryInitialization {
 				Comment: "Add initialization statements here that do not require any other library being initialized already.";
 			}
@@ -98,10 +105,18 @@ LibraryModule StopwatchLibrary {
 					"Add initialization statements here that require another library to be initialized already,
 					or add statements that require the Data Management module to be initialized."
 				}
-				Parameter p_ogv;
-				Parameter p_optLow;
-				Parameter p_optDef;
-				Parameter p_optUpp;
+				Parameter p_ogv {
+					Comment: "Return value of OptionGetValue indicating whether the option query succeeded.";
+				}
+				Parameter p_optLow {
+					Comment: "Lower bound of the option value range, returned by OptionGetValue.";
+				}
+				Parameter p_optDef {
+					Comment: "Default value of the option, returned by OptionGetValue.";
+				}
+				Parameter p_optUpp {
+					Comment: "Upper bound of the option value range, returned by OptionGetValue.";
+				}
 			}
 			Procedure PreLibraryTermination {
 				Body: {
